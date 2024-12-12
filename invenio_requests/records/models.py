@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2021 TU Wien.
+# Copyright (C) 2024 Graz University of Technology.
 #
 # Invenio-Requests is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -15,6 +16,7 @@ from sqlalchemy import func
 from sqlalchemy.dialects import mysql
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.sql import text
 from sqlalchemy.types import String
 from sqlalchemy_utils import UUIDType
 
@@ -109,9 +111,9 @@ class SequenceMixin:
         """
         if db.engine.dialect.name == "postgresql":  # pragma: no cover
             db.session.execute(
-                "SELECT setval(pg_get_serial_sequence("
-                "'{0}', 'value'), :newval)".format(cls.__tablename__),
-                dict(newval=val),
+                text(
+                    "SELECT setval(pg_get_serial_sequence(:table, 'value'), :newval)"
+                ).bindparams(newval=val, table=cls.__tablename__),
             )
 
     @classmethod
