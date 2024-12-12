@@ -1,5 +1,6 @@
 ..
     Copyright (C) 2021-2024 CERN.
+    Copyright (C) 2024 Graz University of Technology.
 
     Invenio-Requests is free software; you can redistribute it and/or
     modify it under the terms of the MIT License; see LICENSE file for more
@@ -7,6 +8,12 @@
 
 Changes
 =======
+
+Version 6.0.0.dev1 (released 2024-12-12)
+
+- fix: sqlalchemy.exc.ArgumentError
+- comp: make compatible to flask-sqlalchemy>=3.1
+- setup: bump major dependencies
 
 Version v5.5.0 (released 2024-12-09)
 
