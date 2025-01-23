@@ -9,7 +9,9 @@
 Changes
 =======
 
-Version 6.0.0.dev1 (released 2024-12-12)
+Version v6.0.0.dev2 (released 2025-01-23)
+
+Version v6.0.0.dev1 (released 2024-12-12)
 
 - fix: sqlalchemy.exc.ArgumentError
 - comp: make compatible to flask-sqlalchemy>=3.1
