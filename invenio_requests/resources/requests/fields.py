@@ -8,6 +8,7 @@
 
 """Marshmallow fields for search parameter deserialization."""
 
+from invenio_i18n import lazy_gettext as _
 from marshmallow import fields
 
 
@@ -20,7 +21,7 @@ class ReferenceString(fields.Field):
 
     #: Default error messages.
     default_error_messages = {
-        "invalid": "Not a valid reference.",
+        "invalid": _("Not a valid reference."),
     }
 
     def _deserialize(self, value, attr, data, **kwargs):
