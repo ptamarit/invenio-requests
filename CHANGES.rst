@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v6.0.0 (released 2025-02-13)
+
+- Promote to stable release.
+
 Version v6.0.0.dev2 (released 2025-01-23)
 
 Version v6.0.0.dev1 (released 2024-12-12)
