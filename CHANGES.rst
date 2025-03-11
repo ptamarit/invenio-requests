@@ -11,8 +11,11 @@ Changes
 
 Version v6.1.0 (released 2025-03-11)
 
-- feature: add Topic generator for request types. That enables granting
-  permissions to users based on the topic of the request.
+- feature: add Topic generator for request types. That enables granting permissions to users based on the topic of the request.
+- requests: split mine and shared with me
+- adds `shared_with_me` param to filter requests
+- adds dashboard dropdown to filter requests
+- adds topic generator on `can_read` request permission
 
 Version v6.0.0 (released 2025-02-13)
 
