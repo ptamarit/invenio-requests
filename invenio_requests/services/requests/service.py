@@ -277,7 +277,7 @@ class RequestsService(RecordService):
         """Search for requests matching the querystring and belong to user.
 
         The user is able to search the requests that were created by them
-        or they are the receiver.
+        they are the receiver or they got access via the requests topic e.g record sharing.
         """
         self.require_permission(identity, "search_user_requests")
 
@@ -288,16 +288,13 @@ class RequestsService(RecordService):
             identity,
             params,
             search_preference,
-            permission_action=None,
+            permission_action="read",
             extra_filter=dsl.Q(
                 "bool",
-                should=[
-                    dsl.Q("term", **{"receiver.user": identity.id}),
-                    dsl.Q("term", **{"created_by.user": identity.id}),
-                ],
                 must=[~dsl.Q("term", **{"status": "created"})],
                 minimum_should_match=1,
             ),
+            search_opts=self.config.search_user_requests,
             **kwargs,
         ).execute()
 

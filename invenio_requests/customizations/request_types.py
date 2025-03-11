@@ -117,6 +117,9 @@ class RequestType:
     allowed_topic_ref_types = []
     """A list of allowed TYPE keys for ``topic`` reference dicts."""
 
+    resolve_topic_needs = False
+    """Whether to resolve needs for the topic entity."""
+
     payload_schema = None
     payload_schema_cls = None
     """Schema for supported payload fields.

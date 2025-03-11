@@ -14,21 +14,13 @@ class RequestStatusFilterComponent extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      open: undefined,
-    };
-  }
-
-  componentDidMount() {
-    const { currentQueryState } = this.props;
+    const { currentQueryState } = props;
     const userSelectionFilters = currentQueryState.filters;
     const openFilter = userSelectionFilters.find((obj) => obj.includes("is_open"));
-    if (openFilter) {
-      // eslint-disable-next-line react/no-did-mount-set-state
-      this.setState({
-        open: openFilter.includes("true"),
-      });
-    }
+
+    this.state = {
+      open: openFilter ? openFilter.includes("true") : false,
+    };
   }
 
   /**

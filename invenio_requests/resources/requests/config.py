@@ -34,6 +34,7 @@ class RequestSearchRequestArgsSchema(SearchRequestArgsSchema):
     topic = ReferenceString()
     receiver = ReferenceString()
     is_open = fields.Boolean()
+    shared_with_me = fields.Boolean()
 
 
 request_error_handlers = {

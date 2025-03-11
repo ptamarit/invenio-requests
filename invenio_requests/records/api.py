@@ -46,7 +46,7 @@ class Request(Record):
         extensions=[
             CalculatedFieldDumperExt("is_closed"),
             CalculatedFieldDumperExt("is_open"),
-            GrantTokensDumperExt("created_by", "receiver"),
+            GrantTokensDumperExt("created_by", "receiver", "topic"),
         ]
     )
     """Search dumper with configured extensions."""

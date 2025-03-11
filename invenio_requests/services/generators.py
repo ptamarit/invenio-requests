@@ -18,6 +18,8 @@ from invenio_records_permissions.generators import Generator
 from invenio_records_resources.references import EntityGrant
 from invenio_search.engine import dsl
 
+from invenio_requests.proxies import current_requests
+
 
 class Status(Generator):
     """Generator to validate needs only for a given request status."""
@@ -80,6 +82,72 @@ class Receiver(EntityNeedsGenerator):
     """Allows the receiver of the request."""
 
     entity_field = "receiver"
+
+
+class Topic(EntityNeedsGenerator):
+    """Allows access control based on the request's topic.
+
+    This generator grants permissions to users/entities associated with the topic
+    of a request. The specific needs depend on whether the request type supports
+    `resolve_topic_needs`.
+    """
+
+    entity_field = "topic"
+
+    def needs(self, request=None, **kwargs):
+        """Determine the access needs for the given request topic.
+
+        If the request type defines `resolve_topic_needs`, it means the topic's
+        permissions should be resolved dynamically based on the entity associated
+        with it (e.g., a record, community, or another object).
+
+        Otherwise, the topic is not involved in access control, and no additional
+        permissions are granted.
+        """
+        entity = getattr(request, self.entity_field)
+
+        if getattr(request.type, "resolve_topic_needs"):
+            return request.type.entity_needs(entity)
+
+        return []
+
+    def query_filter(self, identity=None, **kwargs):
+        """Construct a query filter to include only requests where the topic grants access.
+
+        This filter ensures that only request types that support `resolve_topic_needs`
+        contribute to permissions. Request types that do not define this attribute
+        are explicitly excluded.
+
+        Excluding request types without `resolve_topic_needs` prevents them from
+        granting unintended access based on their topic, as they may not have
+        the necessary logic to determine entity-specific permissions.
+        """
+        # Exclude request types that do NOT define `resolve_topic_needs`
+        excluded_request_types = [
+            ~dsl.Q("term", **{"type": _type.type_id})
+            for _type in current_requests.request_type_registry
+            if not getattr(_type, "resolve_topic_needs")
+        ]
+
+        # Generate grant tokens based on the user's identity
+        grant_tokens = [
+            EntityGrant(self.entity_field, need).token for need in identity.provides
+        ]
+
+        # If the user has no grant tokens, there is no need to proceed
+        if not grant_tokens:
+            return None
+
+        # Build the final query
+        query = dsl.Q(
+            "bool",
+            must=[
+                dsl.Q("terms", **{self.grants_field: grant_tokens}),
+                dsl.Q("bool", must=excluded_request_types),
+            ],
+        )
+
+        return query
 
 
 class Commenter(Generator):

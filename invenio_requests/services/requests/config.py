@@ -31,7 +31,7 @@ from .components import (
     RequestPayloadComponent,
 )
 from .links import RequestLink
-from .params import IsOpenParam, ReferenceFilterParam
+from .params import IsOpenParam, ReferenceFilterParam, SharedOrMyRequestsParam
 from .results import RequestItem, RequestList
 
 
@@ -60,6 +60,14 @@ class RequestSearchOptions(SearchOptions, SearchOptionsMixin):
     }
 
 
+class UserRequestSearchOptions(RequestSearchOptions):
+    """User request search options."""
+
+    params_interpreters_cls = RequestSearchOptions.params_interpreters_cls + [
+        SharedOrMyRequestsParam,
+    ]
+
+
 class RequestsServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     """Requests service configuration."""
 
@@ -76,6 +84,14 @@ class RequestsServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         sort_key="REQUESTS_SORT_OPTIONS",
         facet_key="REQUESTS_FACETS",
         search_option_cls=RequestSearchOptions,
+    )
+
+    # user requests search configuration
+    search_user_requests = FromConfigSearchOptions(
+        config_key="REQUESTS_SEARCH",
+        sort_key="REQUESTS_SORT_OPTIONS",
+        facet_key="REQUESTS_FACETS",
+        search_option_cls=UserRequestSearchOptions,
     )
 
     # request-specific configuration
