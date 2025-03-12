@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v6.1.1 (released 2025-03-12)
+
+- search: make shared filters toggleable
+
 Version v6.1.0 (released 2025-03-11)
 
 - feature: add Topic generator for request types. That enables granting permissions to users based on the topic of the request.
