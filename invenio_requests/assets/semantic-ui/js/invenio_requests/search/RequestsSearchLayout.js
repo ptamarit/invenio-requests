@@ -18,7 +18,7 @@ import { Button, Container, Grid } from "semantic-ui-react";
 
 import { SharedOrMineFilter } from "@js/invenio_requests/components/SharedOrMineFilter";
 
-export const RequestsSearchLayout = ({ config, appName }) => {
+export const RequestsSearchLayout = ({ config, appName, showSharedFilters }) => {
   const [sidebarVisible, setSidebarVisible] = React.useState(false);
   return (
     <Container>
@@ -36,27 +36,35 @@ export const RequestsSearchLayout = ({ config, appName }) => {
             />
           </Grid.Column>
 
+          {showSharedFilters && (
+            <Grid.Column
+              mobile={showSharedFilters ? 14 : 13}
+              tablet={showSharedFilters ? 7 : 4}
+              computer={showSharedFilters ? 4 : 3}
+              floated="right"
+              className="text-align-right-mobile"
+            >
+              <SharedOrMineFilter />
+            </Grid.Column>
+          )}
           <Grid.Column
-            mobile={14}
-            tablet={7}
-            computer={4}
-            floated="right"
-            className="text-align-right-mobile"
-          >
-            <SharedOrMineFilter />
-          </Grid.Column>
-
-          <Grid.Column
-            mobile={16}
+            mobile={showSharedFilters ? 16 : 13}
             tablet={4}
             computer={3}
             floated="right"
             className="text-align-right-mobile"
           >
-            <RequestStatusFilter className="rel-mb-1" keepFiltersOnUpdate />
+            <RequestStatusFilter
+              className="rel-mb-1"
+              keepFiltersOnUpdate={showSharedFilters}
+            />
           </Grid.Column>
 
-          <Grid.Column mobile={16} tablet={16} computer={5}>
+          <Grid.Column
+            mobile={16}
+            tablet={showSharedFilters ? 16 : 11}
+            computer={showSharedFilters ? 5 : 9}
+          >
             <SearchBar placeholder={i18next.t("Search in my requests...")} />
           </Grid.Column>
         </Grid.Row>
@@ -84,8 +92,10 @@ export const RequestsSearchLayout = ({ config, appName }) => {
 RequestsSearchLayout.propTypes = {
   config: PropTypes.object.isRequired,
   appName: PropTypes.string,
+  showSharedFilters: PropTypes.bool,
 };
 
 RequestsSearchLayout.defaultProps = {
   appName: undefined,
+  showSharedFilters: false,
 };
