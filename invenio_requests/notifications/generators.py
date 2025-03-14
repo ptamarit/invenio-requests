@@ -66,6 +66,9 @@ class RequestParticipantsRecipient(RecipientGenerator):
             }
         )
 
+        # remove system_user_id if present
+        user_ids.discard(system_identity.id)
+
         filter_ = dsl.Q("terms", **{"id": list(user_ids)})
         users = current_users_service.scan(system_identity, extra_filter=filter_)
         for u in users:
