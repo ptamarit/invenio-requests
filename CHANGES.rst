@@ -9,6 +9,15 @@
 Changes
 =======
 
+Version v6.2.0 (released 2025-04-08)
+
+- i18n: Fix untranslated strings in facets
+- notifications: exclude system_user
+- fix: setuptools require underscores instead of dashes
+- i18n: removed deprecated messages
+- message-index: remove depreciated languages
+- ui: added theme class to request labels
+
 Version v6.1.1 (released 2025-03-12)
 
 - search: make shared filters toggleable
