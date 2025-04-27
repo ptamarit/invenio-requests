@@ -1,6 +1,7 @@
 // This file is part of InvenioRequests
 // Copyright (C) 2022 CERN.
 // Copyright (C) 2024 KTH Royal Institute of Technology.
+// Copyright (C) 2025 Graz University of Technology.
 //
 // Invenio RDM Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -16,7 +17,6 @@ import { Pagination } from "../components/Pagination";
 import RequestsFeed from "../components/RequestsFeed";
 import { TimelineCommentEditor } from "../timelineCommentEditor";
 import { TimelineCommentEventControlled } from "../timelineCommentEventControlled";
-import _ from "lodash";
 
 class TimelineFeed extends Component {
   constructor(props) {
