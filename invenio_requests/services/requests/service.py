@@ -292,7 +292,6 @@ class RequestsService(RecordService):
             extra_filter=dsl.Q(
                 "bool",
                 must=[~dsl.Q("term", **{"status": "created"})],
-                minimum_should_match=1,
             ),
             search_opts=self.config.search_user_requests,
             **kwargs,
