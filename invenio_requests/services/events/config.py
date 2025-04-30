@@ -51,6 +51,7 @@ class RequestEventList(RecordList):
                 context=dict(
                     identity=self._identity,
                     record=record,
+                    meta=hit.meta,
                 ),
             )
 

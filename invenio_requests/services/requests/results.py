@@ -150,6 +150,7 @@ class RequestList(RecordList):
                 context={
                     "identity": self._identity,
                     "record": request,
+                    "meta": hit.meta,
                 },
             )
 
