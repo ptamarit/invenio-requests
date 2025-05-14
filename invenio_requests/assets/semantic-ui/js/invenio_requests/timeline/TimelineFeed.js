@@ -33,13 +33,13 @@ class TimelineFeed extends Component {
     getTimelineWithRefresh();
   }
 
-  componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps) {
     const { timeline } = this.props;
 
     const hasComments = timeline?.hits?.total > 0;
     const hasNewComments = prevProps.timeline?.hits?.total !== timeline?.hits?.total;
     if (hasComments && hasNewComments) {
-      window.MathJax?.typeset();
+      await window.MathJax?.typesetPromise();
     }
   }
 
