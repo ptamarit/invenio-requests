@@ -9,6 +9,13 @@
 Changes
 =======
 
+Version v6.3.0 (released 2025-05-15)
+
+- MathJax: use async typesetting
+- fix: extra filter not needed param
+- services: include Opensearch meta in the results
+- fix: RemovedInMarshmallow4Warning
+
 Version v6.2.0 (released 2025-04-08)
 
 - i18n: Fix untranslated strings in facets
