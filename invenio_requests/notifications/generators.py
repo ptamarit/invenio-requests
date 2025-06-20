@@ -33,7 +33,10 @@ class RequestParticipantsRecipient(RecipientGenerator):
         # non expanded looks like {"user": "1"}
         non_expanded_id = request_field.get("user")
         # expanded looks like {"id": "1", "profile": {"full_name": "A user"}, ... }
-        expanded_id = request_field["id"] if request_field.get("profile") else None
+        # checking for None as the profile might be an empty dict (user never set a profile)
+        expanded_id = (
+            request_field["id"] if request_field.get("profile") is not None else None
+        )
         return non_expanded_id or expanded_id
 
     def __call__(self, notification, recipients: dict):

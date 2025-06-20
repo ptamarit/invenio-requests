@@ -243,6 +243,32 @@ def user2(users):
     return users["user2"]
 
 
+@pytest.fixture()
+def user_without_profile(UserFixture, app, database):
+    """User without profile for requests."""
+    # can not add this to users above as other tests depend on users having 3 items
+    without_profile = UserFixture(
+        email="without_profile@example.org",
+        password="without_profile",
+        preferences={
+            "visibility": "public",
+            "email_visibility": "restricted",
+            "notifications": {
+                "enabled": True,
+            },
+        },
+        active=True,
+        confirmed=True,
+    )
+    without_profile.create(app, database)
+
+    # commit and index the user
+    database.session.commit()
+    current_users_service.indexer.process_bulk_queue()
+    current_users_service.record_cls.index.refresh()
+    return without_profile
+
+
 @pytest.fixture(scope="module")
 def superuser(UserFixture, app, database, superuser_role):
     """Admin user for requests."""

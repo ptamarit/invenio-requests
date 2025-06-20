@@ -15,7 +15,6 @@ from unittest.mock import MagicMock
 import pytest
 from invenio_access.permissions import system_identity
 from invenio_notifications.proxies import current_notifications_manager
-from sqlalchemy.exc import NoResultFound
 
 from invenio_requests.customizations import CommentEventType, LogEventType
 from invenio_requests.customizations.event_types import EventType
@@ -189,8 +188,52 @@ def test_comment_request_event_notification(
     superuser,
     monkeypatch,
 ):
-    """Test notifcation being sent on request comment create."""
+    """Test notification being sent on request comment create."""
+    _test_comment_request_event_notification(
+        app,
+        events_service_data,
+        submit_request,
+        request_events_service,
+        user1,
+        user2,
+        superuser,
+        monkeypatch,
+    )
 
+
+def test_notification_without_profile(
+    app,
+    events_service_data,
+    submit_request,
+    request_events_service,
+    user1,
+    user_without_profile,
+    superuser,
+    monkeypatch,
+):
+    """Test notification being sent on request comment create for user without profile."""
+    _test_comment_request_event_notification(
+        app,
+        events_service_data,
+        submit_request,
+        request_events_service,
+        user1,
+        user_without_profile,
+        superuser,
+        monkeypatch,
+    )
+
+
+def _test_comment_request_event_notification(
+    app,
+    events_service_data,
+    submit_request,
+    request_events_service,
+    user1,
+    user2,
+    superuser,
+    monkeypatch,
+):
     original_builder = CommentRequestEventCreateNotificationBuilder
 
     # mock build to observe calls
