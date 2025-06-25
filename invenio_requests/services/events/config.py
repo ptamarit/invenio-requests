@@ -92,3 +92,8 @@ class RequestEventsServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         "self": RequestEventLink("{+api}/requests/{request_id}/comments/{id}"),
     }
     links_search = pagination_links("{+api}/requests/{request_id}/timeline{?args*}")
+
+    components = FromConfig(
+        "REQUESTS_EVENTS_SERVICE_COMPONENTS",
+        default=[],
+    )

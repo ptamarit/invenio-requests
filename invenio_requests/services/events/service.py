@@ -79,6 +79,17 @@ class RequestEventsService(RecordService):
         )
         event.update(data)
         event.created_by = self._get_creator(identity, request=request)
+
+        # Run components
+        self.run_components(
+            "create",
+            identity,
+            data=data,
+            event=event,
+            errors=errors,
+            uow=uow,
+        )
+
         # Persist record (DB and index)
         uow.register(RecordCommitOp(event, indexer=self.indexer))
 
@@ -148,6 +159,18 @@ class RequestEventsService(RecordService):
         )
         event["payload"]["content"] = data["payload"]["content"]
         event["payload"]["format"] = data["payload"]["format"]
+
+        # Run components
+        self.run_components(
+            "update_comment",
+            identity,
+            data=data,
+            event=event,
+            request=request,
+            uow=uow,
+        )
+
+        # Persist record (DB and index)
         uow.register(RecordCommitOp(event, indexer=self.indexer))
 
         # Reindex the request to update events-related computed fields
@@ -194,6 +217,17 @@ class RequestEventsService(RecordService):
             context=dict(identity=identity, record=event, event_type=event.type),
         )
         event["payload"] = data["payload"]
+
+        # Run components
+        self.run_components(
+            "delete_comment",
+            identity,
+            data=data,
+            event=event,
+            request=request,
+            uow=uow,
+        )
+
         uow.register(RecordCommitOp(event, indexer=self.indexer))
 
         # Reindex the request to update events-related computed fields

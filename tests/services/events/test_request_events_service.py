@@ -15,6 +15,7 @@ from unittest.mock import MagicMock
 import pytest
 from invenio_access.permissions import system_identity
 from invenio_notifications.proxies import current_notifications_manager
+from invenio_records_resources.services.records.components import ServiceComponent
 
 from invenio_requests.customizations import CommentEventType, LogEventType
 from invenio_requests.customizations.event_types import EventType
@@ -309,3 +310,107 @@ def _test_comment_request_event_notification(
         # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
         assert "/me/requests/{}".format(request_id) in html
         assert comment["payload"]["content"] in html
+
+
+def test_create_component_called(
+    app, identity_simple, events_service_data, create_request, request_events_service
+):
+    """The component `add` method is called and modifies the supplied arguments."""
+
+    class MockAddComponent(ServiceComponent):
+        def create(
+            self, identity, data=None, event=None, errors=None, uow=None, **kwargs
+        ):
+            event.update(
+                {"payload": {"content": "An edited comment", "format": "html"}}
+            )
+
+    app.config["REQUESTS_EVENTS_SERVICE_COMPONENTS"] = [MockAddComponent]
+
+    request = create_request(identity_simple)
+    request_id = request.id
+    comment = events_service_data["comment"]
+
+    # Create a comment
+    item = request_events_service.create(
+        identity_simple, request_id, dict(**comment), CommentEventType
+    )
+    item_dict = item.to_dict()
+
+    assert item_dict["payload"] == {
+        "content": "An edited comment",
+        "format": item_dict["payload"]["format"],
+    }
+
+
+def test_update_component_called(
+    app, identity_simple, events_service_data, create_request, request_events_service
+):
+    """The component `update_comment` method is called and modifies the event."""
+
+    class MockUpdateComponent(ServiceComponent):
+        def update_comment(
+            self, identity, data=None, event=None, request=None, uow=None, **kwargs
+        ):
+            event.update(
+                {"payload": {"content": "Component modified content", "format": "html"}}
+            )
+
+    app.config["REQUESTS_EVENTS_SERVICE_COMPONENTS"] = [MockUpdateComponent]
+
+    request = create_request(identity_simple)
+    request_id = request.id
+    comment = events_service_data["comment"]
+
+    item = request_events_service.create(
+        identity_simple, request_id, dict(**comment), CommentEventType
+    )
+    comment_id = item.id
+
+    data = item.to_dict()
+    data["payload"]["content"] = "Updated content"
+    updated_item = request_events_service.update(identity_simple, comment_id, data)
+    updated_dict = updated_item.to_dict()
+
+    assert updated_dict["payload"]["content"] == "Component modified content"
+
+
+def test_delete_component_called(
+    app, identity_simple, events_service_data, create_request, request_events_service
+):
+    """The component `delete_comment` method is called and modifies the event."""
+
+    class MockDeleteComponent(ServiceComponent):
+        def delete_comment(
+            self, identity, data=None, event=None, request=None, uow=None, **kwargs
+        ):
+            event.update(
+                {
+                    "payload": {
+                        "content": "Component modified deletion message",
+                        "format": "html",
+                    }
+                }
+            )
+
+    app.config["REQUESTS_EVENTS_SERVICE_COMPONENTS"] = [MockDeleteComponent]
+
+    request = create_request(identity_simple)
+    request_id = request.id
+    comment = events_service_data["comment"]
+
+    item = request_events_service.create(
+        identity_simple, request_id, dict(**comment), CommentEventType
+    )
+    comment_id = item.id
+
+    result = request_events_service.delete(identity_simple, comment_id)
+    assert result is True
+
+    RequestEvent.index.refresh()
+
+    res = request_events_service.search(identity_simple, request_id, sort="newest")
+    deleted = list(res.hits)[0]
+
+    assert deleted["payload"]["content"] == "Component modified deletion message"
+    assert deleted["type"] == LogEventType.type_id
