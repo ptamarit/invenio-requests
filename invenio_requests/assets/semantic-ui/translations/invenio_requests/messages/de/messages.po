@@ -1,17 +1,21 @@
 # 
 # Translators:
-# Alizee Pace <alizee.pace@gmail.com>, 2022
 # Mojib Wali <mojib.wali@tugraz.at>, 2022
-# Tibor Simko <tibor.simko@cern.ch>, 2022
 # Hermann Schranzhofer <hermann.schranzhofer@tugraz.at>, 2022
-# chriz_uniba <christina.zeller@uni-bamberg.de>, 2022
+# Zacharias Zacharodimos <zacharias.zacharodimos@cern.ch>, 2023
+# David Eckhard <dabombeeer@gmail.com>, 2023
+# Alizee Pace <alizee.pace@gmail.com>, 2024
+# Tibor Simko <tibor.simko@cern.ch>, 2024
+# c960a0736ea0fb7507bb1c3555e7d33f_88b575f <3cef15c38ce2563e884ec389656c9161_1006830>, 2024
+# Sarah Wiechers, 2025
+# Adienne Karsten-Welker, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2022-10-12T08:08:24.546Z\n"
+"POT-Creation-Date: 2025-03-27T14:12:23.605Z\n"
 "PO-Revision-Date: 2022-02-18 11:12+0000\n"
-"Last-Translator: chriz_uniba <christina.zeller@uni-bamberg.de>, 2022\n"
+"Last-Translator: Adienne Karsten-Welker, 2025\n"
 "Language-Team: German (https://app.transifex.com/inveniosoftware/teams/23537/de/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -22,48 +26,6 @@ msgstr ""
 msgid "Save"
 msgstr "Speichern"
 
-msgid "Something went wrong."
-msgstr "Etwas ist schief gegangen."
-
-msgid "Confirm"
-msgstr "Bestätigen"
-
-msgid "Cancel"
-msgstr "Abbrechen"
-
-msgid "{{action}} request"
-msgstr "{{action}} Anfrage"
-
-msgid "Request type"
-msgstr "Anfragetyp"
-
-msgid "Status"
-msgstr "Status"
-
-msgid "Expires"
-msgstr "Läuft ab"
-
-msgid "Comment"
-msgstr "Kommentieren"
-
-msgid "commented"
-msgstr "kommentiert"
-
-msgid "Edit"
-msgstr "Editieren"
-
-msgid "Delete"
-msgstr "Löschen"
-
-msgid "Edited"
-msgstr "Editiert"
-
-msgid "Deleted"
-msgstr "Gelöscht"
-
-msgid "Are you sure you want to delete this comment?"
-msgstr "Sind Sie sicher, dass Sie diesen Kommentar löschen wollen?"
-
 msgid "Decline"
 msgstr "Ablehnen"
 
@@ -73,26 +35,119 @@ msgstr "Annehmen und veröffentlichen"
 msgid "Accept"
 msgstr "Annehmen"
 
-msgid "Add comment (optional)"
-msgstr "Kommentar hinzufügen (optional)"
-
-msgid "Receiver"
-msgstr "EmpfängerIn"
-
-msgid "Created"
-msgstr "Erstellt"
-
-msgid "New submission"
-msgstr "Neue Einreichung"
-
-msgid "New invitation"
-msgstr "Neue Einladung"
+msgid "Cancel"
+msgstr "Abbrechen"
 
 msgid "Cancel request"
 msgstr "Anfrage abbrechen"
 
+msgid "Something went wrong."
+msgstr "Etwas ist schief gegangen."
+
+msgid "Are you sure you want to delete this comment?"
+msgstr "Sind Sie sicher, dass Sie diesen Kommentar löschen wollen?"
+
+msgid "Confirm"
+msgstr "Bestätigen"
+
+msgid "Delete"
+msgstr "Löschen"
+
+msgid "Submitted"
+msgstr "Eingereicht"
+
+msgid "Deleted"
+msgstr "Gelöscht"
+
+msgid "Accepted"
+msgstr "Angenommen"
+
+msgid "Declined"
+msgstr "Abgelehnt"
+
+msgid "Cancelled"
+msgstr "Abgebrochen"
+
+msgid "Expired"
+msgstr "Abgelaufen"
+
+msgid "Draft review"
+msgstr "Entwurf zur Begutachtung"
+
+msgid "Community inclusion"
+msgstr "Community-Einbindung"
+
+msgid "Member invitation"
+msgstr "Mitglieder Einladung"
+
+msgid "Add comment (optional)"
+msgstr "Kommentar hinzufügen (optional)"
+
+msgid "{{action}} request"
+msgstr "{{action}} Anfrage"
+
+msgid "Creator"
+msgstr "Ersteller*in"
+
+msgid "Receiver"
+msgstr "Empfänger*in"
+
+msgid "Request type"
+msgstr "Anfragetyp"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Created"
+msgstr "Erstellt"
+
+msgid "Expires"
+msgstr "Läuft ab"
+
 msgid "Accept request"
 msgstr "Anfrage annehmen"
+
+msgid "Decline request"
+msgstr "Anfrage ablehnen"
+
+msgid "Expires at: {{- expiringDate}}"
+msgstr "Ablaufdatum: {{- expiringDate}}"
+
+msgid "Opened {{relativeTime}} by"
+msgstr "{{relativeTime}} geöffnet von"
+
+msgid "All done!"
+msgstr "Alles erledigt!"
+
+msgid "You've caught up with all open requests."
+msgstr "Sie haben keine offenen Anfragen."
+
+msgid "No requests found!"
+msgstr "Keine Anfragen gefunden!"
+
+msgid "Reset search"
+msgstr "Suche zurücksetzen"
+
+msgid "Sort by"
+msgstr "Sortieren nach"
+
+msgid "Filter results"
+msgstr "Ergebnisse filtern"
+
+msgid "Search in my requests..."
+msgstr "In meinen Anfragen suchen ..."
+
+msgid "Open"
+msgstr "Offen"
+
+msgid "Closed"
+msgstr "Geschlossen"
+
+msgid "Comment"
+msgstr "Kommentieren"
+
+msgid "deleted a comment"
+msgstr "hat einen Kommentar gelöscht"
 
 msgid "accepted this request"
 msgstr "hat diese Anfrage angenommen"
@@ -109,26 +164,47 @@ msgstr "hat diese Anfrage abgebrochen"
 msgid "unknown event"
 msgstr "unbekanntes Ereignis"
 
-msgid "Decline request"
-msgstr "Anfrage ablehnen"
+msgid "Edit"
+msgstr "Editieren"
 
-msgid "Submitted"
-msgstr "Eingereicht"
+msgid "commented {{commentTime}}"
+msgstr "kommentiert {{commentTime}}"
 
-msgid "Accepted"
-msgstr "Angenommen"
+msgid "Edited"
+msgstr "Editiert"
 
-msgid "Cancelled"
-msgstr "Abgebrochen"
+msgid "Request access"
+msgstr "Zugriff beantragen"
 
-msgid "Declined"
-msgstr "Abgelehnt"
+msgid "Guest access"
+msgstr "Gastzugang"
 
-msgid "Expired"
-msgstr "Abgelaufen"
+msgid "User access"
+msgstr "Benutzerzugang"
 
-msgid "Creator"
-msgstr "ErstellerIn"
+msgid "Community manage record"
+msgstr "Community-Eintrag verwalten"
 
-msgid "deleted a comment"
-msgstr "hat einen Kommentar gelöscht"
+msgid "Subcommunity"
+msgstr "Subcommunity"
+
+msgid "Membership request"
+msgstr "Mitgliedschaft beantragen"
+
+msgid "Anonymous user"
+msgstr "Anonyme*r Benutzer*in"
+
+msgid "Email"
+msgstr "E-Mail"
+
+msgid "Group"
+msgstr "Gruppe"
+
+msgid "Record"
+msgstr "Eintrag"
+
+msgid "Actions"
+msgstr "Aktionen"
+
+msgid "Subcommunity invitation"
+msgstr "Subcommunity-Einladung"

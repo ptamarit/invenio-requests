@@ -1,68 +1,67 @@
 # 
 # Translators:
-# Mart Jantson, 2023
-# Martin Jantson <martinjantson97@gmail.com>, 2024
+# Minjae Kwon, 2024
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "POT-Creation-Date: 2025-03-27T14:12:23.605Z\n"
 "PO-Revision-Date: 2022-02-18 11:12+0000\n"
-"Last-Translator: Martin Jantson <martinjantson97@gmail.com>, 2024\n"
-"Language-Team: Estonian (https://app.transifex.com/inveniosoftware/teams/23537/et/)\n"
+"Last-Translator: Minjae Kwon, 2024\n"
+"Language-Team: Korean (https://app.transifex.com/inveniosoftware/teams/23537/ko/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: et\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: ko\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "mime-version: 1.0\n"
 
 msgid "Save"
-msgstr "Salvesta"
+msgstr ""
 
 msgid "Decline"
-msgstr "Keeldu"
+msgstr ""
 
 msgid "Accept and publish"
-msgstr "Võta vastu ja avalda"
+msgstr ""
 
 msgid "Accept"
-msgstr "Võta vastu"
+msgstr ""
 
 msgid "Cancel"
-msgstr "Tühista"
+msgstr ""
 
 msgid "Cancel request"
-msgstr "Tühista taotlus"
+msgstr ""
 
 msgid "Something went wrong."
-msgstr "Midagi läks valesti."
+msgstr ""
 
 msgid "Are you sure you want to delete this comment?"
-msgstr "Kas oled kindel, et soovid selle kommentaari kustutada?"
+msgstr ""
 
 msgid "Confirm"
-msgstr "Kinnita"
+msgstr ""
 
 msgid "Delete"
-msgstr "Kustuta"
+msgstr ""
 
 msgid "Submitted"
-msgstr "Lisatud"
+msgstr ""
 
 msgid "Deleted"
-msgstr "Kustutatud"
+msgstr "삭제됨"
 
 msgid "Accepted"
-msgstr "Vastu võetud"
+msgstr ""
 
 msgid "Declined"
-msgstr "Tagasi lükatud"
+msgstr ""
 
 msgid "Cancelled"
-msgstr "Tühistatud"
+msgstr ""
 
 msgid "Expired"
-msgstr "Aegunud"
+msgstr ""
 
 msgid "Draft review"
 msgstr ""
@@ -74,34 +73,34 @@ msgid "Member invitation"
 msgstr ""
 
 msgid "Add comment (optional)"
-msgstr "Lisa kommentaar (valikuline)"
+msgstr ""
 
 msgid "{{action}} request"
-msgstr "{{action}} taotlus"
+msgstr ""
 
 msgid "Creator"
-msgstr "Looja"
+msgstr ""
 
 msgid "Receiver"
-msgstr "Saaja"
+msgstr ""
 
 msgid "Request type"
-msgstr "Taotluse tüüp"
+msgstr ""
 
 msgid "Status"
-msgstr "Staatus"
+msgstr "상태"
 
 msgid "Created"
-msgstr "Loodud"
+msgstr ""
 
 msgid "Expires"
-msgstr "Aegub"
+msgstr ""
 
 msgid "Accept request"
-msgstr "Võta taotlus vastu"
+msgstr ""
 
 msgid "Decline request"
-msgstr "Lükka taotlus tagasi"
+msgstr ""
 
 msgid "Expires at: {{- expiringDate}}"
 msgstr ""
@@ -110,61 +109,61 @@ msgid "Opened {{relativeTime}} by"
 msgstr ""
 
 msgid "All done!"
-msgstr "Valmis!"
+msgstr ""
 
 msgid "You've caught up with all open requests."
-msgstr "Oled kõikide taotlustega kursis."
+msgstr ""
 
 msgid "No requests found!"
-msgstr "Ühtegi taotlust ei leitud!"
+msgstr ""
 
 msgid "Reset search"
-msgstr "Lähtesta otsing"
+msgstr ""
 
 msgid "Sort by"
-msgstr "Sorteeri"
+msgstr ""
 
 msgid "Filter results"
-msgstr "Filtreeri tulemusi"
+msgstr ""
 
 msgid "Search in my requests..."
-msgstr "Otsi minu päringutest..."
+msgstr ""
 
 msgid "Open"
-msgstr "Avatud"
+msgstr ""
 
 msgid "Closed"
-msgstr "Suletud"
+msgstr ""
 
 msgid "Comment"
-msgstr "Kommenteeri"
+msgstr ""
 
 msgid "deleted a comment"
-msgstr "kustutas kommentaari"
+msgstr ""
 
 msgid "accepted this request"
-msgstr "võttis taotluse vastu"
+msgstr ""
 
 msgid "declined this request"
-msgstr "lükkas taotluse tagasi"
+msgstr ""
 
 msgid "this request expired"
-msgstr "see taotlus aegus"
+msgstr ""
 
 msgid "cancelled this request"
-msgstr "tühistas selle taotluse"
+msgstr ""
 
 msgid "unknown event"
-msgstr "tundmatu sündmus"
+msgstr ""
 
 msgid "Edit"
-msgstr "Redigeeri"
+msgstr ""
 
 msgid "commented {{commentTime}}"
 msgstr ""
 
 msgid "Edited"
-msgstr "Redigeeritud"
+msgstr ""
 
 msgid "Request access"
 msgstr ""
@@ -188,16 +187,16 @@ msgid "Anonymous user"
 msgstr ""
 
 msgid "Email"
-msgstr "E-mail"
+msgstr "이메일"
 
 msgid "Group"
-msgstr "Grupp"
+msgstr ""
 
 msgid "Record"
-msgstr "Kirje"
+msgstr ""
 
 msgid "Actions"
-msgstr "Tegevused"
+msgstr ""
 
 msgid "Subcommunity invitation"
 msgstr ""
