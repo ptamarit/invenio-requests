@@ -12,7 +12,7 @@
 
 import inspect
 
-from importlib_metadata import entry_points
+from invenio_base.utils import entry_points
 
 from . import config
 from .registry import TypeRegistry
@@ -116,7 +116,7 @@ class InvenioRequests:
 
 def register_entry_point(registry, ep_name, app=None):
     """Register types from an entry point."""
-    for ep in set(entry_points(group=ep_name)):
+    for ep in entry_points(group=ep_name):
         loaded_ep = ep.load()
         type_cls = loaded_ep
         # Allow to load class from functions (note: classes are callable too)
