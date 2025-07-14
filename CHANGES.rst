@@ -9,6 +9,16 @@
 Changes
 =======
 
+Version v7.1.0 (released 2025-07-14)
+
+- chores: replaced importlib_xyz with importlib
+- i18n: push translations
+- i18n: run js compile catalog
+- i18n: run js extract msgs
+- i18n: refactor compile catalog
+- i18n: force pull translations
+- i18n: extract py msgs
+
 Version v7.0.0 (released 2025-06-03)
 
 - setup: bump major dependencies
