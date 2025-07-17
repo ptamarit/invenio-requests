@@ -1,15 +1,15 @@
 # 
 # Translators:
-# Bessem Aamira <bessemamira@gmail.com>, 2023
 # Tibor Simko <tibor.simko@cern.ch>, 2024
 # Salaheddine Ben Ali <salaheddine.benali@cnudst.tn>, 2025
+# Bessem Aamira <bessemamira@gmail.com>, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-03-27T14:12:23.605Z\n"
+"POT-Creation-Date: 2025-07-08T19:57:28.912Z\n"
 "PO-Revision-Date: 2022-02-18 11:12+0000\n"
-"Last-Translator: Salaheddine Ben Ali <salaheddine.benali@cnudst.tn>, 2025\n"
+"Last-Translator: Bessem Aamira <bessemamira@gmail.com>, 2025\n"
 "Language-Team: Arabic (https://app.transifex.com/inveniosoftware/teams/23537/ar/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -35,6 +35,9 @@ msgstr "إلغاء"
 msgid "Cancel request"
 msgstr "إلغاء الطلب"
 
+msgid "Request access"
+msgstr "طلب دخول"
+
 msgid "Something went wrong."
 msgstr "هناك خطأ ما."
 
@@ -46,6 +49,12 @@ msgstr "تأكيد"
 
 msgid "Delete"
 msgstr "حذف"
+
+msgid "Shared with me"
+msgstr ""
+
+msgid "My requests"
+msgstr ""
 
 msgid "Submitted"
 msgstr "تم الإيداع"
@@ -74,11 +83,38 @@ msgstr "إدماج المجتمع"
 msgid "Member invitation"
 msgstr "دعوة عضو"
 
+msgid "Guest access"
+msgstr "دخول الضيوف"
+
+msgid "User access"
+msgstr "دخول المستخدم"
+
+msgid "Community manage record"
+msgstr "تسجيلة إدارة المجتمع"
+
+msgid "Subcommunity"
+msgstr "مجتمع فرعي"
+
+msgid "Subcommunity invitation"
+msgstr "دعوة المجتمع الفرعي"
+
+msgid "Membership request"
+msgstr "طلب عضويّة"
+
 msgid "Add comment (optional)"
 msgstr "اضف تعليقا (إختياري)"
 
 msgid "{{action}} request"
 msgstr "{{action}} طلب"
+
+msgid "Anonymous user"
+msgstr "مستخدم مجهول"
+
+msgid "Email"
+msgstr "البريد الإلكتروني"
+
+msgid "Group"
+msgstr "فريق"
 
 msgid "Creator"
 msgstr "المنشئ:"
@@ -97,6 +133,9 @@ msgstr "تم الإنشاء"
 
 msgid "Expires"
 msgstr "تنتهي"
+
+msgid "Record"
+msgstr "تسجيلة"
 
 msgid "Accept request"
 msgstr "قبول الطلب"
@@ -121,6 +160,15 @@ msgstr "لا وجود لطلبيات!"
 
 msgid "Reset search"
 msgstr "تصفير البحث"
+
+msgid "{{count}} results found"
+msgid_plural "{{count}} results found"
+msgstr[0] "{{count}} لم يتم العثور على نتائج"
+msgstr[1] "{{count}} نتيجة موجودة"
+msgstr[2] "{{count}} نتائج موجودة"
+msgstr[3] "{{count}} نتائج موجودة"
+msgstr[4] "{{count}} نتائج موجودة"
+msgstr[5] "{{count}} نتائج موجودة"
 
 msgid "Sort by"
 msgstr "مرتبة حسب"
@@ -158,6 +206,9 @@ msgstr "هذا الطلب ملغى"
 msgid "unknown event"
 msgstr "حدث غير معلوم"
 
+msgid "Actions"
+msgstr "الإجراءات"
+
 msgid "Edit"
 msgstr "تعديل"
 
@@ -166,39 +217,3 @@ msgstr "تم التعليق {{commentTime}}"
 
 msgid "Edited"
 msgstr "تم التعديل"
-
-msgid "Request access"
-msgstr "طلب دخول"
-
-msgid "Guest access"
-msgstr "دخول الضيوف"
-
-msgid "User access"
-msgstr "دخول المستخدم"
-
-msgid "Community manage record"
-msgstr "تسجيلة إدارة المجتمع"
-
-msgid "Subcommunity"
-msgstr "مجتمع فرعي"
-
-msgid "Membership request"
-msgstr "طلب عضويّة"
-
-msgid "Anonymous user"
-msgstr "مستخدم مجهول"
-
-msgid "Email"
-msgstr "البريد الإلكتروني"
-
-msgid "Group"
-msgstr "فريق"
-
-msgid "Record"
-msgstr "تسجيلة"
-
-msgid "Actions"
-msgstr "الإجراءات"
-
-msgid "Subcommunity invitation"
-msgstr "دعوة المجتمع الفرعي"

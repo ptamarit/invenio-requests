@@ -2,13 +2,14 @@
 # Translators:
 # Andrea Dömötör, 2024
 # j k, 2025
+# Zoltán Kanász-Nagy, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-03-27T14:12:23.605Z\n"
+"POT-Creation-Date: 2025-07-08T19:57:28.912Z\n"
 "PO-Revision-Date: 2022-02-18 11:12+0000\n"
-"Last-Translator: j k, 2025\n"
+"Last-Translator: Zoltán Kanász-Nagy, 2025\n"
 "Language-Team: Hungarian (https://app.transifex.com/inveniosoftware/teams/23537/hu/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -34,6 +35,9 @@ msgstr "Mégsem"
 msgid "Cancel request"
 msgstr "Kérés visszavonása"
 
+msgid "Request access"
+msgstr "Hozzáférés kérése"
+
 msgid "Something went wrong."
 msgstr "Valami hiba történt."
 
@@ -45,6 +49,12 @@ msgstr "Megerősítés"
 
 msgid "Delete"
 msgstr "Törlés"
+
+msgid "Shared with me"
+msgstr ""
+
+msgid "My requests"
+msgstr ""
 
 msgid "Submitted"
 msgstr "Benyújtva"
@@ -73,11 +83,38 @@ msgstr "Közösség bevonása"
 msgid "Member invitation"
 msgstr "Tag meghívása"
 
+msgid "Guest access"
+msgstr "Vendég hozzáférés"
+
+msgid "User access"
+msgstr "Felhasználói hozzáférés"
+
+msgid "Community manage record"
+msgstr "Rekord kezelése közösségként"
+
+msgid "Subcommunity"
+msgstr "Al-közösség"
+
+msgid "Subcommunity invitation"
+msgstr "Meghívó al-közösségbe"
+
+msgid "Membership request"
+msgstr "Tagsági kérelem"
+
 msgid "Add comment (optional)"
 msgstr "Komment hozzáadása (opcionális)"
 
 msgid "{{action}} request"
 msgstr "{{action}} kérés"
+
+msgid "Anonymous user"
+msgstr "Névtelen felhasználó"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Group"
+msgstr "Csoport"
 
 msgid "Creator"
 msgstr "Létrehozó"
@@ -96,6 +133,9 @@ msgstr "Létrehozva"
 
 msgid "Expires"
 msgstr "Lejár"
+
+msgid "Record"
+msgstr "Rekord"
 
 msgid "Accept request"
 msgstr "Kérés elfogadása"
@@ -120,6 +160,11 @@ msgstr "Nem találtunk kéréseket!"
 
 msgid "Reset search"
 msgstr "Keresési beállítások visszaállítása"
+
+msgid "{{count}} results found"
+msgid_plural "{{count}} results found"
+msgstr[0] "{{count}} találat"
+msgstr[1] "{{count}} találat"
 
 msgid "Sort by"
 msgstr "Rendezési elv"
@@ -157,6 +202,9 @@ msgstr "visszavonta ezt a kérést"
 msgid "unknown event"
 msgstr "ismeretlen esemény"
 
+msgid "Actions"
+msgstr "Tevékenységek"
+
 msgid "Edit"
 msgstr "Szerkesztés"
 
@@ -165,39 +213,3 @@ msgstr "hozzászólt ekkor: {{commentTime}}"
 
 msgid "Edited"
 msgstr "Szerkesztve"
-
-msgid "Request access"
-msgstr "Hozzáférés kérése"
-
-msgid "Guest access"
-msgstr "Vendég hozzáférés"
-
-msgid "User access"
-msgstr "Felhasználói hozzáférés"
-
-msgid "Community manage record"
-msgstr "Rekord kezelése közösségként"
-
-msgid "Subcommunity"
-msgstr "Al-közösség"
-
-msgid "Membership request"
-msgstr "Tagsági kérelem"
-
-msgid "Anonymous user"
-msgstr "Névtelen felhasználó"
-
-msgid "Email"
-msgstr "Email"
-
-msgid "Group"
-msgstr "Csoport"
-
-msgid "Record"
-msgstr "Rekord"
-
-msgid "Actions"
-msgstr "Tevékenységek"
-
-msgid "Subcommunity invitation"
-msgstr "Meghívó al-közösségbe"

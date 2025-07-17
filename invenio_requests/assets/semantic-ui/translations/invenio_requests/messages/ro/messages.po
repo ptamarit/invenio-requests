@@ -1,14 +1,14 @@
 # 
 # Translators:
 # Tibor Simko <tibor.simko@cern.ch>, 2024
-# Nicolaie Constantinescu, 2024
+# Nicolaie Constantinescu, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-03-27T14:12:23.605Z\n"
+"POT-Creation-Date: 2025-07-08T19:57:28.912Z\n"
 "PO-Revision-Date: 2022-02-18 11:12+0000\n"
-"Last-Translator: Nicolaie Constantinescu, 2024\n"
+"Last-Translator: Nicolaie Constantinescu, 2025\n"
 "Language-Team: Romanian (https://app.transifex.com/inveniosoftware/teams/23537/ro/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -34,6 +34,9 @@ msgstr "Anulează"
 msgid "Cancel request"
 msgstr "Anulează cererea"
 
+msgid "Request access"
+msgstr "Solicită acces"
+
 msgid "Something went wrong."
 msgstr "Ceva nu a funcționat."
 
@@ -45,6 +48,12 @@ msgstr "Confirmă"
 
 msgid "Delete"
 msgstr "Şterge"
+
+msgid "Shared with me"
+msgstr ""
+
+msgid "My requests"
+msgstr ""
 
 msgid "Submitted"
 msgstr "Trimis"
@@ -73,11 +82,38 @@ msgstr "Includere în comunitate"
 msgid "Member invitation"
 msgstr "Invitarea membrilor"
 
+msgid "Guest access"
+msgstr ""
+
+msgid "User access"
+msgstr ""
+
+msgid "Community manage record"
+msgstr ""
+
+msgid "Subcommunity"
+msgstr ""
+
+msgid "Subcommunity invitation"
+msgstr ""
+
+msgid "Membership request"
+msgstr "Solicitare pentru membru"
+
 msgid "Add comment (optional)"
 msgstr "Adaugă comentariu (opțional)"
 
 msgid "{{action}} request"
 msgstr "{{action}} cerere"
+
+msgid "Anonymous user"
+msgstr "User anonim"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Group"
+msgstr "Grup"
 
 msgid "Creator"
 msgstr "Creator"
@@ -96,6 +132,9 @@ msgstr "Creat"
 
 msgid "Expires"
 msgstr "Expiră"
+
+msgid "Record"
+msgstr "Înregistrare"
 
 msgid "Accept request"
 msgstr "Acceptă cererea"
@@ -120,6 +159,12 @@ msgstr "N-am găsit cereri!"
 
 msgid "Reset search"
 msgstr "Resetează căutarea"
+
+msgid "{{count}} results found"
+msgid_plural "{{count}} results found"
+msgstr[0] "{{count}} rezultate găsite"
+msgstr[1] "{{count}} rezultate găsite"
+msgstr[2] "{{count}} rezultate găsite"
 
 msgid "Sort by"
 msgstr "Sortează după"
@@ -157,6 +202,9 @@ msgstr "a anulat această cerere"
 msgid "unknown event"
 msgstr "eveniment necunoscut"
 
+msgid "Actions"
+msgstr "Acțiuni"
+
 msgid "Edit"
 msgstr "Editează"
 
@@ -165,39 +213,3 @@ msgstr "comentat la {{commentTime}}"
 
 msgid "Edited"
 msgstr "Editat"
-
-msgid "Request access"
-msgstr "Solicită acces"
-
-msgid "Guest access"
-msgstr ""
-
-msgid "User access"
-msgstr ""
-
-msgid "Community manage record"
-msgstr ""
-
-msgid "Subcommunity"
-msgstr ""
-
-msgid "Membership request"
-msgstr "Solicitare pentru membru"
-
-msgid "Anonymous user"
-msgstr "User anonim"
-
-msgid "Email"
-msgstr "Email"
-
-msgid "Group"
-msgstr "Grup"
-
-msgid "Record"
-msgstr "Înregistrare"
-
-msgid "Actions"
-msgstr "Acțiuni"
-
-msgid "Subcommunity invitation"
-msgstr ""

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-03-27T14:12:23.605Z\n"
+"POT-Creation-Date: 2025-07-08T19:57:28.912Z\n"
 "PO-Revision-Date: 2022-02-18 11:12+0000\n"
 "Last-Translator: Vitalii Kindrat, 2025\n"
 "Language-Team: Ukrainian (https://app.transifex.com/inveniosoftware/teams/23537/uk/)\n"
@@ -34,6 +34,9 @@ msgstr "Скасувати"
 msgid "Cancel request"
 msgstr ""
 
+msgid "Request access"
+msgstr ""
+
 msgid "Something went wrong."
 msgstr ""
 
@@ -45,6 +48,12 @@ msgstr ""
 
 msgid "Delete"
 msgstr "Видалити"
+
+msgid "Shared with me"
+msgstr ""
+
+msgid "My requests"
+msgstr ""
 
 msgid "Submitted"
 msgstr "Подано"
@@ -73,11 +82,38 @@ msgstr ""
 msgid "Member invitation"
 msgstr ""
 
+msgid "Guest access"
+msgstr ""
+
+msgid "User access"
+msgstr ""
+
+msgid "Community manage record"
+msgstr ""
+
+msgid "Subcommunity"
+msgstr ""
+
+msgid "Subcommunity invitation"
+msgstr ""
+
+msgid "Membership request"
+msgstr ""
+
 msgid "Add comment (optional)"
 msgstr ""
 
 msgid "{{action}} request"
 msgstr ""
+
+msgid "Anonymous user"
+msgstr ""
+
+msgid "Email"
+msgstr "Електронна пошта"
+
+msgid "Group"
+msgstr "Група"
 
 msgid "Creator"
 msgstr ""
@@ -96,6 +132,9 @@ msgstr "Створено"
 
 msgid "Expires"
 msgstr "Термін дії"
+
+msgid "Record"
+msgstr "Запис"
 
 msgid "Accept request"
 msgstr ""
@@ -120,6 +159,13 @@ msgstr "Не знайдено жодного запиту!"
 
 msgid "Reset search"
 msgstr "Скинути пошук"
+
+msgid "{{count}} results found"
+msgid_plural "{{count}} results found"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 msgid "Sort by"
 msgstr "Впорядкувати за"
@@ -157,6 +203,9 @@ msgstr ""
 msgid "unknown event"
 msgstr ""
 
+msgid "Actions"
+msgstr "Дії"
+
 msgid "Edit"
 msgstr "Редагувати"
 
@@ -164,40 +213,4 @@ msgid "commented {{commentTime}}"
 msgstr ""
 
 msgid "Edited"
-msgstr ""
-
-msgid "Request access"
-msgstr ""
-
-msgid "Guest access"
-msgstr ""
-
-msgid "User access"
-msgstr ""
-
-msgid "Community manage record"
-msgstr ""
-
-msgid "Subcommunity"
-msgstr ""
-
-msgid "Membership request"
-msgstr ""
-
-msgid "Anonymous user"
-msgstr ""
-
-msgid "Email"
-msgstr "Електронна пошта"
-
-msgid "Group"
-msgstr "Група"
-
-msgid "Record"
-msgstr "Запис"
-
-msgid "Actions"
-msgstr "Дії"
-
-msgid "Subcommunity invitation"
 msgstr ""

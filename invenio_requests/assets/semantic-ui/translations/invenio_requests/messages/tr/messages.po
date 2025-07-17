@@ -3,14 +3,14 @@
 # Berat Aldemir <berataldemir@gmail.com>, 2022
 # Hakan Bayindir <hbayindir@gmail.com>, 2024
 # Ben Translation and Interpreting Services <info@bentercume.com>, 2024
-# BEN TERCÜME, 2024
+# BEN TERCÜME, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-03-27T14:12:23.605Z\n"
+"POT-Creation-Date: 2025-07-08T19:57:28.912Z\n"
 "PO-Revision-Date: 2022-02-18 11:12+0000\n"
-"Last-Translator: BEN TERCÜME, 2024\n"
+"Last-Translator: BEN TERCÜME, 2025\n"
 "Language-Team: Turkish (https://app.transifex.com/inveniosoftware/teams/23537/tr/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -36,6 +36,9 @@ msgstr "İptal"
 msgid "Cancel request"
 msgstr "Talebi iptal et"
 
+msgid "Request access"
+msgstr "Erişim talebi"
+
 msgid "Something went wrong."
 msgstr "Bir şeyler ters gitti."
 
@@ -47,6 +50,12 @@ msgstr "Onayla"
 
 msgid "Delete"
 msgstr "Sil"
+
+msgid "Shared with me"
+msgstr ""
+
+msgid "My requests"
+msgstr ""
 
 msgid "Submitted"
 msgstr "Gönderildi"
@@ -75,11 +84,38 @@ msgstr "Topluluk katılımı"
 msgid "Member invitation"
 msgstr "Üye daveti"
 
+msgid "Guest access"
+msgstr "Misafir erişim yetkisi"
+
+msgid "User access"
+msgstr "Kullanıcı erişim yetkisi"
+
+msgid "Community manage record"
+msgstr "Topluluk yönetim kaydı"
+
+msgid "Subcommunity"
+msgstr "Alt topluluk"
+
+msgid "Subcommunity invitation"
+msgstr ""
+
+msgid "Membership request"
+msgstr "Üyelik talebi"
+
 msgid "Add comment (optional)"
 msgstr "Yorum ekle (isteğe bağlı)"
 
 msgid "{{action}} request"
 msgstr "{{action}} talebi"
+
+msgid "Anonymous user"
+msgstr "Anonim kullanıcı"
+
+msgid "Email"
+msgstr "E-posta"
+
+msgid "Group"
+msgstr "Grup"
 
 msgid "Creator"
 msgstr "Oluşturan"
@@ -98,6 +134,9 @@ msgstr "Oluşturuldu"
 
 msgid "Expires"
 msgstr "Süresi dolar"
+
+msgid "Record"
+msgstr "Kayıt"
 
 msgid "Accept request"
 msgstr "Talebi kabul et"
@@ -122,6 +161,11 @@ msgstr "Hiç talep bulunamadı!"
 
 msgid "Reset search"
 msgstr "Aramayı sıfırla"
+
+msgid "{{count}} results found"
+msgid_plural "{{count}} results found"
+msgstr[0] "{{count}} adet sonuç bulundu"
+msgstr[1] "{{count}} adet sonuç bulundu"
 
 msgid "Sort by"
 msgstr "Sırala"
@@ -159,6 +203,9 @@ msgstr "bu talebi iptal etti"
 msgid "unknown event"
 msgstr "bilinmeyen olay"
 
+msgid "Actions"
+msgstr "Eylemler"
+
 msgid "Edit"
 msgstr "Düzenle"
 
@@ -167,39 +214,3 @@ msgstr "{{commentTime}} saatinde yorum yapıldı"
 
 msgid "Edited"
 msgstr "Düzenlendi"
-
-msgid "Request access"
-msgstr "Erişim talebi"
-
-msgid "Guest access"
-msgstr "Misafir erişim yetkisi"
-
-msgid "User access"
-msgstr "Kullanıcı erişim yetkisi"
-
-msgid "Community manage record"
-msgstr "Topluluk yönetim kaydı"
-
-msgid "Subcommunity"
-msgstr "Alt topluluk"
-
-msgid "Membership request"
-msgstr "Üyelik talebi"
-
-msgid "Anonymous user"
-msgstr "Anonim kullanıcı"
-
-msgid "Email"
-msgstr "E-posta"
-
-msgid "Group"
-msgstr "Grup"
-
-msgid "Record"
-msgstr "Kayıt"
-
-msgid "Actions"
-msgstr "Eylemler"
-
-msgid "Subcommunity invitation"
-msgstr ""

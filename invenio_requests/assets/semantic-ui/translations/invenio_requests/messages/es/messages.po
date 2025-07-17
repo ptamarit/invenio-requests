@@ -4,14 +4,14 @@
 # Zacharias Zacharodimos <zacharias.zacharodimos@cern.ch>, 2024
 # Tibor Simko <tibor.simko@cern.ch>, 2024
 # Ignacio Estevo, 2024
-# Jesús Martín <jesusmartin@sallep.net>, 2024
+# Jesús Martín <jesusmartin@sallep.net>, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-03-27T14:12:23.605Z\n"
+"POT-Creation-Date: 2025-07-08T19:57:28.912Z\n"
 "PO-Revision-Date: 2022-02-18 11:12+0000\n"
-"Last-Translator: Jesús Martín <jesusmartin@sallep.net>, 2024\n"
+"Last-Translator: Jesús Martín <jesusmartin@sallep.net>, 2025\n"
 "Language-Team: Spanish (https://app.transifex.com/inveniosoftware/teams/23537/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -37,6 +37,9 @@ msgstr "Cancelar"
 msgid "Cancel request"
 msgstr "Cancelar petición"
 
+msgid "Request access"
+msgstr "Solicitar acceso"
+
 msgid "Something went wrong."
 msgstr "Algo salió mal."
 
@@ -48,6 +51,12 @@ msgstr "Confirmar"
 
 msgid "Delete"
 msgstr "Suprimir"
+
+msgid "Shared with me"
+msgstr ""
+
+msgid "My requests"
+msgstr ""
 
 msgid "Submitted"
 msgstr "Enviado"
@@ -76,11 +85,38 @@ msgstr "Inclusión comunitaria"
 msgid "Member invitation"
 msgstr "invitación de miembro"
 
+msgid "Guest access"
+msgstr "Acceso de invitado"
+
+msgid "User access"
+msgstr "Acceso de usuario"
+
+msgid "Community manage record"
+msgstr "Registro de gestión de la comunidad"
+
+msgid "Subcommunity"
+msgstr "Sub-comunidad"
+
+msgid "Subcommunity invitation"
+msgstr ""
+
+msgid "Membership request"
+msgstr "Solicitud de membresía"
+
 msgid "Add comment (optional)"
 msgstr "Añadir comentario (opcional)"
 
 msgid "{{action}} request"
 msgstr "{{action}} solicitud"
+
+msgid "Anonymous user"
+msgstr "Usuario anonimo"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Group"
+msgstr "Grupo"
 
 msgid "Creator"
 msgstr "Creador"
@@ -99,6 +135,9 @@ msgstr "Creado"
 
 msgid "Expires"
 msgstr "Expira"
+
+msgid "Record"
+msgstr "Registro"
 
 msgid "Accept request"
 msgstr "Aceptar petición"
@@ -123,6 +162,12 @@ msgstr "¡No se encontraron solicitudes!"
 
 msgid "Reset search"
 msgstr "Restablecer búsqueda"
+
+msgid "{{count}} results found"
+msgid_plural "{{count}} results found"
+msgstr[0] "{{count}} resultado encontrado"
+msgstr[1] "{{count}} resultados encontrados"
+msgstr[2] "{{count}} resultados encontrados"
 
 msgid "Sort by"
 msgstr "Ordenado por"
@@ -160,6 +205,9 @@ msgstr "canceló esta petición"
 msgid "unknown event"
 msgstr "evento desconocido"
 
+msgid "Actions"
+msgstr "Acciones"
+
 msgid "Edit"
 msgstr "Editar"
 
@@ -168,39 +216,3 @@ msgstr "comentado {{commentTime}}"
 
 msgid "Edited"
 msgstr "Editado"
-
-msgid "Request access"
-msgstr "Solicitar acceso"
-
-msgid "Guest access"
-msgstr "Acceso de invitado"
-
-msgid "User access"
-msgstr "Acceso de usuario"
-
-msgid "Community manage record"
-msgstr "Registro de gestión de la comunidad"
-
-msgid "Subcommunity"
-msgstr "Sub-comunidad"
-
-msgid "Membership request"
-msgstr "Solicitud de membresía"
-
-msgid "Anonymous user"
-msgstr "Usuario anonimo"
-
-msgid "Email"
-msgstr "Email"
-
-msgid "Group"
-msgstr "Grupo"
-
-msgid "Record"
-msgstr "Registro"
-
-msgid "Actions"
-msgstr "Acciones"
-
-msgid "Subcommunity invitation"
-msgstr ""

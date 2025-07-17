@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-03-27T14:12:23.605Z\n"
+"POT-Creation-Date: 2025-07-08T19:57:28.912Z\n"
 "PO-Revision-Date: 2022-02-18 11:12+0000\n"
 "Last-Translator: Martin Jantson <martinjantson97@gmail.com>, 2024\n"
 "Language-Team: Estonian (https://app.transifex.com/inveniosoftware/teams/23537/et/)\n"
@@ -34,6 +34,9 @@ msgstr "Tühista"
 msgid "Cancel request"
 msgstr "Tühista taotlus"
 
+msgid "Request access"
+msgstr ""
+
 msgid "Something went wrong."
 msgstr "Midagi läks valesti."
 
@@ -45,6 +48,12 @@ msgstr "Kinnita"
 
 msgid "Delete"
 msgstr "Kustuta"
+
+msgid "Shared with me"
+msgstr ""
+
+msgid "My requests"
+msgstr ""
 
 msgid "Submitted"
 msgstr "Lisatud"
@@ -73,11 +82,38 @@ msgstr ""
 msgid "Member invitation"
 msgstr ""
 
+msgid "Guest access"
+msgstr ""
+
+msgid "User access"
+msgstr ""
+
+msgid "Community manage record"
+msgstr ""
+
+msgid "Subcommunity"
+msgstr ""
+
+msgid "Subcommunity invitation"
+msgstr ""
+
+msgid "Membership request"
+msgstr ""
+
 msgid "Add comment (optional)"
 msgstr "Lisa kommentaar (valikuline)"
 
 msgid "{{action}} request"
 msgstr "{{action}} taotlus"
+
+msgid "Anonymous user"
+msgstr ""
+
+msgid "Email"
+msgstr "E-mail"
+
+msgid "Group"
+msgstr "Grupp"
 
 msgid "Creator"
 msgstr "Looja"
@@ -96,6 +132,9 @@ msgstr "Loodud"
 
 msgid "Expires"
 msgstr "Aegub"
+
+msgid "Record"
+msgstr "Kirje"
 
 msgid "Accept request"
 msgstr "Võta taotlus vastu"
@@ -120,6 +159,11 @@ msgstr "Ühtegi taotlust ei leitud!"
 
 msgid "Reset search"
 msgstr "Lähtesta otsing"
+
+msgid "{{count}} results found"
+msgid_plural "{{count}} results found"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Sort by"
 msgstr "Sorteeri"
@@ -157,6 +201,9 @@ msgstr "tühistas selle taotluse"
 msgid "unknown event"
 msgstr "tundmatu sündmus"
 
+msgid "Actions"
+msgstr "Tegevused"
+
 msgid "Edit"
 msgstr "Redigeeri"
 
@@ -165,39 +212,3 @@ msgstr ""
 
 msgid "Edited"
 msgstr "Redigeeritud"
-
-msgid "Request access"
-msgstr ""
-
-msgid "Guest access"
-msgstr ""
-
-msgid "User access"
-msgstr ""
-
-msgid "Community manage record"
-msgstr ""
-
-msgid "Subcommunity"
-msgstr ""
-
-msgid "Membership request"
-msgstr ""
-
-msgid "Anonymous user"
-msgstr ""
-
-msgid "Email"
-msgstr "E-mail"
-
-msgid "Group"
-msgstr "Grupp"
-
-msgid "Record"
-msgstr "Kirje"
-
-msgid "Actions"
-msgstr "Tegevused"
-
-msgid "Subcommunity invitation"
-msgstr ""

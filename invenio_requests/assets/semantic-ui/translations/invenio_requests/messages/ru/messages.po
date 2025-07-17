@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-03-27T14:12:23.605Z\n"
+"POT-Creation-Date: 2025-07-08T19:57:28.912Z\n"
 "PO-Revision-Date: 2022-02-18 11:12+0000\n"
 "Last-Translator: Anna Sakoyan, 2025\n"
 "Language-Team: Russian (https://app.transifex.com/inveniosoftware/teams/23537/ru/)\n"
@@ -34,6 +34,9 @@ msgstr "Отменить"
 msgid "Cancel request"
 msgstr "Отменить этот запрос"
 
+msgid "Request access"
+msgstr "Запросить доступ"
+
 msgid "Something went wrong."
 msgstr "Что-то пошло не так."
 
@@ -45,6 +48,12 @@ msgstr "Подтвердить"
 
 msgid "Delete"
 msgstr "Удалить"
+
+msgid "Shared with me"
+msgstr ""
+
+msgid "My requests"
+msgstr ""
 
 msgid "Submitted"
 msgstr "Отправлено"
@@ -73,11 +82,38 @@ msgstr "Включение сообщества"
 msgid "Member invitation"
 msgstr "Приглашение участника"
 
+msgid "Guest access"
+msgstr "Гостевой доступ"
+
+msgid "User access"
+msgstr "Пользовательский доступ"
+
+msgid "Community manage record"
+msgstr ""
+
+msgid "Subcommunity"
+msgstr "Подсообщество"
+
+msgid "Subcommunity invitation"
+msgstr ""
+
+msgid "Membership request"
+msgstr "Запрос на участие"
+
 msgid "Add comment (optional)"
 msgstr "Добавить комментарий (опционально)"
 
 msgid "{{action}} request"
 msgstr "Запрос на {{action}}"
+
+msgid "Anonymous user"
+msgstr "Анонимный пользователь"
+
+msgid "Email"
+msgstr "Электронная почта"
+
+msgid "Group"
+msgstr "Группа"
 
 msgid "Creator"
 msgstr "Создатель"
@@ -96,6 +132,9 @@ msgstr "Создано"
 
 msgid "Expires"
 msgstr "Истекает"
+
+msgid "Record"
+msgstr "Запись"
 
 msgid "Accept request"
 msgstr "Принять запрос"
@@ -120,6 +159,13 @@ msgstr "Запросов не найдено!"
 
 msgid "Reset search"
 msgstr "Сбросить поисковый запрос"
+
+msgid "{{count}} results found"
+msgid_plural "{{count}} results found"
+msgstr[0] "{{count}} результат найден"
+msgstr[1] "{{count}} результата найдено"
+msgstr[2] "{{count}} результатов найдено"
+msgstr[3] "{{count}} результата найдено"
 
 msgid "Sort by"
 msgstr "Сортировка"
@@ -157,6 +203,9 @@ msgstr "отменил/а этот запрос этот запрос"
 msgid "unknown event"
 msgstr "неизвестное событие"
 
+msgid "Actions"
+msgstr "Действия"
+
 msgid "Edit"
 msgstr "Редактировать"
 
@@ -165,39 +214,3 @@ msgstr "оставил/а комментарий {{commentTime}}"
 
 msgid "Edited"
 msgstr "Отредкатировано"
-
-msgid "Request access"
-msgstr "Запросить доступ"
-
-msgid "Guest access"
-msgstr "Гостевой доступ"
-
-msgid "User access"
-msgstr "Пользовательский доступ"
-
-msgid "Community manage record"
-msgstr ""
-
-msgid "Subcommunity"
-msgstr "Подсообщество"
-
-msgid "Membership request"
-msgstr "Запрос на участие"
-
-msgid "Anonymous user"
-msgstr "Анонимный пользователь"
-
-msgid "Email"
-msgstr "Электронная почта"
-
-msgid "Group"
-msgstr "Группа"
-
-msgid "Record"
-msgstr "Запись"
-
-msgid "Actions"
-msgstr "Действия"
-
-msgid "Subcommunity invitation"
-msgstr ""

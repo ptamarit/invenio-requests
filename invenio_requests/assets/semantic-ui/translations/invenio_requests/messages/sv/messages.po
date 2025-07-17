@@ -1,16 +1,16 @@
 # 
 # Translators:
-# Sam Arbid, 2023
 # Tibor Simko <tibor.simko@cern.ch>, 2024
 # Rim Sharif, 2024
 # Mattias Vesterlund, 2025
+# Sam Arbid, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-03-27T14:12:23.605Z\n"
+"POT-Creation-Date: 2025-07-08T19:57:28.912Z\n"
 "PO-Revision-Date: 2022-02-18 11:12+0000\n"
-"Last-Translator: Mattias Vesterlund, 2025\n"
+"Last-Translator: Sam Arbid, 2025\n"
 "Language-Team: Swedish (https://app.transifex.com/inveniosoftware/teams/23537/sv/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -36,6 +36,9 @@ msgstr "Avbryt"
 msgid "Cancel request"
 msgstr "Avbryt förfrågan"
 
+msgid "Request access"
+msgstr "Begär åtkomst"
+
 msgid "Something went wrong."
 msgstr "Något gick fel."
 
@@ -47,6 +50,12 @@ msgstr "Bekräfta"
 
 msgid "Delete"
 msgstr "Radera"
+
+msgid "Shared with me"
+msgstr "Delat med mig"
+
+msgid "My requests"
+msgstr "Mina förfrågningar"
 
 msgid "Submitted"
 msgstr "Inskickad"
@@ -75,11 +84,38 @@ msgstr "Community-inkludering"
 msgid "Member invitation"
 msgstr "Medlemsinbjudan"
 
+msgid "Guest access"
+msgstr "Gäståtkomst"
+
+msgid "User access"
+msgstr "Användaråtkomst"
+
+msgid "Community manage record"
+msgstr "Community-Hantera post"
+
+msgid "Subcommunity"
+msgstr "Delcommunity"
+
+msgid "Subcommunity invitation"
+msgstr "Inbjudan till delcommunity"
+
+msgid "Membership request"
+msgstr "Begäran om medlemskap"
+
 msgid "Add comment (optional)"
 msgstr "Lägg till kommentar (valfritt)"
 
 msgid "{{action}} request"
 msgstr "{{action}} begär"
+
+msgid "Anonymous user"
+msgstr "Anonym användare"
+
+msgid "Email"
+msgstr "E-post"
+
+msgid "Group"
+msgstr "Grupp"
 
 msgid "Creator"
 msgstr "Skapare"
@@ -98,6 +134,9 @@ msgstr "Skapad"
 
 msgid "Expires"
 msgstr "Upphör att gälla"
+
+msgid "Record"
+msgstr "Post"
 
 msgid "Accept request"
 msgstr "Acceptera förfrågan"
@@ -122,6 +161,11 @@ msgstr "Inga förfrågningar hittades!"
 
 msgid "Reset search"
 msgstr "Återställ sökning"
+
+msgid "{{count}} results found"
+msgid_plural "{{count}} results found"
+msgstr[0] "{{count}} resultat hittades"
+msgstr[1] "{{count}} resultat hittades"
 
 msgid "Sort by"
 msgstr "Sortera efter"
@@ -159,6 +203,9 @@ msgstr "avbröt denna förfrågan"
 msgid "unknown event"
 msgstr "okänd händelse"
 
+msgid "Actions"
+msgstr "Åtgärder"
+
 msgid "Edit"
 msgstr "Redigera"
 
@@ -167,39 +214,3 @@ msgstr "kommenterade {{commentTime}}"
 
 msgid "Edited"
 msgstr "Redigerat"
-
-msgid "Request access"
-msgstr "Begär åtkomst"
-
-msgid "Guest access"
-msgstr "Gäståtkomst"
-
-msgid "User access"
-msgstr "Användaråtkomst"
-
-msgid "Community manage record"
-msgstr "Community-Hantera post"
-
-msgid "Subcommunity"
-msgstr "Delcommunity"
-
-msgid "Membership request"
-msgstr "Begäran om medlemskap"
-
-msgid "Anonymous user"
-msgstr "Anonym användare"
-
-msgid "Email"
-msgstr "E-post"
-
-msgid "Group"
-msgstr "Grupp"
-
-msgid "Record"
-msgstr "Post"
-
-msgid "Actions"
-msgstr "Åtgärder"
-
-msgid "Subcommunity invitation"
-msgstr "Inbjudan till delcommunity"

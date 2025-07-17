@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-03-27T14:12:23.605Z\n"
+"POT-Creation-Date: 2025-07-08T19:57:28.912Z\n"
 "PO-Revision-Date: 2022-02-18 11:12+0000\n"
 "Last-Translator: Tibor Simko <tibor.simko@cern.ch>, 2024\n"
 "Language-Team: Polish (https://app.transifex.com/inveniosoftware/teams/23537/pl/)\n"
@@ -34,6 +34,9 @@ msgstr "Anuluj"
 msgid "Cancel request"
 msgstr ""
 
+msgid "Request access"
+msgstr ""
+
 msgid "Something went wrong."
 msgstr ""
 
@@ -45,6 +48,12 @@ msgstr "Potwierdź"
 
 msgid "Delete"
 msgstr "Usuń"
+
+msgid "Shared with me"
+msgstr ""
+
+msgid "My requests"
+msgstr ""
 
 msgid "Submitted"
 msgstr ""
@@ -73,11 +82,38 @@ msgstr ""
 msgid "Member invitation"
 msgstr ""
 
+msgid "Guest access"
+msgstr ""
+
+msgid "User access"
+msgstr ""
+
+msgid "Community manage record"
+msgstr ""
+
+msgid "Subcommunity"
+msgstr ""
+
+msgid "Subcommunity invitation"
+msgstr ""
+
+msgid "Membership request"
+msgstr ""
+
 msgid "Add comment (optional)"
 msgstr ""
 
 msgid "{{action}} request"
 msgstr ""
+
+msgid "Anonymous user"
+msgstr ""
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Group"
+msgstr "Grupa"
 
 msgid "Creator"
 msgstr ""
@@ -96,6 +132,9 @@ msgstr ""
 
 msgid "Expires"
 msgstr "Wygasa"
+
+msgid "Record"
+msgstr "Rekord"
 
 msgid "Accept request"
 msgstr ""
@@ -120,6 +159,13 @@ msgstr ""
 
 msgid "Reset search"
 msgstr ""
+
+msgid "{{count}} results found"
+msgid_plural "{{count}} results found"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 msgid "Sort by"
 msgstr ""
@@ -157,6 +203,9 @@ msgstr ""
 msgid "unknown event"
 msgstr ""
 
+msgid "Actions"
+msgstr "Działania"
+
 msgid "Edit"
 msgstr "Edytuj"
 
@@ -165,39 +214,3 @@ msgstr ""
 
 msgid "Edited"
 msgstr "zedytowany"
-
-msgid "Request access"
-msgstr ""
-
-msgid "Guest access"
-msgstr ""
-
-msgid "User access"
-msgstr ""
-
-msgid "Community manage record"
-msgstr ""
-
-msgid "Subcommunity"
-msgstr ""
-
-msgid "Membership request"
-msgstr ""
-
-msgid "Anonymous user"
-msgstr ""
-
-msgid "Email"
-msgstr "Email"
-
-msgid "Group"
-msgstr "Grupa"
-
-msgid "Record"
-msgstr "Rekord"
-
-msgid "Actions"
-msgstr "Działania"
-
-msgid "Subcommunity invitation"
-msgstr ""

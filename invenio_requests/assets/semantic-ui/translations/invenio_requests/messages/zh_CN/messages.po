@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-03-27T14:12:23.605Z\n"
+"POT-Creation-Date: 2025-07-08T19:57:28.912Z\n"
 "PO-Revision-Date: 2022-02-18 11:12+0000\n"
 "Last-Translator: Kalven Richie, 2024\n"
 "Language-Team: Chinese (China) (https://app.transifex.com/inveniosoftware/teams/23537/zh_CN/)\n"
@@ -35,6 +35,9 @@ msgstr "取消"
 msgid "Cancel request"
 msgstr "取消邀请"
 
+msgid "Request access"
+msgstr ""
+
 msgid "Something went wrong."
 msgstr "出了点问题。"
 
@@ -46,6 +49,12 @@ msgstr "确认"
 
 msgid "Delete"
 msgstr "删除"
+
+msgid "Shared with me"
+msgstr ""
+
+msgid "My requests"
+msgstr ""
 
 msgid "Submitted"
 msgstr "已提交"
@@ -74,11 +83,38 @@ msgstr ""
 msgid "Member invitation"
 msgstr ""
 
+msgid "Guest access"
+msgstr ""
+
+msgid "User access"
+msgstr ""
+
+msgid "Community manage record"
+msgstr ""
+
+msgid "Subcommunity"
+msgstr ""
+
+msgid "Subcommunity invitation"
+msgstr ""
+
+msgid "Membership request"
+msgstr ""
+
 msgid "Add comment (optional)"
 msgstr "添加注释（可选）"
 
 msgid "{{action}} request"
 msgstr "{{action}}请求"
+
+msgid "Anonymous user"
+msgstr ""
+
+msgid "Email"
+msgstr "电邮"
+
+msgid "Group"
+msgstr "组别"
 
 msgid "Creator"
 msgstr "创作者"
@@ -97,6 +133,9 @@ msgstr "创建"
 
 msgid "Expires"
 msgstr "到期"
+
+msgid "Record"
+msgstr "数据记录"
 
 msgid "Accept request"
 msgstr "接受邀请"
@@ -121,6 +160,10 @@ msgstr "没有发现请求！"
 
 msgid "Reset search"
 msgstr "重置搜索"
+
+msgid "{{count}} results found"
+msgid_plural "{{count}} results found"
+msgstr[0] ""
 
 msgid "Sort by"
 msgstr "排序方式"
@@ -158,6 +201,9 @@ msgstr "已取消此请求"
 msgid "unknown event"
 msgstr "未知事件"
 
+msgid "Actions"
+msgstr "动作"
+
 msgid "Edit"
 msgstr "编辑"
 
@@ -166,39 +212,3 @@ msgstr ""
 
 msgid "Edited"
 msgstr "已编辑"
-
-msgid "Request access"
-msgstr ""
-
-msgid "Guest access"
-msgstr ""
-
-msgid "User access"
-msgstr ""
-
-msgid "Community manage record"
-msgstr ""
-
-msgid "Subcommunity"
-msgstr ""
-
-msgid "Membership request"
-msgstr ""
-
-msgid "Anonymous user"
-msgstr ""
-
-msgid "Email"
-msgstr "电邮"
-
-msgid "Group"
-msgstr "组别"
-
-msgid "Record"
-msgstr "数据记录"
-
-msgid "Actions"
-msgstr "动作"
-
-msgid "Subcommunity invitation"
-msgstr ""

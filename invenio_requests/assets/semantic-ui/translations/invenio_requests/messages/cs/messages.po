@@ -2,13 +2,13 @@
 # Translators:
 # Jiří Kunčar <jiri.kuncar@gmail.com>, 2024
 # Tibor Simko <tibor.simko@cern.ch>, 2024
-# Mirek Simek <miroslav.simek@gmail.com>, 2024
+# Mirek Simek <miroslav.simek@gmail.com>, 2025
 # daniela.hornickova, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-03-27T14:12:23.605Z\n"
+"POT-Creation-Date: 2025-07-08T19:57:28.912Z\n"
 "PO-Revision-Date: 2022-02-18 11:12+0000\n"
 "Last-Translator: daniela.hornickova, 2025\n"
 "Language-Team: Czech (https://app.transifex.com/inveniosoftware/teams/23537/cs/)\n"
@@ -36,6 +36,9 @@ msgstr "Stornovat"
 msgid "Cancel request"
 msgstr "Zrušit požadavek"
 
+msgid "Request access"
+msgstr "Zažádat o přístup"
+
 msgid "Something went wrong."
 msgstr "Nastal neočekávaný problém."
 
@@ -47,6 +50,12 @@ msgstr "Potvrdit"
 
 msgid "Delete"
 msgstr "Smazat"
+
+msgid "Shared with me"
+msgstr "Sdíleno se mnou"
+
+msgid "My requests"
+msgstr "Moje žádosti"
 
 msgid "Submitted"
 msgstr "Odeslána"
@@ -75,11 +84,38 @@ msgstr "Přidání do komunity"
 msgid "Member invitation"
 msgstr "Pozvánka k členství"
 
+msgid "Guest access"
+msgstr "Přístup pro hosty"
+
+msgid "User access"
+msgstr "Přístup pro uživatele"
+
+msgid "Community manage record"
+msgstr "Správa záznamu komunity"
+
+msgid "Subcommunity"
+msgstr "Podkomunity"
+
+msgid "Subcommunity invitation"
+msgstr "Pozvánka do podkomunity"
+
+msgid "Membership request"
+msgstr "Žádost o členství"
+
 msgid "Add comment (optional)"
 msgstr "Přidat poznámku (volitelně)"
 
 msgid "{{action}} request"
 msgstr "{{action}} žádost"
+
+msgid "Anonymous user"
+msgstr "Anonymní uživatel"
+
+msgid "Email"
+msgstr "E-mail"
+
+msgid "Group"
+msgstr "Skupina"
 
 msgid "Creator"
 msgstr "Žadatel"
@@ -98,6 +134,9 @@ msgstr "Vytvořeno"
 
 msgid "Expires"
 msgstr "Vypršení platnosti"
+
+msgid "Record"
+msgstr "Záznam"
 
 msgid "Accept request"
 msgstr "Schválit žádost"
@@ -122,6 +161,13 @@ msgstr "Nenalezeny žádné žádosti!"
 
 msgid "Reset search"
 msgstr "Zrušit filtr"
+
+msgid "{{count}} results found"
+msgid_plural "{{count}} results found"
+msgstr[0] "nalezen {{count}} výsledek"
+msgstr[1] "nalezeny {{count}} výsledky"
+msgstr[2] "nalezeno {{count}} výsledků"
+msgstr[3] "nalezeno {{count}} výsledků"
 
 msgid "Sort by"
 msgstr "Řadit podle"
@@ -159,6 +205,9 @@ msgstr "zrušil(a) tuto žádost"
 msgid "unknown event"
 msgstr "neznámá událost"
 
+msgid "Actions"
+msgstr "Akce"
+
 msgid "Edit"
 msgstr "Upravit"
 
@@ -167,39 +216,3 @@ msgstr "komentováno {{commentTime}}"
 
 msgid "Edited"
 msgstr "Upraveno"
-
-msgid "Request access"
-msgstr "Zažádat o přístup"
-
-msgid "Guest access"
-msgstr "Přístup pro hosty"
-
-msgid "User access"
-msgstr "Přístup pro uživatele"
-
-msgid "Community manage record"
-msgstr "Správa záznamu komunity"
-
-msgid "Subcommunity"
-msgstr "Podkomunity"
-
-msgid "Membership request"
-msgstr "Žádost o členství"
-
-msgid "Anonymous user"
-msgstr "Anonymní uživatel"
-
-msgid "Email"
-msgstr "E-mail"
-
-msgid "Group"
-msgstr "Skupina"
-
-msgid "Record"
-msgstr "Záznam"
-
-msgid "Actions"
-msgstr "Akce"
-
-msgid "Subcommunity invitation"
-msgstr "Pozvánka do podkomunity"
