@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v7.2.1 (released 2025-07-22)
+
+- fix: notification not sent if user has an empty profile
+
 Version v7.2.0 (released 2025-07-17)
 
 - i18n: pulled translations
