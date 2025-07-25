@@ -62,3 +62,9 @@ export const LabelTypeCommunityMembershipRequest = (props) => (
     {i18next.t("Membership request")}
   </Label>
 );
+
+export const LabelTypeRecordDeletion = (props) => (
+  <Label horizontal className="primary theme-secondary" size="small">
+    {i18next.t("Record deletion")}
+  </Label>
+);

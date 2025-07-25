@@ -29,6 +29,7 @@ type = TermsFacet(
         "subcommunity-invitation": _("Subcommunity invitation"),
         # Moderation
         "user-moderation": _("User moderation"),
+        "record-deletion": _("Record deletion"),
         # Instance-specific labels which ideally should not be listed here
         "community-manage-record": _("Community manage record"),
         "legacy-record-upgrade": _("Upgrade legacy record"),
