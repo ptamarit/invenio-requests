@@ -88,16 +88,19 @@ export const ComputerTabletRequestItem = ({
             {creatorName}
           </small>
           <small className="right floated">
-            {result.receiver.community && result.expanded?.receiver.metadata.title && (
-              <>
-                <Icon
-                  className="default-margin"
-                  name={getUserIcon(result.expanded?.receiver)}
-                />
-                <span className="ml-5">{result.expanded?.receiver.metadata.title}</span>
-                {result.expires_at && " - "}
-              </>
-            )}
+            {result.receiver?.community &&
+              result.expanded?.receiver?.metadata.title && (
+                <>
+                  <Icon
+                    className="default-margin"
+                    name={getUserIcon(result.expanded?.receiver)}
+                  />
+                  <span className="ml-5">
+                    {result.expanded?.receiver.metadata.title}
+                  </span>
+                  {result.expires_at && " - "}
+                </>
+              )}
             {result.expires_at && (
               <span>
                 {i18next.t("Expires at: {{- expiringDate}}", {

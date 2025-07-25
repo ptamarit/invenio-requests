@@ -192,20 +192,22 @@ class RequestMetadata extends Component {
               <Divider />
             </>
           )}
-
-          <Header as="h3" size="tiny">
-            {i18next.t("Receiver")}
-          </Header>
-          {this.isResourceDeleted(expandedReceiver) ? (
-            <DeletedResource details={expandedReceiver} />
-          ) : (
-            <EntityDetails
-              userData={request.receiver}
-              details={request.expanded?.receiver}
-            />
+          {expandedReceiver !== undefined && (
+            <>
+              <Header as="h3" size="tiny">
+                {i18next.t("Receiver")}
+              </Header>
+              {this.isResourceDeleted(expandedReceiver) ? (
+                <DeletedResource details={expandedReceiver} />
+              ) : (
+                <EntityDetails
+                  userData={request.receiver}
+                  details={request.expanded?.receiver}
+                />
+              )}
+              <Divider />
+            </>
           )}
-          <Divider />
-
           <Header as="h3" size="tiny">
             {i18next.t("Request type")}
           </Header>
