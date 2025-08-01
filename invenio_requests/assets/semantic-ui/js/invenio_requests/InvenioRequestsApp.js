@@ -39,12 +39,12 @@ export class InvenioRequestsApp extends Component {
   }
 
   render() {
-    const { overriddenCmps, userAvatar, permissions } = this.props;
+    const { overriddenCmps, userAvatar, permissions, config } = this.props;
 
     return (
       <OverridableContext.Provider value={overriddenCmps}>
         <Provider store={this.store}>
-          <Request userAvatar={userAvatar} permissions={permissions} />
+          <Request userAvatar={userAvatar} permissions={permissions} config={config} />
         </Provider>
       </OverridableContext.Provider>
     );
@@ -59,6 +59,7 @@ InvenioRequestsApp.propTypes = {
   userAvatar: PropTypes.string.isRequired,
   defaultQueryParams: PropTypes.object,
   permissions: PropTypes.object.isRequired,
+  config: PropTypes.object,
 };
 
 InvenioRequestsApp.defaultProps = {
@@ -66,4 +67,7 @@ InvenioRequestsApp.defaultProps = {
   requestsApi: null,
   requestEventsApi: null,
   defaultQueryParams: { size: 15 },
+  config: {
+    allowGroupReviewers: false,
+  },
 };

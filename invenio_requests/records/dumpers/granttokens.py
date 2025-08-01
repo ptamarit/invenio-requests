@@ -31,8 +31,13 @@ class GrantTokensDumperExt(SearchDumperExt):
         grants = []
         for field_name in self.fields:
             entity = getattr(request, field_name)
-            for need in request.type.entity_needs(entity):
-                grants.append(EntityGrant(field_name, need).token)
+            if isinstance(entity, list):
+                for e in entity:
+                    for need in request.type.entity_needs(e):
+                        grants.append(EntityGrant(field_name, need).token)
+            else:
+                for need in request.type.entity_needs(entity):
+                    grants.append(EntityGrant(field_name, need).token)
         data[self.grants_field] = grants
 
     def load(self, data, request_cls):

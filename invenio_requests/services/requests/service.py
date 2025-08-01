@@ -25,7 +25,7 @@ from ...customizations.event_types import CommentEventType
 from ...errors import CannotExecuteActionError
 from ...proxies import current_events_service, current_request_type_registry
 from ...resolvers.registry import ResolverRegistry
-from ..results import EntityResolverExpandableField
+from ..results import EntityResolverExpandableField, MultiEntityResolverExpandableField
 from .links import RequestLinksTemplate
 
 
@@ -60,6 +60,7 @@ class RequestsService(RecordService):
             EntityResolverExpandableField("receiver"),
             # TODO to be verified
             EntityResolverExpandableField("topic"),
+            MultiEntityResolverExpandableField("reviewers"),
         ]
 
     @unit_of_work()
@@ -167,6 +168,7 @@ class RequestsService(RecordService):
         # we're not using "self.schema" b/c the schema may differ per
         # request type!
         schema = self._wrap_schema(request.type.marshmallow_schema())
+
         data, _ = schema.load(
             data,
             context={

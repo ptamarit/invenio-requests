@@ -13,10 +13,13 @@ mechanism for custom types of requests.
 TODO explain what can be done here, and how!
 """
 
-
 import base32_lib as base32
 import marshmallow as ma
-from invenio_records_resources.services.references import EntityReferenceBaseSchema
+from flask import current_app
+from invenio_records_resources.services.references import (
+    EntityReferenceBaseSchema,
+    MultipleEntityReferenceBaseSchema,
+)
 
 from ..notifications.builders import CommentRequestEventCreateNotificationBuilder
 from ..proxies import current_requests
@@ -114,6 +117,18 @@ class RequestType:
     allowed_receiver_ref_types = ["user"]
     """A list of allowed TYPE keys for ``receiver`` reference dicts."""
 
+    @classmethod
+    def allowed_reviewers_ref_types(cls):
+        """Return the allowed reviewers reference types."""
+        if current_app.config.get("USERS_RESOURCES_GROUPS_ENABLED", False):
+            return ["user", "group"]
+        return ["user"]
+
+    @classmethod
+    def reviewers_can_be_none(cls):
+        """Return whether reviewers can be None."""
+        return current_app.config.get("REQUESTS_REVIEWERS_ENABLED", False)
+
     allowed_topic_ref_types = []
     """A list of allowed TYPE keys for ``topic`` reference dicts."""
 
@@ -176,6 +191,14 @@ class RequestType:
             "receiver": ma.fields.Nested(
                 RefBaseSchema.create_from_dict(cls.allowed_receiver_ref_types),
                 allow_none=cls.receiver_can_be_none,
+            ),
+            "reviewers": ma.fields.List(
+                ma.fields.Nested(
+                    MultipleEntityReferenceBaseSchema.create_from_dict(
+                        cls.allowed_reviewers_ref_types()
+                    ),
+                    allow_none=cls.reviewers_can_be_none(),
+                )
             ),
             "topic": ma.fields.Nested(
                 RefBaseSchema.create_from_dict(cls.allowed_topic_ref_types),

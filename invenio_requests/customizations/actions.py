@@ -7,6 +7,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Base class for customizable actions on requests."""
+
 from ..errors import NoSuchActionError
 from ..proxies import current_events_service
 from .event_types import LogEventType
@@ -123,7 +124,7 @@ class SubmitAction(RequestAction):
 
 
 class AcceptAction(RequestAction):
-    """Decline a request."""
+    """Accept a request."""
 
     status_from = ["submitted"]
     status_to = "accepted"

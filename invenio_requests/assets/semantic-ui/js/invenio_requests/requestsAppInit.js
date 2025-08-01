@@ -27,6 +27,7 @@ import {
   TimelineDeclineEvent,
   TimelineExpireEvent,
   TimelineUnknownEvent,
+  TimelineReviewersUpdatedEvent,
 } from "./timelineEvents";
 
 const requestDetailsDiv = document.getElementById("request-detail");
@@ -34,6 +35,7 @@ const request = JSON.parse(requestDetailsDiv.dataset.record);
 const defaultQueryParams = JSON.parse(requestDetailsDiv.dataset.defaultQueryConfig);
 const userAvatar = JSON.parse(requestDetailsDiv.dataset.userAvatar);
 const permissions = JSON.parse(requestDetailsDiv.dataset.permissions);
+const config = JSON.parse(requestDetailsDiv.dataset.config);
 
 const defaultComponents = {
   ...defaultContribComponents,
@@ -42,6 +44,7 @@ const defaultComponents = {
   "TimelineEvent.layout.accepted": TimelineAcceptEvent,
   "TimelineEvent.layout.expired": TimelineExpireEvent,
   "TimelineEvent.layout.cancelled": TimelineCancelEvent,
+  "TimelineEvent.layout.reviewers_updated": TimelineReviewersUpdatedEvent,
   "TimelineEvent.layout.comment_deleted": TimelineCommentDeletionEvent,
   "RequestStatus.layout.submitted": SubmitStatus,
   "RequestStatus.layout.deleted": DeleteStatus,
@@ -63,6 +66,7 @@ ReactDOM.render(
     overriddenCmps={{ ...defaultComponents, ...overriddenComponents }}
     userAvatar={userAvatar}
     permissions={permissions}
+    config={config}
   />,
   requestDetailsDiv
 );

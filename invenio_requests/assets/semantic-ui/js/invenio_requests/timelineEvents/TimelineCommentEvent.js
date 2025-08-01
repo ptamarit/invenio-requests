@@ -34,6 +34,8 @@ class TimelineCommentEvent extends Component {
         return payload?.event || "unknown";
       case "C":
         return "comment";
+      case "R":
+        return payload?.event || "unknown";
       default:
         return "unknown";
     }

@@ -9,10 +9,16 @@
 
 """Component for creating request numbers."""
 
+from flask import current_app
+from invenio_i18n import _
 from invenio_records_resources.services.records.components import (
     DataComponent,
     ServiceComponent,
 )
+from marshmallow import ValidationError
+
+from invenio_requests.customizations.event_types import ReviewersUpdatedType
+from invenio_requests.proxies import current_events_service
 
 
 class RequestNumberComponent(ServiceComponent):
@@ -46,6 +52,76 @@ class RequestDataComponent(DataComponent):
         for k in keys:
             if k in data:
                 record[k] = data[k]
+
+
+class RequestReviewersComponent(ServiceComponent):
+    """Component for handling request reviewers."""
+
+    def _reviewers_updated(self, previous_reviewers, new_reviewers):
+        """Determine the event type based on reviewers added or removed."""
+        prev_rev = set()
+        updated = []
+        for reviewer in previous_reviewers:
+            if "user" in reviewer:
+                prev_rev.add(f"user:{reviewer['user']}")
+            elif "group" in reviewer:
+                prev_rev.add(f"group:{reviewer['group']}")
+        for reviewer in new_reviewers:
+            if "user" in reviewer:
+                if f"user:{reviewer['user']}" not in prev_rev:
+                    updated.append(reviewer)
+            elif "group" in reviewer:
+                if f"group:{reviewer['group']}" not in prev_rev:
+                    updated.append(reviewer)
+
+        # NOTE this just supports adding OR removing at a time
+        # if both are done, we return "updated" for now
+        if len(previous_reviewers) > len(new_reviewers):
+            return "removed", updated
+        elif len(previous_reviewers) < len(new_reviewers):
+            return "added", updated
+        elif updated:
+            return "updated", updated
+
+    def _validate_reviewers(self, reviewers):
+        """Validate the reviewers data."""
+        reviewers_enabled = current_app.config["REQUESTS_REVIEWERS_ENABLED"]
+        reviewers_groups_enabled = current_app.config["USERS_RESOURCES_GROUPS_ENABLED"]
+        max_reviewers = current_app.config["REQUESTS_REVIEWERS_MAX_NUMBER"]
+
+        if not reviewers_enabled:
+            raise ValidationError(_("Reviewers are not enabled for this request type."))
+        if not reviewers_groups_enabled:
+            for reviewer in reviewers:
+                if "group" in reviewer:
+                    raise ValidationError(_("Group reviewers are not enabled."))
+
+        if len(reviewers) > max_reviewers:
+            raise ValidationError(
+                _(f"You can only add up to {max_reviewers} reviewers.")
+            )
+
+    def update(self, identity, data=None, record=None, **kwargs):
+        """Update the reviewers of a request."""
+        if reviewers := data.get("reviewers", None):
+            self._validate_reviewers(reviewers)
+            self.service.require_permission(identity, f"action_accept", request=record)
+
+            event_type, updated_reviewers = self._reviewers_updated(
+                record.get("reviewers", []), reviewers
+            )
+            event = ReviewersUpdatedType(
+                payload=dict(
+                    event="reviewers_updated",
+                    content=_(f"{event_type} a reviewer"),
+                    reviewers=updated_reviewers,
+                )
+            )
+            _data = dict(payload=event.payload)
+            current_events_service.create(
+                identity, record.id, _data, event, uow=self.uow
+            )
+            record["reviewers"] = reviewers
 
 
 class RequestPayloadComponent(DataComponent):

@@ -36,6 +36,12 @@
     },
     "@v": {
       "type": "string"
+    },
+    "reviewers": {
+      "type": "array",
+      "items": {
+        "$ref": "local://definitions-v1.0.0.json#/entity_reference"
+      }
     }
   }
 }

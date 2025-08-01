@@ -107,15 +107,23 @@ class SharedOrMyRequestsParam(ParamInterpreter):
         The query will return requests shared with the user via the topic grants (only via user or group).
         """
         allowed_need_methods = {"id", "role"}
-        grants = [
+        topic_grants = [
             EntityGrant("topic", need).token
+            for need in identity.provides
+            if need.method in allowed_need_methods
+        ]
+        reviewer_grants = [
+            EntityGrant("reviewers", need).token
             for need in identity.provides
             if need.method in allowed_need_methods
         ]
         my_requests_query = self._generate_my_requests_query(identity)
         # Topic grants include requests created by the user or the user is the receiver,
         # so we need to exclude them
-        return dsl.Q("terms", **{"grants": grants}) & ~my_requests_query
+        return (
+            dsl.Q("terms", **{"grants": topic_grants + reviewer_grants})
+            & ~my_requests_query
+        )
 
     def apply(self, identity, search, params):
         """Evaluate the shared_with_me parameter on the search.

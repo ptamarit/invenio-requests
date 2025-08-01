@@ -29,6 +29,7 @@ from .components import (
     RequestDataComponent,
     RequestNumberComponent,
     RequestPayloadComponent,
+    RequestReviewersComponent,
 )
 from .links import RequestLink
 from .params import IsOpenParam, ReferenceFilterParam, SharedOrMyRequestsParam
@@ -123,6 +124,7 @@ class RequestsServiceConfig(RecordServiceConfig, ConfiguratorMixin):
             # Order of components is important!
             RequestPayloadComponent,
             RequestDataComponent,
+            RequestReviewersComponent,
             EntityReferencesComponent,
             RequestNumberComponent,
         ],

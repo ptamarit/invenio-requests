@@ -157,6 +157,7 @@ def test_simple_request_flow(app, client_logged_as, headers, example_request):
                 "submit": f"https://127.0.0.1:5000/api/requests/{id_}/actions/submit",
             },
         },
+        "reviewers": [],
     }
     assert_api_response(response, 200, expected_data)
 

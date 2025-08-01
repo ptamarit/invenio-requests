@@ -32,6 +32,7 @@ export class Request extends Component {
             request={request}
             userAvatar={userAvatar}
             permissions={permissions}
+            config={this.props.config}
           />
         </Loader>
       </Overridable>
@@ -45,6 +46,7 @@ Request.propTypes = {
   updateRequestAfterAction: PropTypes.func.isRequired,
   userAvatar: PropTypes.string,
   permissions: PropTypes.object.isRequired,
+  config: PropTypes.object.isRequired,
 };
 
 Request.defaultProps = {

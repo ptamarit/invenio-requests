@@ -13,7 +13,7 @@ from invenio_users_resources.entity_resolvers import GroupResolver, UserResolver
 
 from invenio_requests.services.requests import facets
 
-from .customizations import CommentEventType, LogEventType
+from .customizations import CommentEventType, LogEventType, ReviewersUpdatedType
 from .services.permissions import PermissionPolicy
 
 REQUESTS_PERMISSION_POLICY = PermissionPolicy
@@ -25,6 +25,7 @@ REQUESTS_REGISTERED_TYPES = []
 REQUESTS_REGISTERED_EVENT_TYPES = [
     LogEventType(),
     CommentEventType(),
+    ReviewersUpdatedType(),
 ]
 """Configuration for registered Request Event Types."""
 
@@ -117,3 +118,9 @@ REQUESTS_USER_MODERATION_FACETS = {
     "is_open": {"facet": facets.is_open, "ui": {"field": "is_open"}},
 }
 """Available facets defined for this module."""
+
+REQUESTS_REVIEWERS_ENABLED = False
+"""Enable reviewers for requests."""
+
+REQUESTS_REVIEWERS_MAX_NUMBER = 15
+"""Maximum number of reviewers allowed for a request."""

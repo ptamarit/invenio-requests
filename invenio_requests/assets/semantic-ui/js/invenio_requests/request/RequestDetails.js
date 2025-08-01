@@ -14,7 +14,7 @@ import { Timeline } from "../timeline";
 
 class RequestDetails extends Component {
   render() {
-    const { request, userAvatar, permissions } = this.props;
+    const { request, userAvatar, permissions, config } = this.props;
     return (
       <Overridable id="InvenioRequests.RequestDetails.layout" {...this.props}>
         <Grid stackable reversed="mobile">
@@ -26,7 +26,11 @@ class RequestDetails extends Component {
             />
           </Grid.Column>
           <Grid.Column mobile={16} tablet={4} computer={3}>
-            <RequestMetadata request={request} />
+            <RequestMetadata
+              request={request}
+              permissions={permissions}
+              config={config}
+            />
           </Grid.Column>
         </Grid>
       </Overridable>
@@ -38,6 +42,7 @@ RequestDetails.propTypes = {
   request: PropTypes.object.isRequired,
   userAvatar: PropTypes.string,
   permissions: PropTypes.object.isRequired,
+  config: PropTypes.object.isRequired,
 };
 
 RequestDetails.defaultProps = {

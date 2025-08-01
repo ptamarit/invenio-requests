@@ -152,6 +152,7 @@ def app_config(app_config):
     )
     app_config["USERS_RESOURCES_SERVICE_SCHEMA"] = NotificationsUserSchema
     app_config["THEME_FRONTPAGE"] = False
+    app_config["REQUESTS_REVIEWERS_ENABLED"] = True
     return app_config
 
 

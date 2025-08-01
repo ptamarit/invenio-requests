@@ -10,6 +10,7 @@
 from functools import partial
 
 from invenio_records_resources.records.systemfields.entity_reference import (
+    MultiReferenceEntityField,
     ReferencedEntityField,
     check_allowed_references,
 )
@@ -41,3 +42,17 @@ check_allowed_topics = partial(
     lambda r: r.type.allowed_topic_ref_types,
 )
 """Check function specific for the ``topic`` field of requests."""
+
+
+check_allowed_reviewers = partial(
+    check_allowed_references,
+    lambda r: r.type.reviewers_can_be_none(),
+    lambda r: r.type.allowed_reviewers_ref_types(),
+)
+"""Check function specific for the ``re`` field of requests."""
+
+
+MultiEntityReferenceField = partial(
+    MultiReferenceEntityField, resolver_registry=ResolverRegistry
+)
+"""An opinionated ReferenceEntityField with set ResolverRegistry."""

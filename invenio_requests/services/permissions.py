@@ -19,7 +19,7 @@ from invenio_records_permissions.generators import (
     SystemProcessWithoutSuperUser,
 )
 
-from .generators import Commenter, Creator, Receiver, Status, Topic
+from .generators import Commenter, Creator, Receiver, Reviewers, Status, Topic
 
 
 class PermissionPolicy(RecordPermissionPolicy):
@@ -37,8 +37,15 @@ class PermissionPolicy(RecordPermissionPolicy):
     can_read = [
         Status(["created"], [Creator()]),
         Status(
-            ["submitted", "deleted", "cancelled", "expired", "accepted", "declined"],
-            [Creator(), Receiver(), Topic()],
+            [
+                "submitted",
+                "deleted",
+                "cancelled",
+                "expired",
+                "accepted",
+                "declined",
+            ],
+            [Creator(), Receiver(), Reviewers(), Topic()],
         ),
         SystemProcess(),
     ]

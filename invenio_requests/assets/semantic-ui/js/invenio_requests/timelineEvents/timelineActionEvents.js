@@ -75,6 +75,19 @@ TimelineUnknownEvent.propTypes = {
   event: PropTypes.object.isRequired,
 };
 
+export const TimelineReviewersUpdatedEvent = ({ event }) => (
+  <TimelineActionEvent
+    iconName="user circle"
+    iconColor="grey"
+    event={event}
+    eventContent={i18next.t(event.payload.content) || i18next.t("updated reviewers")}
+  />
+);
+
+TimelineReviewersUpdatedEvent.propTypes = {
+  event: PropTypes.object.isRequired,
+};
+
 export const TimelineCommentDeletionEvent = ({ event }) => (
   <TimelineActionEvent
     iconName="erase"

@@ -73,6 +73,14 @@ export class InvenioRequestsAPI {
     });
   };
 
+  addReviewer = async (reviewers) => {
+    return await http.put(this.#urls.self, {
+      reviewers: reviewers.map((r) => {
+        return "user" in r ? { user: r.id } : { group: r.id };
+      }),
+    });
+  };
+
   performAction = async (action, commentContent = null) => {
     let payload = {};
     if (!_isEmpty(commentContent)) {

@@ -14,6 +14,7 @@ import operator
 from functools import reduce
 from itertools import chain
 
+from flask import current_app
 from invenio_records_permissions.generators import Generator
 from invenio_records_resources.references import EntityGrant
 from invenio_search.engine import dsl
@@ -148,6 +149,39 @@ class Topic(EntityNeedsGenerator):
         )
 
         return query
+
+
+class Reviewers(EntityNeedsGenerator):
+    """Allows the reviewer of the request."""
+
+    entity_field = "reviewers"
+
+    def _reviewers_enabled(self):
+        """Check if reviewers are enabled."""
+        return current_app.config.get("REQUESTS_REVIEWERS_ENABLED", False)
+
+    def needs(self, request=None, **kwargs):
+        """Needs for the given entity reference."""
+        if not self._reviewers_enabled():
+            return []
+
+        entities = getattr(request, self.entity_field)
+        _needs = []
+        for entity in entities:
+            _needs.extend(request.type.entity_needs(entity))
+        return _needs
+
+    def query_filter(self, identity=None, **kwargs):
+        """Query filters for the current identity."""
+        if not self._reviewers_enabled():
+            return None
+
+        grants = []
+        for need in identity.provides:
+            grants.append(EntityGrant(self.entity_field, need).token)
+        if grants:
+            return dsl.Q("terms", **{self.grants_field: grants})
+        return None
 
 
 class Commenter(Generator):

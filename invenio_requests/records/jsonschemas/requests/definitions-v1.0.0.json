@@ -9,7 +9,15 @@
     "additionalProperties": false,
     "patternProperties": {
       "^.+$": {
-        "type": "string"
+        "description": "A property with any name and any value.",
+        "type": [
+          "string",
+          "number",
+          "boolean",
+          "object",
+          "array",
+          "null"
+        ]
       }
     }
   },
