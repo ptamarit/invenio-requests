@@ -9,6 +9,20 @@
 Changes
 =======
 
+Version v8.0.0 (released 2025-08-01)
+
+- feat: implement comprehensive reviewers functionality for requests
+  
+  * Add complete reviewers system for request assignment and management
+  * Frontend: RequestReviewers React component with search and selection UI
+  * Backend: RequestReviewersComponent for service layer reviewer management
+  * Database: Update OpenSearch mappings and request schema for reviewers
+  * API: Extend request service with reviewer update capabilities
+  * Permissions: Add reviewer-specific access control and generators
+  * Timeline: Implement ReviewersUpdatedType custom event tracking
+  * Configuration: Make reviewers configurable through request types
+  * Testing: Add comprehensive test coverage for reviewer functionality
+
 Version v7.2.1 (released 2025-07-22)
 
 - fix: notification not sent if user has an empty profile

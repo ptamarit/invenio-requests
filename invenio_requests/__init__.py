@@ -20,7 +20,7 @@ from .proxies import (
     current_requests_service,
 )
 
-__version__ = "7.2.1"
+__version__ = "8.0.0"
 
 __all__ = (
     "__version__",
