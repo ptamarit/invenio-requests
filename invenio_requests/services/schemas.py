@@ -14,67 +14,14 @@ from datetime import timezone
 
 from invenio_records_resources.services.records.schema import BaseRecordSchema
 from marshmallow import (
-    INCLUDE,
     RAISE,
-    Schema,
-    ValidationError,
     fields,
-    post_dump,
-    post_load,
-    validate,
 )
 from marshmallow_utils import fields as utils_fields
 
 from invenio_requests.proxies import current_requests
 
 from ..customizations.event_types import CommentEventType, EventType
-from ..proxies import current_event_type_registry
-
-
-class RequestSchema(BaseRecordSchema):
-    """Schema for requests.
-
-    Note that the payload schema and the entity reference schemas (i.e. creator,
-    receiver, and topic) are dynamically constructed and injected into this schema.
-    """
-
-    # load and dump
-    type = fields.String()
-    title = utils_fields.SanitizedUnicode(dump_default="")
-    description = utils_fields.SanitizedUnicode()
-
-    # Dump-only
-    number = fields.String(dump_only=True)
-    status = fields.String(dump_only=True)
-    is_closed = fields.Boolean(dump_only=True)
-    is_open = fields.Boolean(dump_only=True)
-    expires_at = utils_fields.TZDateTime(
-        timezone=timezone.utc, format="iso", dump_only=True
-    )
-    is_expired = fields.Boolean(dump_only=True)
-
-    class Meta:
-        """Schema meta."""
-
-        unknown = RAISE
-
-
-class GenericRequestSchema(RequestSchema):
-    """Generic request schema.
-
-    CAUTION: This schema should not be used for the final validation of input
-    data. Use the request type's own defined schema instead.
-
-    This schema can be used in situations where you need to do basic validation
-    or dumping of a request without the payload.
-
-    This is used e.g. in Invenio-RDM-Records for dumping a request without
-    having to know the specific request type.
-    """
-
-    created_by = fields.Dict()
-    receiver = fields.Dict()
-    topic = fields.Dict()
 
 
 class EventTypeMarshmallowField(fields.Str):
@@ -108,3 +55,51 @@ class RequestEventSchema(BaseRecordSchema):
             }
         else:
             return {}
+
+
+class RequestSchema(BaseRecordSchema):
+    """Schema for requests.
+
+    Note that the payload schema and the entity reference schemas (i.e. creator,
+    receiver, and topic) are dynamically constructed and injected into this schema.
+    """
+
+    # load and dump
+    type = fields.String()
+    title = utils_fields.SanitizedUnicode(dump_default="")
+    description = utils_fields.SanitizedUnicode()
+
+    # Dump-only
+    number = fields.String(dump_only=True)
+    status = fields.String(dump_only=True)
+    is_closed = fields.Boolean(dump_only=True)
+    is_open = fields.Boolean(dump_only=True)
+    expires_at = utils_fields.TZDateTime(
+        timezone=timezone.utc, format="iso", dump_only=True
+    )
+    is_expired = fields.Boolean(dump_only=True)
+
+    last_reply = fields.Nested(RequestEventSchema, dump_only=True)
+
+    class Meta:
+        """Schema meta."""
+
+        unknown = RAISE
+
+
+class GenericRequestSchema(RequestSchema):
+    """Generic request schema.
+
+    CAUTION: This schema should not be used for the final validation of input
+    data. Use the request type's own defined schema instead.
+
+    This schema can be used in situations where you need to do basic validation
+    or dumping of a request without the payload.
+
+    This is used e.g. in Invenio-RDM-Records for dumping a request without
+    having to know the specific request type.
+    """
+
+    created_by = fields.Dict()
+    receiver = fields.Dict()
+    topic = fields.Dict()

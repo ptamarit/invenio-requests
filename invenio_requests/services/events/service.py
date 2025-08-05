@@ -9,16 +9,22 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """RequestEvents Service."""
+
 from flask_principal import AnonymousIdentity
 from invenio_i18n import _
 from invenio_notifications.services.uow import NotificationOp
 from invenio_records_resources.services import RecordService, ServiceSchemaWrapper
 from invenio_records_resources.services.base.links import LinksTemplate
-from invenio_records_resources.services.uow import RecordCommitOp, unit_of_work
+from invenio_records_resources.services.uow import (
+    RecordCommitOp,
+    RecordIndexOp,
+    unit_of_work,
+)
 from invenio_search.engine import dsl
 
 from invenio_requests.customizations import CommentEventType
 from invenio_requests.customizations.event_types import LogEventType
+from invenio_requests.proxies import current_requests_service as requests_service
 from invenio_requests.records.api import RequestEventFormat
 from invenio_requests.services.results import EntityResolverExpandableField
 
@@ -76,6 +82,9 @@ class RequestEventsService(RecordService):
         # Persist record (DB and index)
         uow.register(RecordCommitOp(event, indexer=self.indexer))
 
+        # Reindex the request to update events-related computed fields
+        uow.register(RecordIndexOp(request, indexer=requests_service.indexer))
+
         if notify and event_type is CommentEventType:
             uow.register(
                 NotificationOp(
@@ -132,6 +141,9 @@ class RequestEventsService(RecordService):
         event["payload"]["format"] = data["payload"]["format"]
         uow.register(RecordCommitOp(event, indexer=self.indexer))
 
+        # Reindex the request to update events-related computed fields
+        uow.register(RecordIndexOp(request, indexer=requests_service.indexer))
+
         return self.result_item(
             self,
             identity,
@@ -174,6 +186,9 @@ class RequestEventsService(RecordService):
         )
         event["payload"] = data["payload"]
         uow.register(RecordCommitOp(event, indexer=self.indexer))
+
+        # Reindex the request to update events-related computed fields
+        uow.register(RecordIndexOp(request, indexer=requests_service.indexer))
 
         return True
 

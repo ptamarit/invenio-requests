@@ -61,6 +61,8 @@ class RequestsService(RecordService):
             # TODO to be verified
             EntityResolverExpandableField("topic"),
             MultiEntityResolverExpandableField("reviewers"),
+            # Computed fields
+            EntityResolverExpandableField("last_reply.created_by"),
         ]
 
     @unit_of_work()
@@ -139,7 +141,7 @@ class RequestsService(RecordService):
         """Retrieve a request."""
         # resolve and require permission
         request = self.record_cls.get_record(id_)
-        self.require_permission(identity, f"read", request=request)
+        self.require_permission(identity, "read", request=request)
 
         # run components
         for component in self.components:
@@ -163,7 +165,7 @@ class RequestsService(RecordService):
 
         self.check_revision_id(request, revision_id)
 
-        self.require_permission(identity, f"update", record=request, request=request)
+        self.require_permission(identity, "update", record=request, request=request)
 
         # we're not using "self.schema" b/c the schema may differ per
         # request type!
@@ -204,7 +206,7 @@ class RequestsService(RecordService):
         # self.check_revision_id(request, revision_id)
 
         # check permissions
-        self.require_permission(identity, f"action_delete", request=request)
+        self.require_permission(identity, "action_delete", request=request)
 
         # run components
         self.run_components("delete", identity, record=request, uow=uow)

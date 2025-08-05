@@ -7,7 +7,6 @@
 
 """Search dumpers for the is_expired state of requests."""
 
-
 from invenio_records.dumpers import SearchDumperExt
 
 

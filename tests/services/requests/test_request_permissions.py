@@ -8,6 +8,7 @@
 # details.
 
 """Permission tests."""
+
 import copy
 
 import pytest

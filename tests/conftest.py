@@ -63,6 +63,7 @@ from invenio_requests.customizations import (
 from invenio_requests.notifications.builders import (
     CommentRequestEventCreateNotificationBuilder,
 )
+from invenio_requests.proxies import current_requests
 
 
 class UserPreferencesNotificationsSchema(UserPreferencesSchema):
@@ -369,10 +370,7 @@ def mod_identity(app, moderator_user):
 
 @pytest.fixture()
 def example_request(identity_simple, request_record_input_data, user1, user2):
-    """Example record."""
-    # Need to use the service to get the id I guess...
-    from invenio_requests.proxies import current_requests
-
+    """Example request."""
     requests_service = current_requests.requests_service
     item = requests_service.create(
         identity_simple,

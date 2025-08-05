@@ -7,6 +7,7 @@
 
 """Systemfields for request records."""
 
+from .computed import LastReply
 from .entity_reference import EntityReferenceField
 from .event_type import EventTypeField
 from .expired_state import ExpiredStateCalculatedField
@@ -20,6 +21,7 @@ __all__ = (
     "EventTypeField",
     "ExpiredStateCalculatedField",
     "IdentityField",
+    "LastReply",
     "RequestStateCalculatedField",
     "RequestStatusField",
     "RequestTypeField",

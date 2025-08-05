@@ -158,6 +158,7 @@ def test_simple_request_flow(app, client_logged_as, headers, example_request):
             },
         },
         "reviewers": [],
+        "last_reply": None,
     }
     assert_api_response(response, 200, expected_data)
 

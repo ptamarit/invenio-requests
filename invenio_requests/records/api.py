@@ -24,6 +24,7 @@ from .systemfields import (
     EventTypeField,
     ExpiredStateCalculatedField,
     IdentityField,
+    LastReply,
     RequestStateCalculatedField,
     RequestStatusField,
     RequestTypeField,
@@ -38,8 +39,55 @@ from .systemfields.entity_reference import (
 )
 
 
+class RequestEventFormat(Enum):
+    """Comment/content format enum."""
+
+    HTML = "html"
+
+
+class RequestEvent(Record):
+    """A Request Event."""
+
+    model_cls = RequestEventModel
+
+    # Systemfields
+    metadata = None
+
+    schema = ConstantField("$schema", "local://requestevents/requestevent-v1.0.0.json")
+    """The JSON Schema to use for validation."""
+
+    request = ModelField(dump=False)
+    """The request."""
+
+    request_id = DictField("request_id")
+    """The data-layer id of the related Request."""
+
+    type = EventTypeField("type")
+    """Request event type system field."""
+
+    index = IndexField(
+        "requestevents-requestevent-v1.0.0", search_alias="requestevents"
+    )
+    """The ES index used."""
+
+    id = ModelField("id")
+    """The data-layer id."""
+
+    check_referenced = partial(
+        check_allowed_references,
+        lambda r: True,  # for system process for now
+        lambda r: ["user", "email"],  # only users for now
+    )
+
+    created_by = EntityReferenceField("created_by", check_referenced)
+    """Who created the event."""
+
+
 class Request(Record):
     """A generic request record."""
+
+    event_cls = RequestEvent
+    """The event class used for request events."""
 
     model_cls = RequestMetadata
     """The model class for the request."""
@@ -101,46 +149,5 @@ class Request(Record):
     is_expired = ExpiredStateCalculatedField("expires_at")
     """Whether or not the request is already expired."""
 
-
-class RequestEventFormat(Enum):
-    """Comment/content format enum."""
-
-    HTML = "html"
-
-
-class RequestEvent(Record):
-    """A Request Event."""
-
-    model_cls = RequestEventModel
-
-    # Systemfields
-    metadata = None
-
-    schema = ConstantField("$schema", "local://requestevents/requestevent-v1.0.0.json")
-    """The JSON Schema to use for validation."""
-
-    request = ModelField(dump=False)
-    """The request."""
-
-    request_id = DictField("request_id")
-    """The data-layer id of the related Request."""
-
-    type = EventTypeField("type")
-    """Request event type system field."""
-
-    index = IndexField(
-        "requestevents-requestevent-v1.0.0", search_alias="requestevents"
-    )
-    """The ES index used."""
-
-    id = ModelField("id")
-    """The data-layer id."""
-
-    check_referenced = partial(
-        check_allowed_references,
-        lambda r: True,  # for system process for now
-        lambda r: ["user", "email"],  # only users for now
-    )
-
-    created_by = EntityReferenceField("created_by", check_referenced)
-    """Who created the event."""
+    last_reply = LastReply()
+    """The complete last reply event in the request."""
