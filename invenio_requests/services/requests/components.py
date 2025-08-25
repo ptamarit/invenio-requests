@@ -58,30 +58,46 @@ class RequestReviewersComponent(ServiceComponent):
     """Component for handling request reviewers."""
 
     def _reviewers_updated(self, previous_reviewers, new_reviewers):
-        """Determine the event type based on reviewers added or removed."""
-        prev_rev = set()
-        updated = []
-        for reviewer in previous_reviewers:
-            if "user" in reviewer:
-                prev_rev.add(f"user:{reviewer['user']}")
-            elif "group" in reviewer:
-                prev_rev.add(f"group:{reviewer['group']}")
-        for reviewer in new_reviewers:
-            if "user" in reviewer:
-                if f"user:{reviewer['user']}" not in prev_rev:
-                    updated.append(reviewer)
-            elif "group" in reviewer:
-                if f"group:{reviewer['group']}" not in prev_rev:
-                    updated.append(reviewer)
+        """Determine reviewers change type: added, removed, updated, unchanged."""
 
-        # NOTE this just supports adding OR removing at a time
-        # if both are done, we return "updated" for now
-        if len(previous_reviewers) > len(new_reviewers):
-            return "removed", updated
-        elif len(previous_reviewers) < len(new_reviewers):
-            return "added", updated
-        elif updated:
-            return "updated", updated
+        def _normalize(reviewers):
+            """Convert reviewers into a set of string identifiers."""
+            normalized = set()
+            for r in reviewers:
+                if "user" in r:
+                    normalized.add(f"user:{r['user']}")
+                elif "group" in r:
+                    normalized.add(f"group:{r['group']}")
+            return normalized
+
+        prev_set = _normalize(previous_reviewers)
+        new_set = _normalize(new_reviewers)
+
+        added = new_set - prev_set
+        removed = prev_set - new_set
+
+        if added and not removed:
+            return "added", [
+                r
+                for r in new_reviewers
+                if (
+                    ("user" in r and f"user:{r['user']}" in added)
+                    or ("group" in r and f"group:{r['group']}" in added)
+                )
+            ]
+        elif removed and not added:
+            return "removed", [
+                r
+                for r in previous_reviewers
+                if (
+                    ("user" in r and f"user:{r['user']}" in removed)
+                    or ("group" in r and f"group:{r['group']}" in removed)
+                )
+            ]
+        elif added and removed:
+            return "updated", list(new_reviewers)
+        else:
+            return "unchanged", list(new_reviewers)
 
     def _validate_reviewers(self, reviewers):
         """Validate the reviewers data."""
@@ -101,27 +117,44 @@ class RequestReviewersComponent(ServiceComponent):
                 _(f"You can only add up to {max_reviewers} reviewers.")
             )
 
-    def update(self, identity, data=None, record=None, **kwargs):
+    def _ensure_no_duplicates(self, reviewers):
+        """Ensure there are no duplicate reviewers.
+
+        The code is preserving the original order of reviewers.
+        """
+        seen = set()
+        unique_objs = []
+        for d in reviewers:
+            t = tuple(sorted(d.items()))
+            if t not in seen:
+                seen.add(t)
+                unique_objs.append(d)
+        return unique_objs
+
+    def update(self, identity, data=None, record=None, uow=None, **kwargs):
         """Update the reviewers of a request."""
-        if reviewers := data.get("reviewers", None):
-            self._validate_reviewers(reviewers)
+        if "reviewers" in data:
+            # ensure there are not duplicates
+            new_reviewers = self._ensure_no_duplicates(data["reviewers"])
+            self._validate_reviewers(new_reviewers)
             self.service.require_permission(identity, f"action_accept", request=record)
 
             event_type, updated_reviewers = self._reviewers_updated(
-                record.get("reviewers", []), reviewers
+                record.get("reviewers", []), new_reviewers
             )
-            event = ReviewersUpdatedType(
-                payload=dict(
-                    event="reviewers_updated",
-                    content=_(f"{event_type} a reviewer"),
-                    reviewers=updated_reviewers,
+            if not event_type == "unchanged":
+                event = ReviewersUpdatedType(
+                    payload=dict(
+                        event="reviewers_updated",
+                        content=_(f"{event_type} a reviewer"),
+                        reviewers=updated_reviewers,
+                    )
                 )
-            )
-            _data = dict(payload=event.payload)
-            current_events_service.create(
-                identity, record.id, _data, event, uow=self.uow
-            )
-            record["reviewers"] = reviewers
+                _data = dict(payload=event.payload)
+                current_events_service.create(
+                    identity, record.id, _data, event, uow=uow
+                )
+            record["reviewers"] = new_reviewers
 
 
 class RequestPayloadComponent(DataComponent):

@@ -54,7 +54,12 @@ from invenio_users_resources.services.schemas import (
 )
 from marshmallow import fields
 
-from invenio_requests.customizations import CommentEventType, LogEventType, RequestType
+from invenio_requests.customizations import (
+    CommentEventType,
+    LogEventType,
+    RequestType,
+    ReviewersUpdatedType,
+)
 from invenio_requests.notifications.builders import (
     CommentRequestEventCreateNotificationBuilder,
 )
@@ -125,6 +130,7 @@ def app_config(app_config):
     app_config["REQUESTS_REGISTERED_EVENT_TYPES"] = [
         LogEventType(),
         CommentEventType(),
+        ReviewersUpdatedType(),
     ]
 
     app_config["MAIL_DEFAULT_SENDER"] = "test@inveniosoftware.org"
@@ -204,7 +210,7 @@ def headers():
 def users(UserFixture, app, database):
     """Users."""
     users = {}
-    for r in ["user1", "user2", "user3"]:
+    for r in ["user1", "user2", "user3", "user4"]:
         u = UserFixture(
             email=f"{r}@example.org",
             password=r,

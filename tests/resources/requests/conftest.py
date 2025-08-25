@@ -31,7 +31,7 @@ def example_requests(app, users):
     """A few example requests."""
     svc = app.extensions["invenio-requests"].requests_service
 
-    u1, u2, u3 = [u.user for u in users.values()]
+    u1, u2, u3, _ = [u.user for u in users.values()]
     req1 = svc.create(
         sys_id, {"title": "first"}, RequestType, receiver=u1, creator=u3
     )._obj

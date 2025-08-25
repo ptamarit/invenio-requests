@@ -107,19 +107,15 @@ export const RequestReviewers = ({
         <Grid className="mt-0 mb-5">
           {selectedReviewers.length > 0 ? (
             selectedReviewers.map((reviewer) => (
-              <>
-                <Grid.Column width={14} className="pb-0">
-                  <React.Fragment key={reviewer.id}>
-                    {isResourceDeleted(reviewer) ? (
-                      <DeletedResource details={reviewer} />
-                    ) : (
-                      <>
-                        <EntityDetails userData={reviewer} details={reviewer} />
-                      </>
-                    )}
-                  </React.Fragment>
-                </Grid.Column>
-              </>
+              <Grid.Column width={14} className="pb-0" key={reviewer.id}>
+                <React.Fragment>
+                  {isResourceDeleted(reviewer) ? (
+                    <DeletedResource details={reviewer} />
+                  ) : (
+                    <EntityDetails userData={reviewer} details={reviewer} />
+                  )}
+                </React.Fragment>
+              </Grid.Column>
             ))
           ) : (
             <Grid.Column width={12} className="pb-0 pl-20">
