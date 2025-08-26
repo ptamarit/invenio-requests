@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v8.0.1 (released 2025-08-26)
+
+- reviewers: fix bug with removing the last assigned reviewers from a request
+
 Version v8.0.0 (released 2025-08-01)
 
 - feat: implement comprehensive reviewers functionality for requests
