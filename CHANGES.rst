@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v8.1.0 (released 2025-08-29)
+
+- labels: add record deletion label
+
 Version v8.0.1 (released 2025-08-26)
 
 - reviewers: fix bug with removing the last assigned reviewers from a request
