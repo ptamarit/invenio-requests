@@ -68,10 +68,17 @@ export const RequestAcceptButton = ({
   size,
   className,
 }) => {
-  const requestIsCommunitySubmission = requestType === "community-submission";
-  const buttonText = requestIsCommunitySubmission
-    ? i18next.t("Accept and publish")
-    : i18next.t("Accept");
+  let buttonText;
+  switch (requestType) {
+    case "community-submission":
+      buttonText = i18next.t("Accept and publish");
+      break;
+    case "record-deletion":
+      buttonText = i18next.t("Accept and delete");
+      break;
+    default:
+      buttonText = i18next.t("Accept");
+  }
   return (
     <Button
       icon="checkmark"

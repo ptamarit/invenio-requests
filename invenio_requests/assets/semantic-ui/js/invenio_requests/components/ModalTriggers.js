@@ -77,10 +77,17 @@ export const RequestAcceptModalTrigger = ({
   size,
   className,
 }) => {
-  const requestIsCommunitySubmission = requestType === "community-submission";
-  const text = requestIsCommunitySubmission
-    ? i18next.t("Accept and publish")
-    : i18next.t("Accept");
+  let text; // logic duplicated from Buttons.js for Dropdown text
+  switch (requestType) {
+    case "community-submission":
+      text = i18next.t("Accept and publish");
+      break;
+    case "record-deletion":
+      text = i18next.t("Accept and delete");
+      break;
+    default:
+      text = i18next.t("Accept");
+  }
   return (
     <MediaContextProvider>
       <Media greaterThanOrEqual="tablet">
