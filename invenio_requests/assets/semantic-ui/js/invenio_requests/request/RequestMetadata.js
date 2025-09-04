@@ -235,7 +235,7 @@ class RequestMetadata extends Component {
             </>
           )}
 
-          {request.status === "accepted" && request.topic?.record && (
+          {request.topic?.record && (
             <>
               <Divider />
               <Header as="h3" size="tiny">
