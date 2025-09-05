@@ -1,5 +1,5 @@
 ..
-    Copyright (C) 2021-2024 CERN.
+    Copyright (C) 2021-2025 CERN.
     Copyright (C) 2024-2025 Graz University of Technology.
 
     Invenio-Requests is free software; you can redistribute it and/or
@@ -8,6 +8,11 @@
 
 Changes
 =======
+
+Version v9.0.0 (released 2025-09-05)
+
+- setup: bump major version of invenio-users-resources
+- ui: improve record-deletion accept label
 
 Version v8.1.0 (released 2025-08-29)
 
@@ -20,7 +25,7 @@ Version v8.0.1 (released 2025-08-26)
 Version v8.0.0 (released 2025-08-01)
 
 - feat: implement comprehensive reviewers functionality for requests
-  
+
   * Add complete reviewers system for request assignment and management
   * Frontend: RequestReviewers React component with search and selection UI
   * Backend: RequestReviewersComponent for service layer reviewer management
