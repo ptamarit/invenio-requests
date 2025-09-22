@@ -9,6 +9,12 @@
 Changes
 =======
 
+Version v10.0.0 (released 2025-09-22)
+
+- global: add `Request.last_reply` systemfield
+    * Adds a computed and search-indexed field for getting the last reply
+      (i.e. the last comment event) for a request.
+
 Version v9.0.1 (released 2025-09-22)
 
 - chores: bump major version of react-overridable
