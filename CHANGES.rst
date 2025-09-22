@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v9.0.1 (released 2025-09-22)
+
+- chores: bump major version of react-overridable
+
 Version v9.0.0 (released 2025-09-05)
 
 - setup: bump major version of invenio-users-resources
