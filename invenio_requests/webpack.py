@@ -42,7 +42,7 @@ requests = WebpackThemeBundle(
                 "react": "^16.12.0",
                 "react-dom": "^16.11.0",
                 "yup": "^0.32.11",
-                "react-overridable": "^0.0.3",
+                "react-overridable": "^1.0.0",
                 "@semantic-ui-react/css-patch": "^1.0.0",
                 "redux": "^4.0.5",
                 "redux-devtools-extension": "^2.13.8",
