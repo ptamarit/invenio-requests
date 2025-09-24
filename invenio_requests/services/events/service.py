@@ -83,7 +83,16 @@ class RequestEventsService(RecordService):
         uow.register(RecordCommitOp(event, indexer=self.indexer))
 
         # Reindex the request to update events-related computed fields
-        uow.register(RecordIndexOp(request, indexer=requests_service.indexer))
+        # NOTE: We're not reindexing if the event is a deletion log event, since the
+        # associated request will anyways be deleted from the index. Ideally, instead of
+        # checking this here, the Unit of Work, should be able to optimize away the
+        # unecessary reindexing operations (i.e. if there's a RecordDeleteOp registered,
+        # all previous RecordIndexOps for the same record should be ignored).
+        is_delete_event = (
+            isinstance(event_type, LogEventType) or event_type is LogEventType
+        ) and (data.get("payload", {}).get("event") == "deleted")
+        if not is_delete_event:
+            uow.register(RecordIndexOp(request, indexer=requests_service.indexer))
 
         if notify and event_type is CommentEventType:
             uow.register(
