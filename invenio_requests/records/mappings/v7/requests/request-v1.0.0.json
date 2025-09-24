@@ -4,7 +4,7 @@
     "dynamic_templates": [
         {
           "creators": {
-            "path_match": "*.created_by.*",
+            "path_match": "*created_by.*",
             "mapping": {
               "type": "keyword"
             }
