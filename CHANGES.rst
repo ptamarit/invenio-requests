@@ -9,6 +9,11 @@
 Changes
 =======
 
+Version v10.0.1 (released 2025-09-24)
+
+- fix(events): avoid indexing request on delete event
+- mappings: fix dynamic template for `created_by`
+
 Version v10.0.0 (released 2025-09-22)
 
 - global: add `Request.last_reply` systemfield
