@@ -39,7 +39,7 @@ REQUESTS_ROUTES = {
 
 REQUESTS_SEARCH = {
     "facets": ["type", "status"],
-    "sort": ["bestmatch", "newest", "oldest"],
+    "sort": ["bestmatch", "newest", "oldest", "last_replied"],
 }
 """Requests search default configuration."""
 
@@ -55,6 +55,10 @@ REQUESTS_SORT_OPTIONS = {
     "oldest": dict(
         title=_("Oldest"),
         fields=["created"],
+    ),
+    "last_replied": dict(
+        title=_("Last replied"),
+        fields=["last_reply.created"],
     ),
 }
 """Definitions of available request sort options."""
