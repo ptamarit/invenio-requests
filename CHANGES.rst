@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v10.1.0 (released 2025-09-26)
+
+- UI: add record link to request metadata/details
+
 Version v10.0.1 (released 2025-09-24)
 
 - fix(events): avoid indexing request on delete event
