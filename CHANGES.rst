@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v10.1.1 (released 2025-09-30)
+
+- events: Adding component calls to RequestEventsService methods
+
 Version v10.1.0 (released 2025-09-26)
 
 - UI: add record link to request metadata/details
