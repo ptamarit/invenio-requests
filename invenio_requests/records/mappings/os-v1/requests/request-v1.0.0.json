@@ -141,6 +141,9 @@
             "enabled": false
           }
         }
+      },
+      "last_activity_at": {
+        "type": "date"
       }
     }
   }

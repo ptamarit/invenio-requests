@@ -9,6 +9,7 @@
 """Request resource tests."""
 
 import copy
+from datetime import timezone as tz
 
 
 def assert_api_response_json(expected_json, received_json):
@@ -159,6 +160,7 @@ def test_simple_request_flow(app, client_logged_as, headers, example_request):
         },
         "reviewers": [],
         "last_reply": None,
+        "last_activity_at": example_request.updated.replace(tzinfo=tz.utc).isoformat(),
     }
     assert_api_response(response, 200, expected_data)
 
@@ -178,6 +180,7 @@ def test_simple_request_flow(app, client_logged_as, headers, example_request):
                     "cancel": f"https://127.0.0.1:5000/api/requests/{id_}/actions/cancel",  # noqa
                 },
             },
+            "last_activity_at": response.json["updated"],
         }
     )
     assert_api_response(response, 200, expected_data)
@@ -197,6 +200,7 @@ def test_simple_request_flow(app, client_logged_as, headers, example_request):
                 "comments": f"https://127.0.0.1:5000/api/requests/{id_}/comments",
                 "actions": {},
             },
+            "last_activity_at": response.json["updated"],
         }
     )
     assert_api_response(response, 200, expected_data)

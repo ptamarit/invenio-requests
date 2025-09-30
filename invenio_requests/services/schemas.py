@@ -81,6 +81,10 @@ class RequestSchema(BaseRecordSchema):
 
     last_reply = fields.Nested(RequestEventSchema, dump_only=True)
 
+    last_activity_at = utils_fields.TZDateTime(
+        timezone=timezone.utc, format="iso", dump_only=True
+    )
+
     class Meta:
         """Schema meta."""
 

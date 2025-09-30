@@ -24,6 +24,7 @@ from .systemfields import (
     EventTypeField,
     ExpiredStateCalculatedField,
     IdentityField,
+    LastActivity,
     LastReply,
     RequestStateCalculatedField,
     RequestStatusField,
@@ -151,3 +152,6 @@ class Request(Record):
 
     last_reply = LastReply()
     """The complete last reply event in the request."""
+
+    last_activity_at = LastActivity()
+    """The last activity (derived from other fields)."""
