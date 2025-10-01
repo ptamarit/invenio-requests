@@ -9,6 +9,12 @@
 Changes
 =======
 
+Version v10.2.0 (released 2025-10-01)
+
+- perf(models): add an index to `request_events.request_id`
+- fix(systemfields): handle `None` cached values in calculated fields
+- feat(systemfields): add last activity field
+
 Version v10.1.1 (released 2025-09-30)
 
 - events: Adding component calls to RequestEventsService methods
