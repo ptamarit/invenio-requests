@@ -44,7 +44,7 @@ class RequestEventModel(db.Model, RecordMetadataBase):
 
     type = db.Column(db.String(1), nullable=False)
     request_id = db.Column(
-        UUIDType, db.ForeignKey(RequestMetadata.id, ondelete="CASCADE")
+        UUIDType, db.ForeignKey(RequestMetadata.id, ondelete="CASCADE"), index=True
     )
     request = db.relationship(RequestMetadata)
 
