@@ -20,6 +20,8 @@ from ...customizations import CommentEventType
 class CachedCalculatedField(CalculatedField):
     """Cache-aware calculated field."""
 
+    CACHE_MISS = object()
+
     def __init__(self, key=None, use_cache=True):
         """Constructor."""
         super().__init__(key=key, use_cache=use_cache)
@@ -33,6 +35,7 @@ class CachedCalculatedField(CalculatedField):
         obj_cache = getattr(record, "_obj_cache", None)
         if obj_cache is not None and self.attr_name in obj_cache:
             return obj_cache[self.attr_name]
+        return self.CACHE_MISS
 
 
 class LastReply(CachedCalculatedField):
@@ -94,7 +97,9 @@ class LastActivity(CachedCalculatedField):
 
     def calculate(self, record):
         """Calculate the last activity."""
-        super().calculate(record)
+        res = super().calculate(record)
+        if res is not self.CACHE_MISS:
+            return res
 
         activity_dates = [record.model.updated]
 
