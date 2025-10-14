@@ -35,6 +35,6 @@ export const CollapsedHeader = ({ canUpdateReviewers, onOpen, label }) => {
 
 CollapsedHeader.propTypes = {
   canUpdateReviewers: PropTypes.bool.isRequired,
-  onOpen: PropTypes.func,
+  onOpen: PropTypes.func.isRequired,
   label: PropTypes.string.isRequired,
 };

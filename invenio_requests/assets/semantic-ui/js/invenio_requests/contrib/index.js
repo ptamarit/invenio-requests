@@ -21,7 +21,7 @@ import {
   LabelTypeCommunitySubcommunityInvitation,
   LabelTypeCommunityMembershipRequest,
   LabelTypeRecordDeletion,
-  LabelTypeFileModification
+  LabelTypeFileModification,
 } from "@js/invenio_requests/contrib";
 import {
   RequestAcceptButton,

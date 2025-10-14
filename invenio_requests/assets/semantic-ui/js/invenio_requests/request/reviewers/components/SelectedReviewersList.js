@@ -25,7 +25,7 @@ export const SelectedReviewersList = ({
       <Header fluid as="h4" className="mb-5" size="tiny">
         {i18next.t(`Add up to ${maxReviewers} reviewers`)}
       </Header>
-      {selectedReviewers.length == 0 ? (
+      {selectedReviewers.length === 0 ? (
         <HeaderSubheader className="pl-2 pt-2">
           {i18next.t("No reviewers selected")}
         </HeaderSubheader>

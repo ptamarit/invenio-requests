@@ -10,8 +10,6 @@ import PropTypes from "prop-types";
 import React from "react";
 import { Button, Search } from "semantic-ui-react";
 
-const isResourceDeleted = (details) => details.is_ghost === true;
-
 // Renders the filter buttons and search input.
 export const ReviewerSearch = ({
   searchType,
