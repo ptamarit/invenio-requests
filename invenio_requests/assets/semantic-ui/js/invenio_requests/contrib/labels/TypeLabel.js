@@ -68,3 +68,9 @@ export const LabelTypeRecordDeletion = (props) => (
     {i18next.t("Record deletion")}
   </Label>
 );
+
+export const LabelTypeFileModification = (props) => (
+  <Label horizontal className="primary theme-secondary" size="small">
+    {i18next.t("File modification")}
+  </Label>
+);

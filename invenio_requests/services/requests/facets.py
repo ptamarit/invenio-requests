@@ -30,6 +30,7 @@ type = TermsFacet(
         # Moderation
         "user-moderation": _("User moderation"),
         "record-deletion": _("Record deletion"),
+        "file-modification": _("File modification"),
         # Instance-specific labels which ideally should not be listed here
         "community-manage-record": _("Community manage record"),
         "legacy-record-upgrade": _("Upgrade legacy record"),

@@ -21,6 +21,7 @@ import {
   LabelTypeCommunitySubcommunityInvitation,
   LabelTypeCommunityMembershipRequest,
   LabelTypeRecordDeletion,
+  LabelTypeFileModification
 } from "@js/invenio_requests/contrib";
 import {
   RequestAcceptButton,
@@ -53,6 +54,7 @@ export const defaultContribComponents = {
   [`RequestTypeLabel.layout.community-membership-request`]:
     LabelTypeCommunityMembershipRequest,
   [`RequestTypeLabel.layout.record-deletion`]: LabelTypeRecordDeletion,
+  [`RequestTypeLabel.layout.file-modification`]: LabelTypeFileModification,
   [`RequestStatusLabel.layout.submitted`]: LabelStatusSubmit,
   [`RequestStatusLabel.layout.deleted`]: LabelStatusDelete,
   [`RequestStatusLabel.layout.accepted`]: LabelStatusAccept,
