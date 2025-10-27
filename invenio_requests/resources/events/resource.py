@@ -57,11 +57,13 @@ class RequestCommentsResource(RecordResource):
         routes = self.config.routes
         return [
             route("POST", routes["list"], self.create),
+            route("POST", routes["reply"], self.reply),
             route("GET", routes["item"], self.read),
             route("PUT", routes["item"], self.update),
             route("DELETE", routes["item"], self.delete),
             route("GET", routes["timeline"], self.search),
             route("GET", routes["timeline_focused"], self.focused_list),
+            route("GET", routes["replies"], self.get_replies),
         ]
 
     @list_view_args_parser
@@ -69,11 +71,30 @@ class RequestCommentsResource(RecordResource):
     @data_parser
     @response_handler()
     def create(self):
-        """Create a comment."""
+        """Create a top-level comment (no parent)."""
         data = deepcopy(resource_requestctx.data) if resource_requestctx.data else {}
         item = self.service.create(
             identity=g.identity,
             request_id=resource_requestctx.view_args["request_id"],
+            data=data,
+            event_type=CommentEventType,
+            expand=resource_requestctx.args.get("expand", False),
+        )
+        return item.to_dict(), 201
+
+    @item_view_args_parser
+    @request_extra_args
+    @data_parser
+    @response_handler()
+    def reply(self):
+        """Create a reply to a comment."""
+        data = deepcopy(resource_requestctx.data) if resource_requestctx.data else {}
+        # Extract parent_id from the route (comment_id in the URL)
+        parent_id = resource_requestctx.view_args["comment_id"]
+        item = self.service.create(
+            identity=g.identity,
+            request_id=resource_requestctx.view_args["request_id"],
+            parent_id=parent_id,
             data=data,
             event_type=CommentEventType,
             expand=resource_requestctx.args.get("expand", False),
@@ -152,6 +173,19 @@ class RequestCommentsResource(RecordResource):
             request_id=resource_requestctx.view_args["request_id"],
             focus_event_id=resource_requestctx.args.get("focus_event_id"),
             page_size=resource_requestctx.args.get("size"),
+        )
+        return hits.to_dict(), 200
+
+    @item_view_args_parser
+    @request_extra_args
+    @search_args_parser
+    @response_handler(many=True)
+    def get_replies(self):
+        """Get paginated replies for a specific comment."""
+        hits = self.service.get_comment_replies(
+            identity=g.identity,
+            parent_id=resource_requestctx.view_args["comment_id"],
+            params=resource_requestctx.args,
             search_preference=search_preference(),
             expand=resource_requestctx.args.get("expand", False),
         )

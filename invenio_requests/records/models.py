@@ -12,10 +12,11 @@ import uuid
 
 from invenio_db import db
 from invenio_records.models import RecordMetadataBase
-from sqlalchemy import func
+from sqlalchemy import ForeignKeyConstraint, UniqueConstraint, func
 from sqlalchemy.dialects import mysql
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.orm import backref
 from sqlalchemy.sql import text
 from sqlalchemy.types import String
 from sqlalchemy_utils import UUIDType

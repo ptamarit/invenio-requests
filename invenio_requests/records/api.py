@@ -15,9 +15,14 @@ from invenio_records.dumpers import SearchDumper
 from invenio_records.systemfields import ConstantField, DictField, ModelField
 from invenio_records_resources.records.api import Record
 from invenio_records_resources.records.systemfields import IndexField
+from werkzeug.utils import cached_property
 
 from ..customizations import RequestState as State
-from .dumpers import CalculatedFieldDumperExt, GrantTokensDumperExt
+from .dumpers import (
+    CalculatedFieldDumperExt,
+    GrantTokensDumperExt,
+    ParentChildDumperExt,
+)
 from .models import RequestEventModel, RequestMetadata
 from .systemfields import (
     EntityReferenceField,
@@ -51,6 +56,13 @@ class RequestEvent(Record):
 
     model_cls = RequestEventModel
 
+    dumper = SearchDumper(
+        extensions=[
+            ParentChildDumperExt(),
+        ]
+    )
+    """Search dumper with parent-child relationship extension."""
+
     # Systemfields
     metadata = None
 
@@ -82,6 +94,19 @@ class RequestEvent(Record):
 
     created_by = EntityReferenceField("created_by", check_referenced)
     """Who created the event."""
+
+    parent_id = DictField("parent_id")
+    """The parent event ID for parent-child relationships."""
+
+    def pre_commit(self):
+        """Hook called before committing the record.
+
+        Validates that children are allowed for this event type.
+        """
+        from .validators import validate_children_allowed
+
+        validate_children_allowed(self)
+        super().pre_commit()
 
 
 class Request(Record):

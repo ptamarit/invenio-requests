@@ -135,3 +135,10 @@ REQUESTS_REVIEWERS_MAX_NUMBER = 15
 
 REQUESTS_LOCKING_ENABLED = False
 """Enable locking/unlocking for request conversations."""
+
+REQUESTS_COMMENT_PREVIEW_LIMIT = 5
+"""Number of most recent child comments to inline in parent's search index.
+
+This limits the size of indexed documents when comments have many replies.
+Additional replies can be loaded via pagination.
+"""

@@ -140,6 +140,9 @@
           "payload": {
             "type": "object",
             "enabled": false
+          },
+          "parent_id": {
+            "type": "keyword"
           }
         }
       },

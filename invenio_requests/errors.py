@@ -90,3 +90,37 @@ class RequestEventPermissionError(PermissionDeniedError):
     def __str__(self):
         """Return str(self)."""
         return self.description
+
+
+class ChildrenNotSupportedError(Exception):
+    """Exception raised when children are attempted on an event type that doesn't support it."""
+
+    def __init__(self, event_type, message=None):
+        """Constructor.
+
+        :param event_type: The event type that doesn't support children.
+        :param message: Optional custom error message.
+        """
+        self.event_type = event_type
+        self.message = message or _(
+            (f"Event type '{event_type}' does not support event replies.")
+        )
+        super().__init__(self.message)
+
+
+class NestedChildrenNotAllowedError(Exception):
+    """Exception raised when attempting to create nested children (reply to a reply)."""
+
+    def __init__(self, message=None):
+        """Constructor.
+
+        :param message: Optional custom error message.
+        """
+        self.message = message or _(
+            (
+                "Nested children are not allowed. "
+                "You cannot reply to a comment that is already a reply. "
+                "Only one level of parent-child relationships is supported."
+            )
+        )
+        super().__init__(self.message)

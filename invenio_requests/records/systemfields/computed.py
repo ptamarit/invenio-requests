@@ -73,7 +73,10 @@ class LastReply(CachedCalculatedField):
         """Called before a record is dumped."""
         last_reply = getattr(record, self.attr_name)
         if last_reply:
-            data[self.attr_name] = last_reply.dumps()
+            dumped_reply = last_reply.dumps()
+            # Remove search-index-only fields that shouldn't be embedded
+            dumped_reply.pop("parent_child", None)
+            data[self.attr_name] = dumped_reply
         else:
             data[self.attr_name] = None
 

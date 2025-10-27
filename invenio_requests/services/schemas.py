@@ -39,6 +39,8 @@ class RequestEventSchema(BaseRecordSchema):
     type = EventTypeMarshmallowField(dump_only=True)
     created_by = fields.Dict(dump_only=True)
     permissions = fields.Method("get_permissions", dump_only=True)
+    parent_id = fields.String(allow_none=True, dump_only=True)
+    children = fields.List(fields.Dict(), dump_only=True)
 
     def get_permissions(self, obj):
         """Return permissions to act on comments or empty dict."""

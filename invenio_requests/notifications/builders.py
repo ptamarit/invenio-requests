@@ -20,7 +20,10 @@ from invenio_users_resources.notifications.generators import (
 
 from invenio_requests.notifications.filters import UserRecipientFilter
 
-from .generators import RequestParticipantsRecipient
+from .generators import (
+    CommentRepliesParticipantsRecipient,
+    RequestParticipantsRecipient,
+)
 
 
 class CommentRequestEventCreateNotificationBuilder(NotificationBuilder):
@@ -66,4 +69,20 @@ class CommentRequestEventCreateNotificationBuilder(NotificationBuilder):
 
     recipient_backends = [
         UserEmailBackend(),
+    ]
+
+
+class CommentRequestEventReplyNotificationBuilder(
+    CommentRequestEventCreateNotificationBuilder
+):
+    """Notification builder for reply creation.
+
+    Notifies only participants in the specific comment thread
+    (parent author and other reply authors), not all request participants.
+    """
+
+    type = "comment-request-event.reply"
+
+    recipients = [
+        CommentRepliesParticipantsRecipient(event_key="request_event", key="request"),
     ]

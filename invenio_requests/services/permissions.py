@@ -123,6 +123,9 @@ class PermissionPolicy(RecordPermissionPolicy):
         ),
     ]
 
+    # If you can create a comment, you can reply to a comment.
+    can_reply_comment = can_create_comment
+
     # Needed by the search events permission because a permission_action must
     # be provided to create_search(), but the event search is already protected
     # by request's can_read, thus we use a dummy permission for the search.

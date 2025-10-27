@@ -47,6 +47,15 @@
       "payload": {
         "type": "object",
         "enabled": false
+      },
+      "parent_id": {
+        "type": "keyword"
+      },
+      "parent_child": {
+        "type": "join",
+        "relations": {
+          "parent": "child"
+        }
       }
     }
   }

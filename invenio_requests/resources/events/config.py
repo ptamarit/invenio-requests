@@ -17,7 +17,12 @@ from invenio_records_resources.resources import (
 )
 from marshmallow import fields
 
-from ...errors import RequestEventPermissionError, RequestLockedError
+from ...errors import (
+    ChildrenNotSupportedError,
+    NestedChildrenNotAllowedError,
+    RequestEventPermissionError,
+    RequestLockedError,
+)
 
 
 class RequestCommentsSearchRequestArgsSchema(SearchRequestArgsSchema):
@@ -34,6 +39,8 @@ class RequestCommentsResourceConfig(RecordResourceConfig):
     routes = {
         "list": "/<request_id>/comments",
         "item": "/<request_id>/comments/<comment_id>",
+        "reply": "/<request_id>/comments/<comment_id>/reply",
+        "replies": "/<request_id>/comments/<comment_id>/replies",
         "timeline": "/<request_id>/timeline",
         "timeline_focused": "/<request_id>/timeline_focused",
     }
@@ -71,6 +78,18 @@ class RequestCommentsResourceConfig(RecordResourceConfig):
             lambda e: HTTPJSONException(
                 code=403,
                 description=e.description,
+            )
+        ),
+        NestedChildrenNotAllowedError: create_error_handler(
+            lambda e: HTTPJSONException(
+                code=400,
+                description=str(e),
+            )
+        ),
+        ChildrenNotSupportedError: create_error_handler(
+            lambda e: HTTPJSONException(
+                code=400,
+                description=str(e),
             )
         ),
     }

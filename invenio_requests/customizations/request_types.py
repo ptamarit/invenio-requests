@@ -21,7 +21,10 @@ from invenio_records_resources.services.references import (
     MultipleEntityReferenceBaseSchema,
 )
 
-from ..notifications.builders import CommentRequestEventCreateNotificationBuilder
+from ..notifications.builders import (
+    CommentRequestEventCreateNotificationBuilder,
+    CommentRequestEventReplyNotificationBuilder,
+)
 from ..proxies import current_requests
 from .actions import (
     AcceptAction,
@@ -155,6 +158,7 @@ class RequestType:
     """
 
     comment_notification_builder = CommentRequestEventCreateNotificationBuilder
+    reply_notification_builder = CommentRequestEventReplyNotificationBuilder
 
     needs_context = None
     """The context for needs.

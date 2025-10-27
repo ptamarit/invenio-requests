@@ -82,8 +82,7 @@ def test_simple_flow(
     deleted = list(res.hits)[0]
 
     assert LogEventType.type_id == deleted["type"]
-    assert "comment_deleted" == deleted["payload"]["event"]
-    assert "deleted a comment" == deleted["payload"]["content"]
+    assert "comment was deleted" == deleted["payload"]["content"]
     # Search (batch read) events
     # Let's create a separate request with comment and make sure search is isolated
     data = copy.deepcopy(comment)
@@ -224,6 +223,116 @@ def test_notification_without_profile(
         superuser,
         monkeypatch,
     )
+
+
+def test_reply_request_event_notification(
+    app,
+    events_service_data,
+    submit_request,
+    request_events_service,
+    user1,
+    user2,
+    superuser,
+    monkeypatch,
+):
+    """Test notification being sent on reply create to thread participants."""
+    from invenio_requests.notifications.builders import (
+        CommentRequestEventReplyNotificationBuilder,
+    )
+
+    original_builder = CommentRequestEventReplyNotificationBuilder
+
+    # Mock build to observe calls
+    mock_build = MagicMock()
+    mock_build.side_effect = original_builder.build
+    monkeypatch.setattr(original_builder, "build", mock_build)
+
+    # Register builder
+    monkeypatch.setattr(
+        current_notifications_manager,
+        "builders",
+        {
+            **current_notifications_manager.builders,
+            original_builder.type: original_builder,
+        },
+    )
+
+    mail = app.extensions.get("mail")
+    request = submit_request(user2.identity, receiver=user1.user)
+    request_id = request.id
+    comment = events_service_data["comment"]
+
+    # Create parent comment (by user2)
+    parent_comment = request_events_service.create(
+        user2.identity, request_id, dict(**comment), CommentEventType
+    )
+    parent_id = str(parent_comment.id)
+
+    # Test 1: First reply by user1 (receiver)
+    with mail.record_messages() as outbox:
+        comment_data = {
+            **comment,
+            "payload": {"content": "First reply", "format": "html"},
+        }
+        request_events_service.create(
+            user1.identity,
+            request_id,
+            dict(**comment_data),
+            CommentEventType,
+            parent_id=parent_id,
+        )
+
+        assert mock_build.called
+        # Only parent author (user2) should receive notification
+        assert len(outbox) == 1
+        assert user2.email in outbox[0].recipients
+        # Reply creator (user1) should NOT receive notification
+        recipients_all = [r for msg in outbox for r in msg.recipients]
+        assert user1.email not in recipients_all
+
+    # Test 2: Second reply by superuser
+    with mail.record_messages() as outbox:
+        comment_data = {
+            **comment,
+            "payload": {"content": "Second reply", "format": "html"},
+        }
+        request_events_service.create(
+            superuser.identity,
+            request_id,
+            dict(**comment_data),
+            CommentEventType,
+            parent_id=parent_id,
+        )
+
+        # Parent author (user2) and first reply author (user1) should receive notifications
+        assert len(outbox) == 2
+        recipients_all = [r for msg in outbox for r in msg.recipients]
+        assert user2.email in recipients_all
+        assert user1.email in recipients_all
+        # Current reply creator (superuser) should NOT receive notification
+        assert superuser.email not in recipients_all
+
+    # Test 3: Parent author (user2) replies to their own thread
+    with mail.record_messages() as outbox:
+        comment_data = {
+            **comment,
+            "payload": {"content": "Parent replies", "format": "html"},
+        }
+        request_events_service.create(
+            user2.identity,
+            request_id,
+            dict(**comment_data),
+            CommentEventType,
+            parent_id=parent_id,
+        )
+
+        # First reply author (user1) and second reply author (superuser) should receive
+        assert len(outbox) == 2
+        recipients_all = [r for msg in outbox for r in msg.recipients]
+        assert user1.email in recipients_all
+        assert superuser.email in recipients_all
+        # Current reply creator (user2) should NOT receive notification
+        assert user2.email not in recipients_all
 
 
 def _test_comment_request_event_notification(

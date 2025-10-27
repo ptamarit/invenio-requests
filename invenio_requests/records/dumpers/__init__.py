@@ -9,8 +9,10 @@
 
 from .calculated import CalculatedFieldDumperExt
 from .granttokens import GrantTokensDumperExt
+from .parentchild import ParentChildDumperExt
 
 __all__ = (
     "CalculatedFieldDumperExt",
     "GrantTokensDumperExt",
+    "ParentChildDumperExt",
 )

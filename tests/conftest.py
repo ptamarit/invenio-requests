@@ -62,6 +62,7 @@ from invenio_requests.customizations import (
 )
 from invenio_requests.notifications.builders import (
     CommentRequestEventCreateNotificationBuilder,
+    CommentRequestEventReplyNotificationBuilder,
 )
 from invenio_requests.proxies import current_requests
 
@@ -144,6 +145,7 @@ def app_config(app_config):
     # Specifying dummy builders to avoid raising errors for most tests. Extend as needed.
     app_config["NOTIFICATIONS_BUILDERS"] = {
         CommentRequestEventCreateNotificationBuilder.type: DummyNotificationBuilder,
+        CommentRequestEventReplyNotificationBuilder.type: DummyNotificationBuilder,
     }
 
     # Specifying default resolvers. Will only be used in specific test cases.

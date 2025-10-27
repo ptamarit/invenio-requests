@@ -21,6 +21,9 @@
     },
     "type": {
       "type": "string"
+    },
+    "parent_id": {
+      "$ref": "local://definitions-v1.0.0.json#/identifier"
     }
   }
 }

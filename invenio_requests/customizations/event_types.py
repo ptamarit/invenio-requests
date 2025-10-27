@@ -46,6 +46,13 @@ class EventType:
     payload_required = False
     """Require the event payload."""
 
+    allow_children = False
+    """Allow this event type to have children (parent-child relationships).
+
+    If True, events of this type can have a parent_id and children.
+    If False, attempting to set a parent_id will raise an error.
+    """
+
     def __init__(self, payload=None):
         """Constructor."""
         self.payload = payload or {}
@@ -161,6 +168,9 @@ class CommentEventType(EventType):
     """Comment event type."""
 
     type_id = "C"
+
+    allow_children = True
+    """Comments support parent-child relationships (replies to comments)."""
 
     def payload_schema():
         """Return payload schema as a dictionary."""
