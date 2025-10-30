@@ -10,11 +10,14 @@
 
 """RequestEvents Service."""
 
+import sqlalchemy.exc
 from flask_principal import AnonymousIdentity
 from invenio_i18n import _
 from invenio_notifications.services.uow import NotificationOp
 from invenio_records_resources.services import RecordService, ServiceSchemaWrapper
 from invenio_records_resources.services.base.links import LinksTemplate
+from invenio_records_resources.services.errors import PermissionDeniedError
+from invenio_records_resources.services.records.params import PaginationParam
 from invenio_records_resources.services.uow import (
     RecordCommitOp,
     RecordIndexOp,
@@ -42,6 +45,14 @@ class RequestEventsService(RecordService):
     def expandable_fields(self):
         """Get expandable fields."""
         return [EntityResolverExpandableField("created_by")]
+
+    def links_tpl_factory(self, links, **context):
+        """Include context information in the link template.
+
+        This way, the link URLs can be contextualised depending e.g. on the type of the event's
+        parent request.
+        """
+        return LinksTemplate(links, context=context)
 
     @unit_of_work()
     def create(
@@ -117,7 +128,9 @@ class RequestEventsService(RecordService):
             identity,
             event,
             schema=schema,
-            links_tpl=self.links_item_tpl,
+            links_tpl=self.links_tpl_factory(
+                self.config.links_item, request_type=str(request.type)
+            ),
             expandable_fields=self.expandable_fields,
             expand=expand,
         )
@@ -134,7 +147,9 @@ class RequestEventsService(RecordService):
             identity,
             event,
             schema=self._wrap_schema(event.type.marshmallow_schema()),
-            links_tpl=self.links_item_tpl,
+            links_tpl=self.links_tpl_factory(
+                self.config.links_item, request_type=str(request.type)
+            ),
             expandable_fields=self.expandable_fields,
             expand=expand,
         )
@@ -181,7 +196,9 @@ class RequestEventsService(RecordService):
             identity,
             event,
             schema=schema,
-            links_tpl=self.links_item_tpl,
+            links_tpl=self.links_tpl_factory(
+                self.config.links_item, request_type=str(request.type)
+            ),
             expandable_fields=self.expandable_fields,
             expand=expand,
         )
@@ -241,7 +258,6 @@ class RequestEventsService(RecordService):
         """Search for events for a given request matching the querystring."""
         params = params or {}
         params.setdefault("sort", "oldest")
-
         expand = kwargs.pop("expand", False)
 
         # Permissions - guarded by the request's can_read.
@@ -249,7 +265,7 @@ class RequestEventsService(RecordService):
         self.require_permission(identity, "read", request=request)
 
         # Prepare and execute the search
-        search = self._search(
+        search_result = self._search(
             "search",
             identity,
             params,
@@ -257,8 +273,7 @@ class RequestEventsService(RecordService):
             permission_action="unused",
             extra_filter=dsl.Q("term", request_id=str(request.id)),
             **kwargs,
-        )
-        search_result = search.execute()
+        ).execute()
 
         return self.result_list(
             self,
@@ -269,7 +284,110 @@ class RequestEventsService(RecordService):
                 self.config.links_search,
                 context={"request_id": str(request.id), "args": params},
             ),
-            links_item_tpl=self.links_item_tpl,
+            links_item_tpl=self.links_tpl_factory(
+                self.config.links_item, request_type=str(request.type)
+            ),
+            expandable_fields=self.expandable_fields,
+            expand=expand,
+        )
+
+    def focused_list(
+        self,
+        identity,
+        request_id,
+        focus_event_id,
+        page_size,
+        expand=False,
+        search_preference=None,
+    ):
+        """Return a page of results focused on a given event, or the first page if the event is not found."""
+        # Permissions - guarded by the request's can_read.
+        request = self._get_request(request_id)
+        self.require_permission(identity, "read", request=request)
+
+        # If a specific event ID is requested, we need to work out the corresponding page number.
+        focus_event = None
+        try:
+            focus_event = self._get_event(focus_event_id)
+            # Make sure the event belongs to the request, otherwise the `require_permission` call above
+            # might not be valid for this particular event.
+            if str(focus_event.request_id) != str(request_id):
+                raise PermissionDeniedError()
+        except sqlalchemy.exc.NoResultFound:
+            # Silently ignore
+            pass
+
+        params = {"sort": "oldest", "size": page_size}
+        search = self._search(
+            "search",
+            identity,
+            params,
+            search_preference,
+            permission_action="unused",
+            extra_filter=dsl.Q("term", request_id=str(request.id)),
+            versioning=False,
+        )
+
+        page = 1
+        if focus_event is not None:
+            num_older_than_event = search.filter(
+                "range", created={"lt": focus_event.created}
+            ).count()
+            page = num_older_than_event // page_size + 1
+
+        # Re run the pagination param interpreter to update the search with the new page number
+        params.update(page=page)
+        search = PaginationParam(self.config.search).apply(identity, search, params)
+
+        # We deactivated versioning before (it doesn't apply for count queries) so we need to re-enable it.
+        search_result = search.params(version=True).execute()
+        return self.result_list(
+            self,
+            identity,
+            search_result,
+            params,
+            links_tpl=LinksTemplate(
+                self.config.links_search,
+                context={"request_id": str(request.id), "args": params},
+            ),
+            links_item_tpl=self.links_tpl_factory(
+                self.config.links_item, request_type=str(request.type)
+            ),
+            expandable_fields=self.expandable_fields,
+            expand=expand,
+        )
+
+    def scan(
+        self,
+        identity,
+        request_id,
+        params=None,
+        search_preference=None,
+        expand=False,
+        **kwargs
+    ):
+        """Scan for events matching the querystring."""
+        request = self._get_request(request_id)
+        self.require_permission(identity, "read", request=request)
+
+        # Prepare and execute the search as scan()
+        params = params or {}
+        search_result = self._search(
+            "scan", identity, params, search_preference, **kwargs
+        ).scan()
+
+        return self.result_list(
+            self,
+            identity,
+            search_result,
+            params,
+            links_tpl=LinksTemplate(
+                self.config.links_search,
+                context={"request_id": str(request.id), "args": params},
+            ),
+            links_item_tpl=self.links_tpl_factory(
+                self.config.links_item, request_type=str(request.type)
+            ),
             expandable_fields=self.expandable_fields,
             expand=expand,
         )

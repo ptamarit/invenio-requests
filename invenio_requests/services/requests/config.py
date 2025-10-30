@@ -107,6 +107,7 @@ class RequestsServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         "self_html": RequestLink("{+ui}/requests/{id}"),
         "comments": RequestLink("{+api}/requests/{id}/comments"),
         "timeline": RequestLink("{+api}/requests/{id}/timeline"),
+        "timeline_focused": RequestLink("{+api}/requests/{id}/timeline_focused"),
     }
     links_search = pagination_links("{+api}/requests{?args*}")
     links_user_requests_search = pagination_links("{+api}/user/requests{?args*}")

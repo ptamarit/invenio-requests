@@ -153,6 +153,7 @@ def test_simple_request_flow(app, client_logged_as, headers, example_request):
             "self": f"https://127.0.0.1:5000/api/requests/{id_}",
             "self_html": f"https://127.0.0.1:5000/requests/{id_}",
             "timeline": f"https://127.0.0.1:5000/api/requests/{id_}/timeline",
+            "timeline_focused": f"https://127.0.0.1:5000/api/requests/{id_}/timeline_focused",
             "comments": f"https://127.0.0.1:5000/api/requests/{id_}/comments",
             "actions": {
                 "submit": f"https://127.0.0.1:5000/api/requests/{id_}/actions/submit",
@@ -175,6 +176,7 @@ def test_simple_request_flow(app, client_logged_as, headers, example_request):
                 "self": f"https://127.0.0.1:5000/api/requests/{id_}",
                 "self_html": f"https://127.0.0.1:5000/requests/{id_}",
                 "timeline": f"https://127.0.0.1:5000/api/requests/{id_}/timeline",
+                "timeline_focused": f"https://127.0.0.1:5000/api/requests/{id_}/timeline_focused",
                 "comments": f"https://127.0.0.1:5000/api/requests/{id_}/comments",
                 "actions": {
                     "cancel": f"https://127.0.0.1:5000/api/requests/{id_}/actions/cancel",  # noqa
@@ -197,6 +199,7 @@ def test_simple_request_flow(app, client_logged_as, headers, example_request):
                 "self": f"https://127.0.0.1:5000/api/requests/{id_}",
                 "self_html": f"https://127.0.0.1:5000/requests/{id_}",
                 "timeline": f"https://127.0.0.1:5000/api/requests/{id_}/timeline",
+                "timeline_focused": f"https://127.0.0.1:5000/api/requests/{id_}/timeline_focused",
                 "comments": f"https://127.0.0.1:5000/api/requests/{id_}/comments",
                 "actions": {},
             },

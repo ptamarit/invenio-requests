@@ -57,6 +57,7 @@ class RequestParticipantsRecipient(RecipientGenerator):
 
         # fetching all request events to get involved users
         request_events = current_events_service.scan(
+            request_id=request["id"],
             identity=system_identity,
             extra_filter=dsl.Q("term", request_id=request["id"]),
         )

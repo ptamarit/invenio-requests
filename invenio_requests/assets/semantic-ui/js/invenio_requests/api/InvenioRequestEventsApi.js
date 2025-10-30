@@ -4,6 +4,7 @@
 // Invenio RDM Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 import { http } from "react-invenio-forms";
+import { i18next } from "@translations/invenio_requests/i18next";
 
 export class RequestEventsLinksExtractor {
   #links;
@@ -14,9 +15,24 @@ export class RequestEventsLinksExtractor {
 
   get eventUrl() {
     if (!this.#links.self) {
-      throw TypeError("Self link missing from resource.");
+      throw TypeError(
+        i18next.t("{{link_name}} link missing from resource.", {
+          link_name: "Self",
+        })
+      );
     }
     return this.#links.self;
+  }
+
+  get eventHtmlUrl() {
+    if (!this.#links.self_html) {
+      throw TypeError(
+        i18next.t("{{link_name}} link missing from resource.", {
+          link_name: "Self HTML",
+        })
+      );
+    }
+    return this.#links.self_html;
   }
 }
 

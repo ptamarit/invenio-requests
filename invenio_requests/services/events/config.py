@@ -18,6 +18,10 @@ from invenio_records_resources.services.base.config import ConfiguratorMixin, Fr
 from invenio_records_resources.services.records.links import pagination_links
 from invenio_records_resources.services.records.results import RecordItem, RecordList
 
+from invenio_requests.proxies import (
+    current_request_type_registry,
+)
+
 from ...records.api import Request, RequestEvent
 from ..permissions import PermissionPolicy
 from ..schemas import RequestEventSchema
@@ -67,9 +71,11 @@ class RequestEventLink(Link):
     """Link variables setter for RequestEvent links."""
 
     @staticmethod
-    def vars(record, vars):
+    def vars(obj, vars):
         """Variables for the URI template."""
-        vars.update({"id": record.id, "request_id": record.request_id})
+        request_type = current_request_type_registry.lookup(vars["request_type"])
+        vars.update({"id": obj.id, "request_id": obj.request_id})
+        vars.update(request_type._update_link_config(**vars))
 
 
 class RequestEventsServiceConfig(RecordServiceConfig, ConfiguratorMixin):
@@ -90,6 +96,7 @@ class RequestEventsServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     # ResultItem configurations
     links_item = {
         "self": RequestEventLink("{+api}/requests/{request_id}/comments/{id}"),
+        "self_html": RequestEventLink("{+ui}/requests/{request_id}#commentevent-{id}"),
     }
     links_search = pagination_links("{+api}/requests/{request_id}/timeline{?args*}")
 

@@ -10,8 +10,17 @@
 
 """RequestEvent Resource Configuration."""
 
-from invenio_records_resources.resources import RecordResourceConfig
+from invenio_records_resources.resources import (
+    RecordResourceConfig,
+    SearchRequestArgsSchema,
+)
 from marshmallow import fields
+
+
+class RequestCommentsSearchRequestArgsSchema(SearchRequestArgsSchema):
+    """Add parameter to parse tags."""
+
+    focus_event_id = fields.UUID()
 
 
 class RequestCommentsResourceConfig(RecordResourceConfig):
@@ -23,6 +32,7 @@ class RequestCommentsResourceConfig(RecordResourceConfig):
         "list": "/<request_id>/comments",
         "item": "/<request_id>/comments/<comment_id>",
         "timeline": "/<request_id>/timeline",
+        "timeline_focused": "/<request_id>/timeline_focused",
     }
 
     # Input
@@ -36,6 +46,8 @@ class RequestCommentsResourceConfig(RecordResourceConfig):
         "request_id": fields.Str(),
         "comment_id": fields.Str(),
     }
+
+    request_search_args = RequestCommentsSearchRequestArgsSchema
 
     response_handlers = {
         "application/vnd.inveniordm.v1+json": RecordResourceConfig.response_handlers[

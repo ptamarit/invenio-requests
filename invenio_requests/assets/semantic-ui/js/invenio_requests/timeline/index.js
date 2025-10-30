@@ -13,7 +13,8 @@ import {
 import TimelineFeedComponent from "./TimelineFeed";
 
 const mapDispatchToProps = (dispatch) => ({
-  getTimelineWithRefresh: () => dispatch(getTimelineWithRefresh()),
+  getTimelineWithRefresh: (includeEventId) =>
+    dispatch(getTimelineWithRefresh(includeEventId)),
   timelineStopRefresh: () => dispatch(clearTimelineInterval()),
   setPage: (page) => dispatch(setPage(page)),
 });
@@ -26,6 +27,7 @@ const mapStateToProps = (state) => ({
   isSubmitting: state.timelineCommentEditor.isLoading,
   size: state.timeline.size,
   page: state.timeline.page,
+  warning: state.timeline.warning,
 });
 
 export const Timeline = connect(

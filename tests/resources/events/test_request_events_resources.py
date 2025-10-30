@@ -54,6 +54,7 @@ def test_simple_comment_flow(
         "id": comment_id,
         "links": {
             "self": f"https://127.0.0.1:5000/api/requests/{request_id}/comments/{comment_id}",  # noqa
+            "self_html": f"https://127.0.0.1:5000/requests/{request_id}#commentevent-{comment_id}",
             # "report": ""  # TODO
         },
         "permissions": {"can_update_comment": True, "can_delete_comment": True},
@@ -97,6 +98,7 @@ def test_simple_comment_flow(
         "id": comment_id,
         "links": {
             "self": f"https://127.0.0.1:5000/api/requests/{request_id}/comments/{comment_id}",  # noqa
+            "self_html": f"https://127.0.0.1:5000/requests/{request_id}#commentevent-{comment_id}",
             # "report": ""  # TODO
         },
         "permissions": {"can_update_comment": True, "can_delete_comment": True},
@@ -158,7 +160,7 @@ def test_timeline_links(
 
     expected_links = {
         # NOTE: Variations are covered in records-resources
-        "self": f"https://127.0.0.1:5000/api/requests/{request_id}/timeline?page=1&size=25&sort=oldest"  # noqa
+        "self": f"https://127.0.0.1:5000/api/requests/{request_id}/timeline?page=1&size=25&sort=oldest",  # noqa
     }
     assert expected_links == search_record_links
 

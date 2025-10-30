@@ -4,7 +4,15 @@
 // Invenio RDM Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
-import { CHANGE_PAGE, HAS_ERROR, IS_LOADING, IS_REFRESHING, SUCCESS } from "./actions";
+import { i18next } from "@translations/invenio_requests/i18next";
+import {
+  CHANGE_PAGE,
+  HAS_ERROR,
+  IS_LOADING,
+  IS_REFRESHING,
+  MISSING_REQUESTED_EVENT,
+  SUCCESS,
+} from "./actions";
 
 export const initialState = {
   loading: false,
@@ -13,6 +21,7 @@ export const initialState = {
   error: null,
   size: 15,
   page: 1,
+  warning: null,
 };
 
 export const timelineReducer = (state = initialState, action) => {
@@ -40,6 +49,14 @@ export const timelineReducer = (state = initialState, action) => {
       return {
         ...state,
         page: action.payload,
+        warning: null,
+      };
+    case MISSING_REQUESTED_EVENT:
+      return {
+        ...state,
+        warning: i18next.t(
+          "The requested comment was not found. The first page of comments is shown instead."
+        ),
       };
 
     default:

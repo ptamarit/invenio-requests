@@ -9,7 +9,7 @@
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import Overridable from "react-overridable";
-import { Container, Divider } from "semantic-ui-react";
+import { Container, Divider, Message, Icon } from "semantic-ui-react";
 import Error from "../components/Error";
 import Loader from "../components/Loader";
 import { DeleteConfirmationModal } from "../components/modals/DeleteConfirmationModal";
@@ -17,6 +17,7 @@ import { Pagination } from "../components/Pagination";
 import RequestsFeed from "../components/RequestsFeed";
 import { TimelineCommentEditor } from "../timelineCommentEditor";
 import { TimelineCommentEventControlled } from "../timelineCommentEventControlled";
+import { getEventIdFromUrl } from "../timelineEvents/utils";
 
 class TimelineFeed extends Component {
   constructor(props) {
@@ -30,7 +31,9 @@ class TimelineFeed extends Component {
 
   componentDidMount() {
     const { getTimelineWithRefresh } = this.props;
-    getTimelineWithRefresh();
+
+    // Check if an event ID is included in the hash
+    getTimelineWithRefresh(getEventIdFromUrl());
   }
 
   async componentDidUpdate(prevProps) {
@@ -63,12 +66,22 @@ class TimelineFeed extends Component {
       userAvatar,
       request,
       permissions,
+      warning,
     } = this.props;
     const { modalOpen, modalAction } = this.state;
 
     return (
       <Loader isLoading={loading}>
         <Error error={error}>
+          {warning && (
+            <Message visible warning>
+              <p>
+                <Icon name="warning sign" />
+                {warning}
+              </p>
+            </Message>
+          )}
+
           <Overridable id="TimelineFeed.layout" {...this.props}>
             <Container id="requests-timeline" className="ml-0-mobile mr-0-mobile">
               <Overridable
@@ -122,6 +135,7 @@ TimelineFeed.propTypes = {
   request: PropTypes.object.isRequired,
   permissions: PropTypes.object.isRequired,
   loading: PropTypes.bool.isRequired,
+  warning: PropTypes.string,
 };
 
 TimelineFeed.defaultProps = {
@@ -131,6 +145,7 @@ TimelineFeed.defaultProps = {
   page: 1,
   size: 10,
   userAvatar: "",
+  warning: null,
 };
 
 export default Overridable.component("TimelineFeed", TimelineFeed);

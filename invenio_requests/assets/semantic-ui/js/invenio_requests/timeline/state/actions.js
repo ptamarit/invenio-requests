@@ -11,6 +11,7 @@ export const SUCCESS = "timeline/SUCCESS";
 export const HAS_ERROR = "timeline/HAS_ERROR";
 export const IS_REFRESHING = "timeline/REFRESHING";
 export const CHANGE_PAGE = "timeline/CHANGE_PAGE";
+export const MISSING_REQUESTED_EVENT = "timeline/MISSING_REQUESTED_EVENT";
 
 class intervalManager {
   static IntervalId = undefined;
@@ -25,26 +26,28 @@ class intervalManager {
   }
 }
 
-export const fetchTimeline = (loadingState = true) => {
+export const fetchTimeline = (focusEventId = undefined) => {
   return async (dispatch, getState, config) => {
     const state = getState();
     const { size, page, data: timelineData } = state.timeline;
 
-    if (loadingState) {
-      dispatch({
-        type: IS_LOADING,
-      });
-    }
     dispatch({
       type: IS_REFRESHING,
     });
 
     try {
-      const response = await config.requestsApi.getTimeline({
-        size: size,
-        page: page,
-        sort: "oldest",
-      });
+      let response;
+      if (focusEventId) {
+        response = await config.requestsApi.getTimelineFocused(focusEventId, {
+          size: size,
+        });
+      } else {
+        response = await config.requestsApi.getTimeline({
+          size: size,
+          page: page,
+          sort: "oldest",
+        });
+      }
 
       // Check if timeline has more events than the current state
       const hasMoreEvents = response.data?.hits?.total > timelineData?.hits?.total;
@@ -60,6 +63,23 @@ export const fetchTimeline = (loadingState = true) => {
           const response = await config.requestsApi.getRequest();
           dispatch(updateRequest(response.data));
         }
+      }
+
+      if (response.data.page !== page) {
+        // If a different page was returned (e.g. a specific event ID was requested) we need to update it.
+        // This will _not_ trigger a reload of the timeline.
+        dispatch({
+          type: CHANGE_PAGE,
+          payload: response.data.page,
+        });
+      }
+
+      if (focusEventId && !response.data.hits.hits.some((h) => h.id === focusEventId)) {
+        // Show a warning if the event ID in the hash was not found in the response list of events.
+        // This happens if the server cannot find the requested event.
+        dispatch({
+          type: MISSING_REQUESTED_EVENT,
+        });
       }
 
       dispatch({
@@ -81,6 +101,9 @@ export const setPage = (page) => {
       type: CHANGE_PAGE,
       payload: page,
     });
+    dispatch({
+      type: IS_LOADING,
+    });
 
     await dispatch(fetchTimeline());
   };
@@ -99,12 +122,15 @@ const timelineReload = (dispatch, getState, config) => {
 
   if (concurrentRequests) return;
 
-  dispatch(fetchTimeline(false));
+  dispatch(fetchTimeline());
 };
 
-export const getTimelineWithRefresh = () => {
+export const getTimelineWithRefresh = (focusEventId) => {
   return async (dispatch, getState, config) => {
-    dispatch(fetchTimeline(true));
+    dispatch({
+      type: IS_LOADING,
+    });
+    dispatch(fetchTimeline(focusEventId));
     dispatch(setTimelineInterval());
   };
 };

@@ -6,7 +6,7 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import PropTypes from "prop-types";
-import React from "react";
+import React, { forwardRef } from "react";
 import { Image } from "react-invenio-forms";
 import { Container, Feed, Icon } from "semantic-ui-react";
 
@@ -26,18 +26,31 @@ RequestsFeed.defaultProps = {
   children: null,
 };
 
-export const RequestEventItem = ({ children }) => (
-  <div className="requests-event-item">
-    <div className="requests-event-container">{children}</div>
-  </div>
-);
+export const RequestEventItem = forwardRef(function RequestEventItem(
+  { id, children, selected },
+  ref
+) {
+  return (
+    <div
+      className={`requests-event-item${selected ? " selected" : ""}`}
+      id={id}
+      ref={ref}
+    >
+      <div className="requests-event-container">{children}</div>
+    </div>
+  );
+});
 
 RequestEventItem.propTypes = {
+  id: PropTypes.string,
   children: PropTypes.node,
+  selected: PropTypes.bool,
 };
 
 RequestEventItem.defaultProps = {
+  id: null,
   children: null,
+  selected: false,
 };
 
 export const RequestEventInnerContainer = ({ children, isEvent }) => (

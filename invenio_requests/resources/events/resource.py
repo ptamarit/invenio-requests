@@ -61,6 +61,7 @@ class RequestCommentsResource(RecordResource):
             route("PUT", routes["item"], self.update),
             route("DELETE", routes["item"], self.delete),
             route("GET", routes["timeline"], self.search),
+            route("GET", routes["timeline_focused"], self.focused_list),
         ]
 
     @list_view_args_parser
@@ -135,6 +136,22 @@ class RequestCommentsResource(RecordResource):
             identity=g.identity,
             request_id=resource_requestctx.view_args["request_id"],
             params=resource_requestctx.args,
+            search_preference=search_preference(),
+            expand=resource_requestctx.args.get("expand", False),
+        )
+        return hits.to_dict(), 200
+
+    @list_view_args_parser
+    @request_extra_args
+    @search_args_parser
+    @response_handler(many=True)
+    def focused_list(self):
+        """List the page containing the event with ID focus_event_id, or the first page of results if this is not found."""
+        hits = self.service.focused_list(
+            identity=g.identity,
+            request_id=resource_requestctx.view_args["request_id"],
+            focus_event_id=resource_requestctx.args.get("focus_event_id"),
+            page_size=resource_requestctx.args.get("size"),
             search_preference=search_preference(),
             expand=resource_requestctx.args.get("expand", False),
         )
