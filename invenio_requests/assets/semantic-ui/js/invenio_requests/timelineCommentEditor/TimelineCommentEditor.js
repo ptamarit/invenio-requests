@@ -5,7 +5,7 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import { RichEditor } from "react-invenio-forms";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { SaveButton } from "../components/Buttons";
 import { Container, Message } from "semantic-ui-react";
 import PropTypes from "prop-types";
@@ -18,6 +18,7 @@ const TimelineCommentEditor = ({
   storedCommentContent,
   restoreCommentContent,
   setCommentContent,
+  appendedCommentContent,
   error,
   submitComment,
   userAvatar,
@@ -25,6 +26,16 @@ const TimelineCommentEditor = ({
   useEffect(() => {
     restoreCommentContent();
   }, [restoreCommentContent]);
+
+  const editorRef = useRef(null);
+  useEffect(() => {
+    if (!appendedCommentContent || !editorRef.current) return;
+    // Move the caret to the end of the body and focus the editor.
+    // See https://www.tiny.cloud/blog/set-and-get-cursor-position/#h_48266906174501699933284256
+    editorRef.current.selection.select(editorRef.current.getBody(), true);
+    editorRef.current.selection.collapse(false);
+    editorRef.current.focus();
+  }, [appendedCommentContent]);
 
   return (
     <div className="timeline-comment-editor-container">
@@ -39,10 +50,11 @@ const TimelineCommentEditor = ({
             inputValue={commentContent}
             // initialValue is not allowed to change, so we use `storedCommentContent` which is set at most once
             initialValue={storedCommentContent}
-            onEditorChange={(event, editor) => {
+            onEditorChange={(_, editor) => {
               setCommentContent(editor.getContent());
             }}
             minHeight={150}
+            onInit={(_, editor) => (editorRef.current = editor)}
           />
         </Container>
       </div>
@@ -62,6 +74,7 @@ const TimelineCommentEditor = ({
 TimelineCommentEditor.propTypes = {
   commentContent: PropTypes.string,
   storedCommentContent: PropTypes.string,
+  appendedCommentContent: PropTypes.string,
   isLoading: PropTypes.bool,
   setCommentContent: PropTypes.func.isRequired,
   error: PropTypes.string,
@@ -73,6 +86,7 @@ TimelineCommentEditor.propTypes = {
 TimelineCommentEditor.defaultProps = {
   commentContent: "",
   storedCommentContent: null,
+  appendedCommentContent: "",
   isLoading: false,
   error: "",
   userAvatar: "",

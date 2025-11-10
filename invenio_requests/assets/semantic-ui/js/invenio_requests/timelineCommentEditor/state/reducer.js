@@ -11,6 +11,7 @@ import {
   SUCCESS,
   SETTING_CONTENT,
   RESTORE_CONTENT,
+  APPEND_CONTENT,
 } from "./actions";
 
 const initialState = {
@@ -18,12 +19,21 @@ const initialState = {
   isLoading: false,
   commentContent: "",
   storedCommentContent: null,
+  appendedCommentContent: "",
 };
 
 export const commentEditorReducer = (state = initialState, action) => {
   switch (action.type) {
     case SETTING_CONTENT:
       return { ...state, commentContent: action.payload };
+    case APPEND_CONTENT:
+      return {
+        ...state,
+        commentContent: state.commentContent + action.payload,
+        // We keep track of appended content separately to trigger the focus event only when
+        // text is appended (not when the user is typing).
+        appendedCommentContent: state.appendedCommentContent + action.payload,
+      };
     case IS_LOADING:
       return { ...state, isLoading: true };
     case HAS_ERROR:

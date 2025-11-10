@@ -18,6 +18,7 @@ export const HAS_ERROR = "eventEditor/HAS_ERROR";
 export const SUCCESS = "eventEditor/SUCCESS";
 export const SETTING_CONTENT = "eventEditor/SETTING_CONTENT";
 export const RESTORE_CONTENT = "eventEditor/RESTORE_CONTENT";
+export const APPEND_CONTENT = "eventEditor/APPENDING_CONTENT";
 
 const draftCommentKey = (requestId) => `draft-comment-${requestId}`;
 const setDraftComment = (requestId, content) => {
@@ -65,6 +66,15 @@ export const restoreEventContent = () => {
         payload: savedDraft,
       });
     }
+  };
+};
+
+export const appendEventContent = (content, focus) => {
+  return async (dispatch, getState, config) => {
+    dispatch({
+      type: APPEND_CONTENT,
+      payload: content,
+    });
   };
 };
 

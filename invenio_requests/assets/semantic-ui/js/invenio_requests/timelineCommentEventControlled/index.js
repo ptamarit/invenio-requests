@@ -7,10 +7,12 @@
 import EventWithStateComponent from "./TimelineCommentEventControlled";
 import { connect } from "react-redux";
 import { updateComment, deleteComment } from "./state/actions";
+import { appendEventContent } from "../timelineCommentEditor/state/actions";
 
 const mapDispatchToProps = (dispatch) => ({
   updateComment: async (payload) => dispatch(updateComment(payload)),
   deleteComment: async (payload) => dispatch(deleteComment(payload)),
+  appendCommentContent: (content) => dispatch(appendEventContent(content)),
 });
 
 export const TimelineCommentEventControlled = connect(
