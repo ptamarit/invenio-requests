@@ -1,5 +1,5 @@
 // This file is part of InvenioRequests
-// Copyright (C) 2022 CERN.
+// Copyright (C) 2022-2025 CERN.
 //
 // Invenio RDM Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -17,6 +17,18 @@ export const IS_LOADING = "eventEditor/IS_LOADING";
 export const HAS_ERROR = "eventEditor/HAS_ERROR";
 export const SUCCESS = "eventEditor/SUCCESS";
 export const SETTING_CONTENT = "eventEditor/SETTING_CONTENT";
+export const RESTORE_CONTENT = "eventEditor/RESTORE_CONTENT";
+
+const draftCommentKey = (requestId) => `draft-comment-${requestId}`;
+const setDraftComment = (requestId, content) => {
+  localStorage.setItem(draftCommentKey(requestId), content);
+};
+const getDraftComment = (requestId) => {
+  return localStorage.getItem(draftCommentKey(requestId));
+};
+const deleteDraftComment = (requestId) => {
+  localStorage.removeItem(draftCommentKey(requestId));
+};
 
 export const setEventContent = (content) => {
   return async (dispatch, getState, config) => {
@@ -24,12 +36,41 @@ export const setEventContent = (content) => {
       type: SETTING_CONTENT,
       payload: content,
     });
+    const { request } = getState();
+
+    try {
+      setDraftComment(request.data.id, content);
+    } catch (e) {
+      // This should not be a fatal error. The comment editor is still usable if
+      // draft saving isn't working (e.g. on very old browsers or ultra-restricted
+      // environments with 0 storage quota.)
+      console.warn("Failed to save comment:", e);
+    }
+  };
+};
+
+export const restoreEventContent = () => {
+  return (dispatch, getState, config) => {
+    const { request } = getState();
+    let savedDraft = null;
+    try {
+      savedDraft = getDraftComment(request.data.id);
+    } catch (e) {
+      console.warn("Failed to get saved comment:", e);
+    }
+
+    if (savedDraft) {
+      dispatch({
+        type: RESTORE_CONTENT,
+        payload: savedDraft,
+      });
+    }
   };
 };
 
 export const submitComment = (content, format) => {
   return async (dispatch, getState, config) => {
-    const { timeline: timelineState } = getState();
+    const { timeline: timelineState, request } = getState();
 
     dispatch(clearTimelineInterval());
 
@@ -55,6 +96,12 @@ export const submitComment = (content, format) => {
       }
 
       dispatch({ type: SUCCESS });
+
+      try {
+        deleteDraftComment(request.data.id);
+      } catch (e) {
+        console.warn("Failed to delete saved comment:", e);
+      }
 
       await dispatch({
         type: TIMELINE_SUCCESS,
