@@ -4,6 +4,7 @@
 # Copyright (C) 2021 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 # Copyright (C) 2023 Graz University of Technology.
+# Copyright (C) 2025 CESNET i.a.l.e.
 #
 # Invenio-Requests is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -122,7 +123,7 @@ class InvenioRequests:
         register_entry_point(
             self.request_type_registry, "invenio_requests.types", app=app
         )
-        register_entry_point(self.request_type_registry, "invenio_requests.event_types")
+        register_entry_point(self.event_type_registry, "invenio_requests.event_types")
         register_entry_point(
             self.entity_resolvers_registry, "invenio_requests.entity_resolvers"
         )
