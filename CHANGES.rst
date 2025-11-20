@@ -9,6 +9,11 @@
 Changes
 =======
 
+Version v10.3.0 (released 2025-11-20)
+
+- chore: fix eslint errors+warnings
+- labels: add file modification label
+
 Version v10.2.0 (released 2025-10-01)
 
 - perf(models): add an index to `request_events.request_id`
