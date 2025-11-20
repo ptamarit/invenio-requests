@@ -10,7 +10,11 @@
 
 """Requests service."""
 
-from invenio_records_resources.services import RecordService, ServiceSchemaWrapper
+from invenio_records_resources.services import (
+    FileService,
+    RecordService,
+    ServiceSchemaWrapper,
+)
 from invenio_records_resources.services.base import LinksTemplate
 from invenio_records_resources.services.uow import (
     IndexRefreshOp,
@@ -47,6 +51,11 @@ class RequestsService(RecordService):
     def request_type_registry(self):
         """Request_type_registry."""
         return current_request_type_registry
+
+    @property
+    def files(self):
+        """Request files service."""
+        return self.config.files_service_config
 
     def _wrap_schema(self, schema):
         """Wrap schema."""
@@ -313,3 +322,43 @@ class RequestsService(RecordService):
             expandable_fields=self.expandable_fields,
             expand=expand,
         )
+
+
+class RequestFilesService(FileService):
+    """Service for managing request file attachments."""
+
+    def create_file(self, identity, id_, key, stream, content_length):
+        """Upload a file in a single operation (simple endpoint).
+
+        Convenience method that combines init/upload/commit into one operation.
+        """
+        # Permission check, lazy bucket init, file size validation,
+        # unique key generation, upload and commit
+
+    def init_files(self, identity, id_, data):
+        """Initialize multi-part file upload."""
+        # For large files or exotic transfer workflows
+
+    def set_file_content(self, identity, id_, file_key, stream, content_length):
+        """Upload file content in multi-part workflow."""
+        # Step 2 of multi-part upload
+
+    def commit_file(self, identity, id_, file_key):
+        """Commit file upload in multi-part workflow."""
+        # Step 3 of multi-part upload - finalize file
+
+    def read_file_metadata(self, identity, id_, file_key):
+        """Retrieve file metadata."""
+        # Return file metadata (key, size, mimetype, links, etc.)
+
+    def get_file_content(self, identity, id_, file_key):
+        """Retrieve file content for download/display."""
+        # Return file stream
+
+    def list_files(self, identity, id_):
+        """List all files for a request."""
+        # Return list of all files in request bucket
+
+    def delete_file(self, identity, id_, file_key):
+        """Delete a specific file."""
+        # Called explicitly via API or by frontend when file removed from comment

@@ -22,6 +22,7 @@ from .resources import (
     RequestsResource,
     RequestsResourceConfig,
 )
+from .services import RequestFilesService  # TODO: Needed?
 from .services import (
     RequestEventsService,
     RequestEventsServiceConfig,

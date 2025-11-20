@@ -13,7 +13,7 @@ from .components import RequestNumberComponent
 from .config import RequestsServiceConfig
 from .links import RequestLink
 from .results import RequestItem, RequestList
-from .service import RequestsService
+from .service import RequestFilesService, RequestsService
 
 __all__ = (
     "RequestNumberComponent",
@@ -22,4 +22,5 @@ __all__ = (
     "RequestList",
     "RequestsService",
     "RequestsServiceConfig",
+    "RequestFilesService",  # TODO: Needed?
 )

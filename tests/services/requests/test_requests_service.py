@@ -180,3 +180,6 @@ def test_search_user_requests(
     ]["hits"]
 
     assert str(request_id) not in [h["id"] for h in hits]
+
+
+# TODO: More tests here?

@@ -11,7 +11,7 @@
 """Services module."""
 
 from .events import RequestEventsService, RequestEventsServiceConfig
-from .requests import RequestsService, RequestsServiceConfig
+from .requests import RequestFilesService, RequestsService, RequestsServiceConfig
 from .user_moderation import UserModerationRequestService
 
 __all__ = (
@@ -19,5 +19,6 @@ __all__ = (
     "RequestEventsServiceConfig",
     "RequestsService",
     "RequestsServiceConfig",
+    "RequestFilesService",  # TODO: Needed?
     "UserModerationRequestService",
 )
