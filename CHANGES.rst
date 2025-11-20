@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v10.3.1 (released 2025-11-20)
+
+- i18n: update package-lock.json
+
 Version v10.3.0 (released 2025-11-20)
 
 - chore: fix eslint errors+warnings
