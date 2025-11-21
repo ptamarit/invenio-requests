@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v10.4.0 (released 2025-11-21)
+
+- feat(comments): add deep linking to specific comments in request timeline
+
 Version v10.3.1 (released 2025-11-20)
 
 - i18n: update package-lock.json
