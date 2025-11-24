@@ -91,6 +91,10 @@ def get_files_quota(record=None):
     """Get bucket quota configuration for request files."""
     # Returns quota_size and max_file_size from Flask config
     # with defaults (100MB total quota, 10MB max file size)
+    return dict(
+        quota_size=10**8,  # 100MB
+        max_file_size=10**7,  # 10MB
+    )
 
 
 class RequestFile(FileRecord):

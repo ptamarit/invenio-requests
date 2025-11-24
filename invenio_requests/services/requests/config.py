@@ -35,6 +35,7 @@ from .components import (
 from .links import RequestLink
 from .params import IsOpenParam, ReferenceFilterParam, SharedOrMyRequestsParam
 from .results import RequestItem, RequestList
+from ..schemas import RequestFileSchema
 
 
 def _is_action_available(request, context):
@@ -205,8 +206,7 @@ class RequestFilesServiceConfig(RecordServiceConfig, ConfiguratorMixin):
 
     # request files-specific configuration
     record_cls = RequestFile  # needed for model queries
-    # schema = RequestFileSchema #  or None  # stored in the API classes, for customization
-    schema = None
+    schema = RequestFileSchema # stored in the API classes, for customization
     request_cls = Request
     indexer_queue_name = "files"  # or "events" or "requests"
     # index_dumper = None

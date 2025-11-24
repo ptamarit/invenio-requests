@@ -28,7 +28,10 @@ def assert_api_response(response, code, json):
     assert_api_response_json(json, response.json)
 
 
-def test_simple_files_flow(app, client_logged_as, example_request):
+def test_simple_files_flow(app, client_logged_as, example_request, location):
+    # Passing the `location` fixture to make sure that a default bucket location is defined.
+    assert location.default == True
+
     request_id = example_request.id
     # key = "filename.ext"
     # data = BytesIO(b"test file content")

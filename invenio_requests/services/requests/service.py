@@ -10,6 +10,7 @@
 
 """Requests service."""
 
+from invenio_db import db
 from invenio_records_resources.services import (
     FileService,
     RecordService,
@@ -22,6 +23,7 @@ from invenio_records_resources.services.uow import (
     RecordDeleteOp,
     unit_of_work,
 )
+from invenio_requests.services.schemas import RequestFileSchema
 from invenio_search.engine import dsl
 
 from ...customizations import RequestActions
@@ -333,8 +335,17 @@ class RequestFilesService(FileService):
         """Get associated request class."""
         return self.config.request_cls
 
-    # @unit_of_work()
-    def create_file(self, identity, id_, key, stream, content_length):
+    # def _create_object_version(bucket, file_stream, filename, mimetype):
+    #     object_version = ObjectVersion.create(
+    #         bucket=bucket, key=filename, mimetype=mimetype
+    #     )
+    #     current_app.logger.info(f"Creating object version: {object_version}")
+    #     object_version.set_contents(file_stream)
+    #     db.session.add(object_version)
+    #     db.session.commit()
+
+    @unit_of_work()
+    def create_file(self, identity, id_, key, stream, content_length, uow=None):
         """Upload a file in a single operation (simple endpoint).
 
         Convenience method that combines init/upload/commit into one operation.
@@ -351,9 +362,21 @@ class RequestFilesService(FileService):
         #         identity, "update_comment", request=request, event=event
         # )
 
-        # record.files['logo'] = stream
-        # record.commit()
-        # db.session.commit()
+        # TODO: Is this atomic? unit_of_work does it?
+        if request.files.bucket is None:
+            request.files.create_bucket()
+            # default_location=Location.get_default().id,
+            # default_storage_class=current_app.config[
+            #     "FILES_REST_DEFAULT_STORAGE_CLASS"
+            # ],
+            # db.session.add(bucket)
+            # db.session.commit()
+            # raise ValueError("boom")
+
+        # TODO: Is some validation needed on the filename to avoid weird characters?
+        request.files[key] = stream
+        request.commit()
+        db.session.commit()
 
         # run components
         # self.run_components("delete", identity, record=request, uow=uow)
@@ -367,13 +390,27 @@ class RequestFilesService(FileService):
 
         # uow.register(RecordDeleteOp(request, indexer=self.indexer))
 
+
+        return self.result_item(
+            self,
+            identity,
+            request,
+            # schema=self._wrap_schema(event.type.marshmallow_schema()),
+            # links_tpl=self.links_tpl_factory(
+            #     self.config.links_item, request_type=str(request.type)
+            # ),
+        )
+
+
         # return self.files.file_result_item(
         return self.result_item(
             self,
             identity,
-            request.files["logo"],
-            request,
-            links_tpl=self.files.file_links_item_tpl(id_),
+            request.files[key],
+            # request,
+            # schema=RequestFileSchema,
+            # TODO: Fix links_tpl
+            # links_tpl=self.files.file_links_item_tpl(id_),
         )
 
     # @unit_of_work()
