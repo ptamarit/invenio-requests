@@ -327,6 +327,7 @@ class RequestsService(RecordService):
 class RequestFilesService(FileService):
     """Service for managing request file attachments."""
 
+    # @unit_of_work()
     def create_file(self, identity, id_, key, stream, content_length):
         """Upload a file in a single operation (simple endpoint).
 
@@ -372,14 +373,17 @@ class RequestFilesService(FileService):
             links_tpl=self.files.file_links_item_tpl(id_),
         )
 
+    # @unit_of_work()
     # def init_files(self, identity, id_, data):
     #     """Initialize multi-part file upload."""
     #     # For large files or exotic transfer workflows
 
+    # @unit_of_work()
     # def set_file_content(self, identity, id_, file_key, stream, content_length):
     #     """Upload file content in multi-part workflow."""
     #     # Step 2 of multi-part upload
 
+    # @unit_of_work()
     # def commit_file(self, identity, id_, file_key):
     #     """Commit file upload in multi-part workflow."""
     #     # Step 3 of multi-part upload - finalize file
@@ -412,6 +416,7 @@ class RequestFilesService(FileService):
         # Return list of all files in request bucket
         self.require_permission(identity, "read", request=request)
 
+    # @unit_of_work()
     def delete_file(self, identity, id_, file_key):
         """Delete a specific file."""
         # Called explicitly via API or by frontend when file removed from comment
