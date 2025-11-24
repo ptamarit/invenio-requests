@@ -7,6 +7,8 @@
 
 """Custom exceptions used in the Invenio-Requests module."""
 
+from invenio_records_resources.services.errors import PermissionDeniedError
+
 
 class ActionError(Exception):
     """Exception indicating an error related to the action."""
@@ -47,3 +49,23 @@ class CannotExecuteActionError(ActionError):
         """
         reason = reason or "Could not execute the action"
         super().__init__(action, reason)
+
+
+class RequestLockedError(PermissionDeniedError):
+    """Exception indicating that the request is locked."""
+
+    def __init__(self, description="The request is locked."):
+        """Constructor.
+
+        :param message: The message to display.
+        """
+        self._description = description
+
+    @property
+    def description(self):
+        """Return the description."""
+        return self._description
+
+    def __str__(self):
+        """Return str(self)."""
+        return self.description

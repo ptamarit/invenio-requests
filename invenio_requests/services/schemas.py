@@ -85,6 +85,8 @@ class RequestSchema(BaseRecordSchema):
         timezone=timezone.utc, format="iso", dump_only=True
     )
 
+    is_locked = fields.Boolean()
+
     class Meta:
         """Schema meta."""
 

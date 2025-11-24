@@ -17,7 +17,10 @@ from invenio_records_resources.services.records.components import (
 )
 from marshmallow import ValidationError
 
-from invenio_requests.customizations.event_types import ReviewersUpdatedType
+from invenio_requests.customizations.event_types import (
+    LogEventType,
+    ReviewersUpdatedType,
+)
 from invenio_requests.proxies import current_events_service
 
 
@@ -45,9 +48,9 @@ class RequestDataComponent(DataComponent):
     def update(self, identity, data=None, record=None, **kwargs):
         """Update an existing record (request)."""
         if record.status == "created":
-            keys = ("title", "description", "payload", "receiver", "topic")
+            keys = ("title", "description", "payload", "receiver", "topic", "is_locked")
         else:
-            keys = ("title", "description")
+            keys = ("title", "description", "is_locked")
 
         for k in keys:
             if k in data:
@@ -133,7 +136,7 @@ class RequestReviewersComponent(ServiceComponent):
 
     def update(self, identity, data=None, record=None, uow=None, **kwargs):
         """Update the reviewers of a request."""
-        if "reviewers" in data:
+        if data.get("reviewers", None):
             # ensure there are not duplicates
             new_reviewers = self._ensure_no_duplicates(data["reviewers"])
             self._validate_reviewers(new_reviewers)
@@ -178,3 +181,19 @@ class RequestPayloadComponent(DataComponent):
                     # workaround for the lack of patch method
                     payload[key] = record["payload"][key]
             record["payload"] = payload
+
+
+class RequestLockComponent(ServiceComponent):
+    """Component for locking a request."""
+
+    def lock_request(self, identity, record=None, uow=None, **kwargs):
+        """Lock a request."""
+        event = LogEventType(payload=dict(event="locked"))
+        _data = dict(payload=event.payload)
+        current_events_service.create(identity, record.id, _data, event, uow=uow)
+
+    def unlock_request(self, identity, record=None, uow=None, **kwargs):
+        """Unlock a request."""
+        event = LogEventType(payload=dict(event="unlocked"))
+        _data = dict(payload=event.payload)
+        current_events_service.create(identity, record.id, _data, event, uow=uow)

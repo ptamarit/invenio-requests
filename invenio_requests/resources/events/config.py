@@ -14,7 +14,10 @@ from invenio_records_resources.resources import (
     RecordResourceConfig,
     SearchRequestArgsSchema,
 )
+from flask_resources import HTTPJSONException, create_error_handler
 from marshmallow import fields
+
+from ...errors import RequestLockedError
 
 
 class RequestCommentsSearchRequestArgsSchema(SearchRequestArgsSchema):
@@ -54,4 +57,14 @@ class RequestCommentsResourceConfig(RecordResourceConfig):
             "application/json"
         ],
         **RecordResourceConfig.response_handlers,
+    }
+
+    error_handlers = {
+        **RecordResourceConfig.error_handlers,
+        RequestLockedError: create_error_handler(
+            lambda e: HTTPJSONException(
+                code=403,
+                description=str(e),
+            )
+        ),
     }

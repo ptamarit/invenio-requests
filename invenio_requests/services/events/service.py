@@ -31,6 +31,7 @@ from invenio_requests.proxies import current_requests_service as requests_servic
 from invenio_requests.records.api import RequestEventFormat
 from invenio_requests.services.results import EntityResolverExpandableField
 
+from ...errors import RequestLockedError
 from ...resolvers.registry import ResolverRegistry
 
 
@@ -72,7 +73,17 @@ class RequestEventsService(RecordService):
         :param dict data: Input data according to the data schema.
         """
         request = self._get_request(request_id)
-        self.require_permission(identity, "create_comment", request=request)
+        try:
+            self.require_permission(identity, "create_comment", request=request)
+        except PermissionDeniedError:
+            if request.get("is_locked", False):
+                raise RequestLockedError(
+                    description=_(
+                        "Commenting is not allowed as this conversation is currently locked."
+                    )
+                )
+            else:
+                raise PermissionDeniedError()
 
         # Validate data (if there are errors, .load() raises)
         schema = self._wrap_schema(event_type.marshmallow_schema())

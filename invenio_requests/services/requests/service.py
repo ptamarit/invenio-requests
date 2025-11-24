@@ -10,6 +10,8 @@
 
 """Requests service."""
 
+from flask import current_app, flash
+from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services import RecordService, ServiceSchemaWrapper
 from invenio_records_resources.services.base import LinksTemplate
 from invenio_records_resources.services.uow import (
@@ -313,3 +315,29 @@ class RequestsService(RecordService):
             expandable_fields=self.expandable_fields,
             expand=expand,
         )
+
+    @unit_of_work()
+    def lock_request(self, identity, id_, uow=None):
+        """Lock a request."""
+        request = self.read(identity, id_)
+        self.require_permission(identity, "lock_request", request=request._record)
+
+        request.data["is_locked"] = True
+        self.update(identity, id_, request.data, uow=uow)
+
+        # Add LogEventType event for locking the request via components
+        self.run_components("lock_request", identity, record=request, uow=uow)
+        flash(_("The conversation has been locked."), category="success")
+
+    @unit_of_work()
+    def unlock_request(self, identity, id_, uow=None):
+        """Unlock a request."""
+        request = self.read(identity, id_)
+        self.require_permission(identity, "lock_request", request=request._record)
+
+        request.data["is_locked"] = False
+        self.update(identity, id_, request.data, uow=uow)
+
+        # Add LogEventType event for unlocking the request via components
+        self.run_components("unlock_request", identity, record=request, uow=uow)
+        flash(_("The conversation has been unlocked."), category="success")

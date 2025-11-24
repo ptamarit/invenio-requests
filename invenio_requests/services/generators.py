@@ -15,7 +15,7 @@ from functools import reduce
 from itertools import chain
 
 from flask import current_app
-from invenio_records_permissions.generators import Generator
+from invenio_records_permissions.generators import ConditionalGenerator, Generator
 from invenio_records_resources.references import EntityGrant
 from invenio_search.engine import dsl
 
@@ -196,3 +196,11 @@ class Commenter(Generator):
     def query_filter(self, identity=None, **kwargs):
         """Filters for current identity as creator."""
         raise RuntimeError("The generator cannot be used for searching.")
+
+
+class IfLocked(ConditionalGenerator):
+    """Allows the action if the request is unlocked."""
+
+    def _condition(self, request=None, **kwargs):
+        """Condition to choose generators set."""
+        return request is not None and request.get("is_locked", False)

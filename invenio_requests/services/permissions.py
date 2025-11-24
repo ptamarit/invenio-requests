@@ -10,6 +10,7 @@
 
 """Request permissions."""
 
+from invenio_administration.generators import Administration
 from invenio_records_permissions import RecordPermissionPolicy
 from invenio_records_permissions.generators import (
     AnyUser,
@@ -19,7 +20,7 @@ from invenio_records_permissions.generators import (
     SystemProcessWithoutSuperUser,
 )
 
-from .generators import Commenter, Creator, Receiver, Reviewers, Status, Topic
+from .generators import Commenter, Creator, IfLocked, Receiver, Reviewers, Status, Topic
 
 
 class PermissionPolicy(RecordPermissionPolicy):
@@ -79,10 +80,16 @@ class PermissionPolicy(RecordPermissionPolicy):
     can_action_accept = [Receiver(), SystemProcess()]
     can_action_decline = [Receiver(), SystemProcess()]
 
+    can_lock_request = [
+        Receiver(),
+        SystemProcess(),
+        Administration(),
+    ]
+
     # Request events/comments
     # Events are in most cases protected by the associated request.
     can_update_comment = [
-        Commenter(),
+        IfLocked(then_=[Commenter()], else_=[Administration()]),
         SystemProcess(),
     ]
     can_delete_comment = [
@@ -90,7 +97,14 @@ class PermissionPolicy(RecordPermissionPolicy):
         SystemProcess(),
     ]
     # If you can read the request you can create events for the request.
-    can_create_comment = can_read
+    can_create_comment = [
+        IfLocked(
+            then_=[Receiver()],
+            else_=can_read,
+        ),
+        SystemProcess(),
+        Administration(),
+    ]
 
     # Needed by the search events permission because a permission_action must
     # be provided to create_search(), but the event search is already protected

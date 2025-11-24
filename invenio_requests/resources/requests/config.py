@@ -66,6 +66,8 @@ class RequestsResourceConfig(RecordResourceConfig, ConfiguratorMixin):
         "user-prefix": "/user",
         "item": "/<id>",
         "action": "/<id>/actions/<action>",
+        "lock": "/<id>/lock",
+        "unlock": "/<id>/unlock",
     }
 
     request_view_args = {

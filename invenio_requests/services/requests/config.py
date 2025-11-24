@@ -27,6 +27,7 @@ from ..permissions import PermissionPolicy
 from .components import (
     EntityReferencesComponent,
     RequestDataComponent,
+    RequestLockComponent,
     RequestNumberComponent,
     RequestPayloadComponent,
     RequestReviewersComponent,
@@ -108,6 +109,8 @@ class RequestsServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         "comments": RequestLink("{+api}/requests/{id}/comments"),
         "timeline": RequestLink("{+api}/requests/{id}/timeline"),
         "timeline_focused": RequestLink("{+api}/requests/{id}/timeline_focused"),
+        "lock": RequestLink("{+api}/requests/{id}/lock"),
+        "unlock": RequestLink("{+api}/requests/{id}/unlock"),
     }
     links_search = pagination_links("{+api}/requests{?args*}")
     links_user_requests_search = pagination_links("{+api}/user/requests{?args*}")
@@ -128,5 +131,6 @@ class RequestsServiceConfig(RecordServiceConfig, ConfiguratorMixin):
             RequestReviewersComponent,
             EntityReferencesComponent,
             RequestNumberComponent,
+            RequestLockComponent,
         ],
     )

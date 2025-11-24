@@ -144,6 +144,9 @@
       },
       "last_activity_at": {
         "type": "date"
+      },
+      "is_locked": {
+        "type": "boolean"
       }
     }
   }

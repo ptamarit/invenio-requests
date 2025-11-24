@@ -57,6 +57,8 @@ class RequestsResource(RecordResource):
             route("DELETE", p(routes["item"]), self.delete),
             route("POST", p(routes["action"]), self.execute_action),
             route("GET", s(routes["user-prefix"]), self.search_user_requests),
+            route("GET", p(routes["lock"]), self.lock_request),
+            route("GET", p(routes["unlock"]), self.unlock_request),
         ]
 
     @request_extra_args
@@ -143,3 +145,23 @@ class RequestsResource(RecordResource):
             expand=resource_requestctx.args.get("expand", False),
         )
         return item.to_dict(), 200
+
+    @request_view_args
+    @request_headers
+    def lock_request(self):
+        """Lock a request."""
+        self.service.lock_request(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["id"],
+        )
+        return "", 204
+
+    @request_view_args
+    @request_headers
+    def unlock_request(self):
+        """Unlock a request."""
+        self.service.unlock_request(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["id"],
+        )
+        return "", 204
