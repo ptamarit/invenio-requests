@@ -19,6 +19,8 @@ from .registry import TypeRegistry
 from .resources import (
     RequestCommentsResource,
     RequestCommentsResourceConfig,
+    RequestFilesResource,
+    RequestFilesResourceConfig,
     RequestsResource,
     RequestsResourceConfig,
 )
@@ -65,6 +67,7 @@ class InvenioRequests:
         class ServiceConfigs:
             requests = RequestsServiceConfig.build(app)
             request_events = RequestEventsServiceConfig.build(app)
+            # request_files = ...
 
         return ServiceConfigs
 
@@ -92,6 +95,12 @@ class InvenioRequests:
         self.request_events_resource = RequestCommentsResource(
             service=self.request_events_service,
             config=RequestCommentsResourceConfig,
+        )
+
+        self.request_events_resource = RequestFilesResource(
+            #service=self.request_files_service,
+            service=None,
+            config=RequestFilesResourceConfig,
         )
 
     def init_registry(self, app):
@@ -149,9 +158,13 @@ def init(app):
     requests_ext = app.extensions["invenio-requests"]
     requests_service = requests_ext.requests_service
     events_service = requests_ext.request_events_service
+    # Added for tests, maybe? It fails with AttributeError: 'InvenioRequests' object has no attribute 'request_files_service'
+    # files_service = requests_ext.request_files_service
 
     svc_reg.register(requests_service)
     svc_reg.register(events_service)
+    # svc_reg.register(files_service)
 
     idx_reg.register(requests_service.indexer, indexer_id="requests")
     idx_reg.register(events_service.indexer, indexer_id="events")
+    # idx_reg.register(files_service.indexer, indexer_id="files")

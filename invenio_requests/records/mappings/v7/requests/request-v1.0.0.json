@@ -145,6 +145,14 @@
       },
       "last_activity_at": {
         "type": "date"
+      },
+      "files": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          }
+        }
       }
     }
   }

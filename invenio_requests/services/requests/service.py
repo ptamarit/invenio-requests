@@ -335,30 +335,106 @@ class RequestFilesService(FileService):
         # Permission check, lazy bucket init, file size validation,
         # unique key generation, upload and commit
 
-    def init_files(self, identity, id_, data):
-        """Initialize multi-part file upload."""
-        # For large files or exotic transfer workflows
+        # resolve and check permissions
+        request = self.record_cls.get_record(id_)
+        # record = self.record_cls.pid.resolve(id_)
+        # self.check_revision_id(request, revision_id)
+        self.require_permission(identity, "create_comment", request=request)
+        self.require_permission(identity, "update", record=request, request=request)
+        # self.require_permission(
+        #         identity, "update_comment", request=request, event=event
+        # )
 
-    def set_file_content(self, identity, id_, file_key, stream, content_length):
-        """Upload file content in multi-part workflow."""
-        # Step 2 of multi-part upload
+        breakpoint()
+        # record.files['logo'] = stream
+        # record.commit()
+        # db.session.commit()
 
-    def commit_file(self, identity, id_, file_key):
-        """Commit file upload in multi-part workflow."""
-        # Step 3 of multi-part upload - finalize file
+        # run components
+        # self.run_components("delete", identity, record=request, uow=uow)
+
+        # we're not using "self.schema" b/c the schema may differ per
+        # request type!
+        schema = self._wrap_schema(request.type.marshmallow_schema())
+
+        # Get and run the request type's create action.
+        self._execute(identity, request, request.type.delete_action, uow)
+
+        uow.register(RecordDeleteOp(request, indexer=self.indexer))
+
+        return True
+
+        return self.files.file_result_item(
+            self.files,
+            identity,
+            record.files["logo"],
+            record,
+            links_tpl=self.files.file_links_item_tpl(id_),
+        )
+
+    # def init_files(self, identity, id_, data):
+    #     """Initialize multi-part file upload."""
+    #     # For large files or exotic transfer workflows
+
+    # def set_file_content(self, identity, id_, file_key, stream, content_length):
+    #     """Upload file content in multi-part workflow."""
+    #     # Step 2 of multi-part upload
+
+    # def commit_file(self, identity, id_, file_key):
+    #     """Commit file upload in multi-part workflow."""
+    #     # Step 3 of multi-part upload - finalize file
 
     def read_file_metadata(self, identity, id_, file_key):
         """Retrieve file metadata."""
         # Return file metadata (key, size, mimetype, links, etc.)
+        self.require_permission(identity, "read", request=request)
 
     def get_file_content(self, identity, id_, file_key):
         """Retrieve file content for download/display."""
         # Return file stream
+        record = self.record_cls.pid.resolve(id_)
+        # self.require_permission(identity, 'read', record=record)
+        self.require_permission(identity, "read", request=request)
+
+        logo_file = record.files.get("logo")
+        if logo_file is None:
+            raise FileNotFoundError()
+        return self.files.file_result_item(
+            self.files,
+            identity,
+            logo_file,
+            record,
+            links_tpl=self.files.file_links_item_tpl(id_),
+        )
 
     def list_files(self, identity, id_):
         """List all files for a request."""
         # Return list of all files in request bucket
+        self.require_permission(identity, "read", request=request)
 
     def delete_file(self, identity, id_, file_key):
         """Delete a specific file."""
         # Called explicitly via API or by frontend when file removed from comment
+
+        self.require_permission(identity, "action_delete", request=request)
+        self.require_permission(identity, "update", record=request, request=request)
+        self.require_permission(
+            identity, "delete_comment", request=request, event=event
+        )
+        self.require_permission(
+            identity, "update_comment", request=request, event=event
+        )
+
+        record = self.record_cls.pid.resolve(id_)
+        deleted_file = record.files.pop("logo", None)
+        if deleted_file is None:
+            raise FileNotFoundError()
+        record.commit()
+        db.session.commit()
+        return self.files.file_result_item(
+            self.files,
+            identity,
+            deleted_file,
+            record,
+            links_tpl=self.files.file_links_item_tpl(id_),
+        )
