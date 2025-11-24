@@ -327,6 +327,12 @@ class RequestsService(RecordService):
 class RequestFilesService(FileService):
     """Service for managing request file attachments."""
 
+    # Utilities
+    @property
+    def request_cls(self):
+        """Get associated request class."""
+        return self.config.request_cls
+
     # @unit_of_work()
     def create_file(self, identity, id_, key, stream, content_length):
         """Upload a file in a single operation (simple endpoint).
@@ -337,8 +343,7 @@ class RequestFilesService(FileService):
         # unique key generation, upload and commit
 
         # resolve and check permissions
-        request = self.record_cls.get_record(id_)
-        # record = self.record_cls.pid.resolve(id_)
+        request = self.request_cls.get_record(id_)
         # self.check_revision_id(request, revision_id)
         self.require_permission(identity, "create_comment", request=request)
         self.require_permission(identity, "update", record=request, request=request)
@@ -346,7 +351,6 @@ class RequestFilesService(FileService):
         #         identity, "update_comment", request=request, event=event
         # )
 
-        breakpoint()
         # record.files['logo'] = stream
         # record.commit()
         # db.session.commit()
@@ -356,20 +360,19 @@ class RequestFilesService(FileService):
 
         # we're not using "self.schema" b/c the schema may differ per
         # request type!
-        schema = self._wrap_schema(request.type.marshmallow_schema())
+        # schema = self._wrap_schema(request.type.marshmallow_schema())
 
         # Get and run the request type's create action.
-        self._execute(identity, request, request.type.delete_action, uow)
+        # self._execute(identity, request, request.type.delete_action, uow)
 
-        uow.register(RecordDeleteOp(request, indexer=self.indexer))
+        # uow.register(RecordDeleteOp(request, indexer=self.indexer))
 
-        return True
-
-        return self.files.file_result_item(
-            self.files,
+        # return self.files.file_result_item(
+        return self.result_item(
+            self,
             identity,
-            record.files["logo"],
-            record,
+            request.files["logo"],
+            request,
             links_tpl=self.files.file_links_item_tpl(id_),
         )
 

@@ -18,7 +18,7 @@ class RequestFilesResourceConfig(RecordResourceConfig):
     blueprint_name = "request_files"
     url_prefix = "/requests"
     routes = {
-        "create": "/<request_id>/files/upload/<key>",
+        "create": "/<id>/files/upload/<key>",  # TODO: Change from id to request_id ? It seems that "request_*" prefix is also a Flask thing.
         # "list": "/<request_id>/comments",
         # "item": "/<request_id>/comments/<comment_id>",
         # "timeline": "/<request_id>/timeline",
@@ -28,10 +28,10 @@ class RequestFilesResourceConfig(RecordResourceConfig):
         # "action": "/<id>/actions/<action>",
     }
 
-    # request_view_args = {
-    #     "id": ma.fields.UUID(),
-    #     "action": ma.fields.Str(),
-    # }
+    request_view_args = {
+        "id": fields.UUID(),
+        "key": fields.Str(),
+    }
 
     # request_search_args = RequestSearchRequestArgsSchema
 

@@ -14,9 +14,11 @@ from copy import deepcopy
 from flask import g
 from flask_resources import resource_requestctx, response_handler, route
 from invenio_records_resources.resources import RecordResource
+from invenio_records_resources.resources.files.resource import request_stream
 from invenio_records_resources.resources.records.resource import (
     request_extra_args,
     request_headers,
+    request_view_args,
 )
 from invenio_records_resources.resources.records.utils import search_preference
 
@@ -75,24 +77,21 @@ class RequestFilesResource(RecordResource):
         #     route("GET", s(routes["user-prefix"]), self.search_user_requests),
         # ]
 
-    # @list_view_args_parser
     @request_extra_args
-    # @data_parser
+    @request_headers
+    @request_view_args
+    @request_stream
     @response_handler()
     def create(self):
         """Create a file."""
-        data = deepcopy(resource_requestctx.data) if resource_requestctx.data else {}
+        # data = deepcopy(resource_requestctx.data) if resource_requestctx.data else {}
+
         item = self.service.create_file(
             identity=g.identity,
-            request_id=resource_requestctx.view_args["request_id"],
-            data=data,
-            event_type=CommentEventType,
-            expand=resource_requestctx.args.get("expand", False),
-        )
-        item2 = self.service.create_file(
-            resource_requestctx.view_args["pid_value"],
-            g.identity,
-            resource_requestctx.data["request_stream"],
+            id_=resource_requestctx.view_args["id"],
+            key=resource_requestctx.view_args["key"],
+            # data=resource_requestctx.data,
+            stream=resource_requestctx.data["request_stream"],
             content_length=resource_requestctx.data["request_content_length"],
         )
         # TODO: 201 instead of 200?

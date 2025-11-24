@@ -30,10 +30,13 @@ def assert_api_response(response, code, json):
 
 def test_simple_files_flow(app, client_logged_as, example_request):
     request_id = example_request.id
-    key = "filename.ext"
-    data = BytesIO(b"test file content")
+    # key = "filename.ext"
+    # data = BytesIO(b"test file content")
+    key = "screenshot.png"
+    data = BytesIO(b"\x89PNG\r\n\x1a\n")
 
     headers_binary = {
+        # TODO: Use image/png instead of  a generic one?
         "content-type": "application/octet-stream",
         "accept": "application/json",
     }
