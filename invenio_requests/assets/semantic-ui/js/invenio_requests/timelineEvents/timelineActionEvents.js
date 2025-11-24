@@ -100,3 +100,29 @@ export const TimelineCommentDeletionEvent = ({ event }) => (
 TimelineCommentDeletionEvent.propTypes = {
   event: PropTypes.object.isRequired,
 };
+
+export const TimelineLockRequestEvent = ({ event }) => (
+  <TimelineActionEvent
+    iconName="lock"
+    iconColor="grey"
+    event={event}
+    eventContent={i18next.t("locked this conversation")}
+  />
+);
+
+TimelineLockRequestEvent.propTypes = {
+  event: PropTypes.object.isRequired,
+};
+
+export const TimelineUnlockRequestEvent = ({ event }) => (
+  <TimelineActionEvent
+    iconName="unlock"
+    iconColor="grey"
+    event={event}
+    eventContent={i18next.t("unlocked this conversation")}
+  />
+);
+
+TimelineUnlockRequestEvent.propTypes = {
+  event: PropTypes.object.isRequired,
+};

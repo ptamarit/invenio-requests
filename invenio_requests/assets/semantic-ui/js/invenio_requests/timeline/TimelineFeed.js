@@ -18,6 +18,7 @@ import RequestsFeed from "../components/RequestsFeed";
 import { TimelineCommentEditor } from "../timelineCommentEditor";
 import { TimelineCommentEventControlled } from "../timelineCommentEventControlled";
 import { getEventIdFromUrl } from "../timelineEvents/utils";
+import { i18next } from "@translations/invenio_requests/i18next";
 
 class TimelineFeed extends Component {
   constructor(props) {
@@ -107,7 +108,16 @@ class TimelineFeed extends Component {
                   totalLength={timeline.hits?.total}
                 />
               </Container>
-              <TimelineCommentEditor userAvatar={userAvatar} />
+              {permissions.can_create_comment ? (
+                <TimelineCommentEditor userAvatar={userAvatar} />
+              ) : (
+                <Message icon info>
+                  <Icon name="info circle" />
+                  <Message.Content>
+                    {i18next.t("Adding and editing comments is not allowed when the conversation is locked.")}
+                  </Message.Content>
+                </Message>
+              )}
               <DeleteConfirmationModal
                 open={modalOpen}
                 action={modalAction}

@@ -214,3 +214,75 @@ RequestSubmitButton.defaultProps = {
   content: i18next.t("Request access"),
   className: "",
 };
+
+export const RequestLockButton = ({
+  onClick,
+  loading,
+  ariaAttributes,
+  size,
+  className,
+}) => {
+  return (
+    <Button
+      icon="lock"
+      onClick={onClick}
+      content={i18next.t("Lock conversation")}
+      loading={loading}
+      disabled={loading}
+      size={size}
+      className={className}
+      {...ariaAttributes}
+    />
+  );
+};
+
+RequestLockButton.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  loading: PropTypes.bool,
+  ariaAttributes: PropTypes.object,
+  size: PropTypes.string,
+  className: PropTypes.string,
+};
+
+RequestLockButton.defaultProps = {
+  loading: false,
+  ariaAttributes: {},
+  size: "mini",
+  className: "",
+};
+
+export const RequestUnlockButton = ({
+  onClick,
+  loading,
+  ariaAttributes,
+  size,
+  className,
+}) => {
+  return (
+    <Button
+      icon="unlock"
+      onClick={onClick}
+      content={i18next.t("Unlock conversation")}
+      loading={loading}
+      disabled={loading}
+      size={size}
+      className={className}
+      {...ariaAttributes}
+    />
+  );
+};
+
+RequestUnlockButton.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  loading: PropTypes.bool,
+  ariaAttributes: PropTypes.object,
+  size: PropTypes.string,
+  className: PropTypes.string,
+};
+
+RequestUnlockButton.defaultProps = {
+  loading: false,
+  ariaAttributes: {},
+  size: "mini",
+  className: "",
+};

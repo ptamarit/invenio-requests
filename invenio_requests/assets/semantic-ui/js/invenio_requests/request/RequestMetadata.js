@@ -3,7 +3,7 @@
 // Copyright (C) 2024 Graz University of Technology.
 // Copyright (C) 2024 KTH Royal Institute of Technology.
 //
-// Invenio RDM Records is free software; you can redistribute it and/or modify it
+// Invenio Requests is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import { i18next } from "@translations/invenio_requests/i18next";
@@ -16,6 +16,7 @@ import { toRelativeTime } from "react-invenio-forms";
 import RequestStatus from "./RequestStatus";
 import RequestTypeLabel from "./RequestTypeLabel";
 import { RequestReviewers } from "./reviewers/RequestReviewers";
+import { LockRequest } from "./LockRequest";
 
 const User = ({ user }) => (
   <div className="flex">
@@ -153,9 +154,23 @@ DeletedResource.propTypes = {
 class RequestMetadata extends Component {
   isResourceDeleted = (details) => details.is_ghost === true;
 
+  state = {
+    locked: false,
+  }
+
+  componentDidMount() {
+    const { request: { is_locked } } = this.props;
+    this.setState({ locked: is_locked || false });
+  }
+
+  updateState = (state) => {
+    this.setState(state);
+  }
+
   render() {
     const { request, config, permissions } = this.props;
     const { enableReviewers, allowGroupReviewers, maxReviewers } = config;
+    const { locked } = this.state;
 
     const expandedCreatedBy = request.expanded?.created_by;
     const expandedReceiver = request.expanded?.receiver;
@@ -241,6 +256,9 @@ class RequestMetadata extends Component {
               </Header>
               <a href={`/records/${request.topic.record}`}>{request.title}</a>
             </>
+          )}
+          {permissions.can_lock_request && (
+            <LockRequest request={request} updateRequest={this.updateState} locked={locked} />
           )}
         </>
       </Overridable>

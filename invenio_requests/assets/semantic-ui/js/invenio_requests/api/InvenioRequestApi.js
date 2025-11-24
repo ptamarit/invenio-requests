@@ -69,6 +69,20 @@ export class RequestLinksExtractor {
     }
     return this.#urls.actions;
   }
+
+  get lock() {
+    if (!this.#urls.lock) {
+      throw TypeError("Lock link missing from resource.");
+    }
+    return this.#urls.lock;
+  }
+
+  get unlock() {
+    if (!this.#urls.unlock) {
+      throw TypeError("Unlock link missing from resource.");
+    }
+    return this.#urls.unlock;
+  }
 }
 
 export class InvenioRequestsAPI {
@@ -132,5 +146,13 @@ export class InvenioRequestsAPI {
     return await http.post(this.#urls.actions[action], payload, {
       params: { expand: 1 },
     });
+  };
+
+  lockRequest = async () => {
+    return await http.get(this.#urls.lock);
+  };
+
+  unlockRequest = async () => {
+    return await http.get(this.#urls.unlock);
   };
 }

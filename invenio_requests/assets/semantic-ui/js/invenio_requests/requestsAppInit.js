@@ -26,6 +26,8 @@ import {
   TimelineCommentDeletionEvent,
   TimelineDeclineEvent,
   TimelineExpireEvent,
+  TimelineLockRequestEvent,
+  TimelineUnlockRequestEvent,
   TimelineUnknownEvent,
   TimelineReviewersUpdatedEvent,
 } from "./timelineEvents";
@@ -46,6 +48,8 @@ const defaultComponents = {
   "TimelineEvent.layout.cancelled": TimelineCancelEvent,
   "TimelineEvent.layout.reviewers_updated": TimelineReviewersUpdatedEvent,
   "TimelineEvent.layout.comment_deleted": TimelineCommentDeletionEvent,
+  "TimelineEvent.layout.locked": TimelineLockRequestEvent,
+  "TimelineEvent.layout.unlocked": TimelineUnlockRequestEvent,
   "RequestStatus.layout.submitted": SubmitStatus,
   "RequestStatus.layout.deleted": DeleteStatus,
   "RequestStatus.layout.accepted": AcceptStatus,
