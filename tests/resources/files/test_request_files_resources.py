@@ -56,8 +56,8 @@ def test_simple_files_flow(app, client_logged_as, example_request, location):
         "id": "f9e8d7c6-b5a4-3210-9876-543210fedcba",
         "key": "a1b2c3d4-e5f6-7890-abcd-ef1234567890-screenshot.png",
         "metadata": {"original_filename": "screenshot.png"},
-        "checksum": "md5:d41d8cd98f00b204e9800998ecf8427e",
-        "size": 45678,
+        "checksum": "md5:e9dd2797018cad79186e03e8c5aec8dc",
+        "size": 8,
         "mimetype": "image/png",
         "links": {
             "self": "/api/requests/{request_id}/files/{key}",

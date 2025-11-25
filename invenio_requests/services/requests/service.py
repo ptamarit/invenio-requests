@@ -23,8 +23,9 @@ from invenio_records_resources.services.uow import (
     RecordDeleteOp,
     unit_of_work,
 )
-from invenio_requests.services.schemas import RequestFileSchema
 from invenio_search.engine import dsl
+
+from invenio_requests.services.schemas import RequestFileSchema
 
 from ...customizations import RequestActions
 from ...customizations.event_types import CommentEventType
@@ -329,6 +330,10 @@ class RequestsService(RecordService):
 class RequestFilesService(FileService):
     """Service for managing request file attachments."""
 
+    def _wrap_schema(self, schema):
+        """Wrap schema."""
+        return ServiceSchemaWrapper(self, schema)
+
     # Utilities
     @property
     def request_cls(self):
@@ -390,27 +395,24 @@ class RequestFilesService(FileService):
 
         # uow.register(RecordDeleteOp(request, indexer=self.indexer))
 
+        file_object_model = request.files[key].file.object_model
+
+        return request.files[key].file.dumps()
 
         return self.result_item(
             self,
             identity,
-            request,
-            # schema=self._wrap_schema(event.type.marshmallow_schema()),
-            # links_tpl=self.links_tpl_factory(
-            #     self.config.links_item, request_type=str(request.type)
-            # ),
-        )
-
-
-        # return self.files.file_result_item(
-        return self.result_item(
-            self,
-            identity,
-            request.files[key],
+            # request.files[key].file,
+            # request.files[key].file.dumps(),
+            file_object_model,
             # request,
+            # schema=self._wrap_schema(file_object_model.type.marshmallow_schema()),
             # schema=RequestFileSchema,
             # TODO: Fix links_tpl
             # links_tpl=self.files.file_links_item_tpl(id_),
+            # links_tpl=self.links_tpl_factory(
+            #     self.config.links_item, request_type=str(request.type)
+            # ),
         )
 
     # @unit_of_work()

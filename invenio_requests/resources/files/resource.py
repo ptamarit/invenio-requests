@@ -95,7 +95,8 @@ class RequestFilesResource(RecordResource):
             content_length=resource_requestctx.data["request_content_length"],
         )
         # TODO: 201 instead of 200?
-        return item.to_dict(), 200
+        # return item.to_dict(), 200
+        return item, 200  # TODO: We need the to_dict like everywhere else.
         # self, identity, id_, key, stream, content_length)
 
     # @request_extra_args

@@ -60,7 +60,10 @@ class RequestEventSchema(BaseRecordSchema):
 class RequestFileSchema(BaseRecordSchema):
     """Schema for file requests."""
 
-    created_by = fields.Dict(dump_only=True)
+    # created_by = fields.Dict(dump_only=True)
+    # Fields from ObjectVersionSchema
+    key = fields.String(dump_only=True)
+    # TODO: Add more fields here.
 
 
 class RequestSchema(BaseRecordSchema):
