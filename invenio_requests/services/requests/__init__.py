@@ -10,18 +10,16 @@
 """Services module."""
 
 from .components import RequestNumberComponent
-from .config import RequestFilesServiceConfig, RequestsServiceConfig
+from .config import RequestsServiceConfig
 from .links import RequestLink
 from .results import RequestItem, RequestList
-from .service import RequestFilesService, RequestsService
+from .service import RequestsService
 
 __all__ = (
     "RequestNumberComponent",
     "RequestLink",
     "RequestItem",
     "RequestList",
-    "RequestFilesService",
-    "RequestFilesServiceConfig",
     "RequestsService",
     "RequestsServiceConfig",
 )

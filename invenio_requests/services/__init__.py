@@ -11,9 +11,8 @@
 """Services module."""
 
 from .events import RequestEventsService, RequestEventsServiceConfig
+from .files import RequestFilesService, RequestFilesServiceConfig
 from .requests import (
-    RequestFilesService,
-    RequestFilesServiceConfig,
     RequestsService,
     RequestsServiceConfig,
 )
