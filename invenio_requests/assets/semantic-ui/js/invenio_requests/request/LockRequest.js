@@ -5,7 +5,7 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import React from "react";
-import { Divider } from "semantic-ui-react";
+import { Divider, Popup, Icon, Grid } from "semantic-ui-react";
 import { RequestLockButton } from "@js/invenio_requests/components/Buttons";
 import {
   RequestLinksExtractor,
@@ -22,38 +22,64 @@ export const LockRequest = ({ request, updateState }) => {
 
   const [loading, setLoading] = useState(false);
 
+  const popupContent = isLocked
+    ? i18next.t(
+        "Unlocking the conversation will allow all users with access to the request to add or update comments."
+      )
+    : i18next.t(
+        "Locking the conversation will only allow the request receivers to add or update comments."
+      );
   return (
     <>
       <Divider />
-      {isLocked ? (
-        <RequestLockButton
-          onClick={async () => {
-            setLoading(true);
-            await requestsApi.unlockRequest();
-            updateState({ locked: false });
-            setLoading(false);
-            window.location.reload();
-          }}
-          className="request-lock-button"
-          loading={loading}
-          content={i18next.t("Unlock conversation")}
-          icon="unlock"
-        />
-      ) : (
-        <RequestLockButton
-          onClick={async () => {
-            setLoading(true);
-            await requestsApi.lockRequest();
-            updateState({ locked: true });
-            setLoading(false);
-            window.location.reload();
-          }}
-          className="request-lock-button"
-          loading={loading}
-          content={i18next.t("Lock conversation")}
-          icon="lock"
-        />
-      )}
+      <Grid columns={2}>
+        <Grid.Column floated="left" width={13}>
+          {isLocked ? (
+            <RequestLockButton
+              onClick={async () => {
+                setLoading(true);
+                await requestsApi.unlockRequest();
+                updateState({ locked: false });
+                setLoading(false);
+                window.location.reload();
+              }}
+              className="request-lock-button"
+              loading={loading}
+              content={i18next.t("Unlock conversation")}
+              icon="unlock"
+            />
+          ) : (
+            <RequestLockButton
+              onClick={async () => {
+                setLoading(true);
+                await requestsApi.lockRequest();
+                updateState({ locked: true });
+                setLoading(false);
+                window.location.reload();
+              }}
+              className="request-lock-button"
+              loading={loading}
+              content={i18next.t("Lock conversation")}
+              icon="lock"
+            />
+          )}
+        </Grid.Column>
+        <Grid.Column
+          floated="right"
+          width={3}
+          verticalAlign="middle"
+          textAlign="center"
+        >
+          <Popup
+            content={popupContent}
+            trigger={
+              <span role="button" tabIndex="0">
+                <Icon name="question circle outline" />
+              </span>
+            }
+          />
+        </Grid.Column>
+      </Grid>
     </>
   );
 };
