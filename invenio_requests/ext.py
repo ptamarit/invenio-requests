@@ -162,7 +162,6 @@ def init(app):
     requests_ext = app.extensions["invenio-requests"]
     requests_service = requests_ext.requests_service
     events_service = requests_ext.request_events_service
-    # Added for tests, maybe? It fails with AttributeError: 'InvenioRequests' object has no attribute 'request_files_service'
     files_service = requests_ext.request_files_service
 
     svc_reg.register(requests_service)

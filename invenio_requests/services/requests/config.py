@@ -213,13 +213,9 @@ class RequestFilesServiceConfig(RecordServiceConfig, ConfiguratorMixin):
 
     # links configuration / ResultItem configurations
     links_item = {
-        # "self": RequestEventLink("{+api}/requests/{request_id}/comments/{id}"),
-        # "self": RequestLink("{+api}/requests/{id}"),
-        # "self_html": RequestEventLink("{+ui}/requests/{request_id}#commentevent-{id}"),
-        # "self_html": RequestLink("{+ui}/requests/{id}"),
-        # "comments": RequestLink("{+api}/requests/{id}/comments"),
-        # "timeline": RequestLink("{+api}/requests/{id}/timeline"),
-        # "timeline_focused": RequestLink("{+api}/requests/{id}/timeline_focused"),
+        "self": RequestFileLink("{+api}/requests/{request_id}/files/{key}"),
+        "content": RequestFileLink("{+api}/requests/{request_id}/files/{key}/content"),
+        "download_html": RequestFileLink("{+ui}/requests/{request_id}/files/{key}"),
     }
     # links_search = pagination_links("{+api}/requests/{request_id}/timeline{?args*}")
     # links_search = pagination_links("{+api}/requests{?args*}")

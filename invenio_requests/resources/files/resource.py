@@ -56,7 +56,9 @@ class RequestFilesResource(RecordResource):
             ),
             # route("GET", routes["item"], self.read),
             # route("PUT", routes["item"], self.update),
-            # route("DELETE", routes["item"], self.delete),
+            route(
+                "DELETE", "/api" + self.config.url_prefix + routes["item"], self.delete
+            ),
             # route("GET", routes["timeline"], self.search),
         ]
 
@@ -135,11 +137,17 @@ class RequestFilesResource(RecordResource):
     #     )
     #     return item.to_dict(), 200
 
-    # # @request_view_args
-    # def delete_logo(self):
-    #     """Delete logo."""
-    #     self.service.delete_logo(
-    #         resource_requestctx.view_args["pid_value"],
-    #         g.identity,
-    #     )
-    #     return "", 204
+    # @request_headers
+    @request_view_args
+    # @response_handler()
+    def delete(self):
+        """Delete a file."""
+        deleted_file = self.service.delete_file(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["id"],
+            file_key=resource_requestctx.view_args["key"],
+            # data=resource_requestctx.data,
+        )
+
+        # TODO: Return the information about the deleted file?
+        return "", 204

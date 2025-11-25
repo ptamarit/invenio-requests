@@ -349,6 +349,7 @@ class RequestFilesService(FileService):
     #     db.session.add(object_version)
     #     db.session.commit()
 
+    # TODO: Other methods have the params file_key, not key.
     @unit_of_work()
     def create_file(self, identity, id_, key, stream, content_length, uow=None):
         """Upload a file in a single operation (simple endpoint).
@@ -397,91 +398,88 @@ class RequestFilesService(FileService):
 
         file_object_model = request.files[key].file.object_model
 
+        # TODO: Return a proper result_item.
         return request.files[key].file.dumps()
 
-        return self.result_item(
-            self,
-            identity,
-            # request.files[key].file,
-            # request.files[key].file.dumps(),
-            file_object_model,
-            # request,
-            # schema=self._wrap_schema(file_object_model.type.marshmallow_schema()),
-            # schema=RequestFileSchema,
-            # TODO: Fix links_tpl
-            # links_tpl=self.files.file_links_item_tpl(id_),
-            # links_tpl=self.links_tpl_factory(
-            #     self.config.links_item, request_type=str(request.type)
-            # ),
-        )
-
-    # @unit_of_work()
-    # def init_files(self, identity, id_, data):
-    #     """Initialize multi-part file upload."""
-    #     # For large files or exotic transfer workflows
-
-    # @unit_of_work()
-    # def set_file_content(self, identity, id_, file_key, stream, content_length):
-    #     """Upload file content in multi-part workflow."""
-    #     # Step 2 of multi-part upload
-
-    # @unit_of_work()
-    # def commit_file(self, identity, id_, file_key):
-    #     """Commit file upload in multi-part workflow."""
-    #     # Step 3 of multi-part upload - finalize file
+        # return self.result_item(
+        #     self,
+        #     identity,
+        #     # request.files[key].file,
+        #     # request.files[key].file.dumps(),
+        #     file_object_model,
+        #     # request,
+        #     # schema=self._wrap_schema(file_object_model.type.marshmallow_schema()),
+        #     # schema=RequestFileSchema,
+        #     # TODO: Fix links_tpl
+        #     # links_tpl=self.files.file_links_item_tpl(id_),
+        #     # links_tpl=self.links_tpl_factory(
+        #     #     self.config.links_item, request_type=str(request.type)
+        #     # ),
+        # )
 
     def read_file_metadata(self, identity, id_, file_key):
         """Retrieve file metadata."""
-        # Return file metadata (key, size, mimetype, links, etc.)
+        # resolve and check permissions
+        request = self.request_cls.get_record(id_)
         self.require_permission(identity, "read", request=request)
+        # Return file metadata (key, size, mimetype, links, etc.)
 
     def get_file_content(self, identity, id_, file_key):
         """Retrieve file content for download/display."""
-        # Return file stream
-        record = self.record_cls.pid.resolve(id_)
+        # resolve and check permissions
+        request = self.request_cls.get_record(id_)
         # self.require_permission(identity, 'read', record=record)
         self.require_permission(identity, "read", request=request)
+        # Return file stream
 
-        logo_file = record.files.get("logo")
-        if logo_file is None:
+        request_file = request.files.get(file_key)
+        if request_file is None:
             raise FileNotFoundError()
         return self.files.file_result_item(
-            self.files,
+            self,
             identity,
-            logo_file,
-            record,
-            links_tpl=self.files.file_links_item_tpl(id_),
+            request_file,
+            request,
+            # links_tpl=self.files.file_links_item_tpl(id_),
         )
 
     def list_files(self, identity, id_):
         """List all files for a request."""
-        # Return list of all files in request bucket
+        # resolve and check permissions
+        request = self.request_cls.get_record(id_)
         self.require_permission(identity, "read", request=request)
+        # Return list of all files in request bucket
+        return list(request.files.keys())
 
-    # @unit_of_work()
-    def delete_file(self, identity, id_, file_key):
+    @unit_of_work()
+    def delete_file(self, identity, id_, file_key, uow=None):
         """Delete a specific file."""
         # Called explicitly via API or by frontend when file removed from comment
 
+        # resolve and check permissions
+        request = self.request_cls.get_record(id_)
         self.require_permission(identity, "action_delete", request=request)
         self.require_permission(identity, "update", record=request, request=request)
-        self.require_permission(
-            identity, "delete_comment", request=request, event=event
-        )
-        self.require_permission(
-            identity, "update_comment", request=request, event=event
-        )
+        # self.require_permission(
+        #     identity, "delete_comment", request=request, event=event
+        # )
+        # self.require_permission(
+        #     identity, "update_comment", request=request, event=event
+        # )
 
-        record = self.record_cls.pid.resolve(id_)
-        deleted_file = record.files.pop("logo", None)
+        # TODO: Why not doing request.files.delete(file_key) ?
+        deleted_file = request.files.pop(file_key, None)
         if deleted_file is None:
             raise FileNotFoundError()
-        record.commit()
+        request.commit()
         db.session.commit()
-        return self.files.file_result_item(
-            self.files,
-            identity,
-            deleted_file,
-            record,
-            links_tpl=self.files.file_links_item_tpl(id_),
-        )
+
+        # TODO: Return a proper result_item.
+        return deleted_file.file.dumps()
+        # return self.result_item(
+        #     self,
+        #     identity,
+        #     deleted_file,
+        #     request,
+        #     # links_tpl=self.files.file_links_item_tpl(id_),
+        # )

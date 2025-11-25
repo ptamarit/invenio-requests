@@ -19,8 +19,8 @@ class RequestFilesResourceConfig(RecordResourceConfig):
     url_prefix = "/requests"
     routes = {
         "create": "/<id>/files/upload/<key>",  # TODO: Change from id to request_id ? It seems that "request_*" prefix is also a Flask thing.
+        "item": "/<id>/files/<key>",
         # "list": "/<request_id>/comments",
-        # "item": "/<request_id>/comments/<comment_id>",
         # "timeline": "/<request_id>/timeline",
         # "list": "/",
         # "user-prefix": "/user",
@@ -42,10 +42,10 @@ class RequestFilesResourceConfig(RecordResourceConfig):
     request_list_view_args = {
         "request_id": fields.UUID(),
     }
-    request_item_view_args = {
-        "request_id": fields.Str(),
-        "comment_id": fields.Str(),
-    }
+    # request_item_view_args = {
+    #     "request_id": fields.Str(),
+    #     "comment_id": fields.Str(),
+    # }
 
     response_handlers = {
         "application/vnd.inveniordm.v1+json": RecordResourceConfig.response_handlers[
