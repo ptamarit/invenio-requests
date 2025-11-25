@@ -7,7 +7,7 @@
 import { RichEditor } from "react-invenio-forms";
 import React, { useEffect, useRef } from "react";
 import { SaveButton } from "../components/Buttons";
-import { Container, Message } from "semantic-ui-react";
+import { Container, Message, Icon } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { i18next } from "@translations/invenio_requests/i18next";
 import { RequestEventAvatarContainer } from "../components/RequestsFeed";
@@ -22,6 +22,7 @@ const TimelineCommentEditor = ({
   error,
   submitComment,
   userAvatar,
+  canCreateComment,
 }) => {
   useEffect(() => {
     restoreCommentContent();
@@ -40,10 +41,21 @@ const TimelineCommentEditor = ({
   return (
     <div className="timeline-comment-editor-container">
       {error && <Message negative>{error}</Message>}
+      {!canCreateComment && (
+        <Message icon info>
+          <Icon name="info circle" />
+          <Message.Content>
+            {i18next.t(
+              "Adding and editing comments is not allowed when the conversation is locked."
+            )}
+          </Message.Content>
+        </Message>
+      )}
       <div className="flex">
         <RequestEventAvatarContainer
           src={userAvatar}
           className="tablet computer only rel-mr-1"
+          disabled={!canCreateComment}
         />
         <Container fluid className="ml-0-mobile mr-0-mobile fluid-mobile">
           <RichEditor
@@ -55,6 +67,7 @@ const TimelineCommentEditor = ({
             }}
             minHeight={150}
             onInit={(_, editor) => (editorRef.current = editor)}
+            disabled={!canCreateComment}
           />
         </Container>
       </div>
@@ -65,6 +78,7 @@ const TimelineCommentEditor = ({
           content={i18next.t("Comment")}
           loading={isLoading}
           onClick={() => submitComment(commentContent, "html")}
+          disabled={!canCreateComment}
         />
       </div>
     </div>
@@ -81,6 +95,7 @@ TimelineCommentEditor.propTypes = {
   submitComment: PropTypes.func.isRequired,
   restoreCommentContent: PropTypes.func.isRequired,
   userAvatar: PropTypes.string,
+  canCreateComment: PropTypes.bool,
 };
 
 TimelineCommentEditor.defaultProps = {
@@ -90,6 +105,7 @@ TimelineCommentEditor.defaultProps = {
   isLoading: false,
   error: "",
   userAvatar: "",
+  canCreateComment: true,
 };
 
 export default TimelineCommentEditor;

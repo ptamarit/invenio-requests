@@ -221,15 +221,18 @@ export const RequestLockButton = ({
   ariaAttributes,
   size,
   className,
+  content,
+  icon,
 }) => {
   return (
     <Button
-      icon="lock"
+      icon={icon}
       onClick={onClick}
-      content={i18next.t("Lock conversation")}
+      content={content}
       loading={loading}
       disabled={loading}
       size={size}
+      fluid
       className={className}
       {...ariaAttributes}
     />
@@ -242,47 +245,13 @@ RequestLockButton.propTypes = {
   ariaAttributes: PropTypes.object,
   size: PropTypes.string,
   className: PropTypes.string,
+  icon: PropTypes.string.isRequired,
+  content: PropTypes.string.isRequired,
 };
 
 RequestLockButton.defaultProps = {
   loading: false,
   ariaAttributes: {},
-  size: "mini",
-  className: "",
-};
-
-export const RequestUnlockButton = ({
-  onClick,
-  loading,
-  ariaAttributes,
-  size,
-  className,
-}) => {
-  return (
-    <Button
-      icon="unlock"
-      onClick={onClick}
-      content={i18next.t("Unlock conversation")}
-      loading={loading}
-      disabled={loading}
-      size={size}
-      className={className}
-      {...ariaAttributes}
-    />
-  );
-};
-
-RequestUnlockButton.propTypes = {
-  onClick: PropTypes.func.isRequired,
-  loading: PropTypes.bool,
-  ariaAttributes: PropTypes.object,
-  size: PropTypes.string,
-  className: PropTypes.string,
-};
-
-RequestUnlockButton.defaultProps = {
-  loading: false,
-  ariaAttributes: {},
-  size: "mini",
-  className: "",
+  size: "small",
+  className: "request-lock-button",
 };

@@ -13,8 +13,17 @@ import { Grid } from "semantic-ui-react";
 import { Timeline } from "../timeline";
 
 class RequestDetails extends Component {
+  state = {
+    locked: false,
+  };
+
+  updateState = (state) => {
+    this.setState(state);
+  };
+
   render() {
     const { request, userAvatar, permissions, config } = this.props;
+    const { locked } = this.state;
     return (
       <Overridable id="InvenioRequests.RequestDetails.layout" {...this.props}>
         <Grid stackable reversed="mobile">
@@ -30,6 +39,7 @@ class RequestDetails extends Component {
               request={request}
               permissions={permissions}
               config={config}
+              updateState={this.updateState}
             />
           </Grid.Column>
         </Grid>

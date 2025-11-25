@@ -6,49 +6,52 @@
 
 import React from "react";
 import { Divider } from "semantic-ui-react";
-import {
-  RequestLockButton,
-  RequestUnlockButton,
-} from "@js/invenio_requests/components/Buttons";
+import { RequestLockButton } from "@js/invenio_requests/components/Buttons";
 import {
   RequestLinksExtractor,
   InvenioRequestsAPI,
 } from "@js/invenio_requests/api/InvenioRequestApi";
 import PropTypes from "prop-types";
 import { useState } from "react";
+import { i18next } from "@translations/invenio_requests/i18next";
 
-export const LockRequest = ({ request, updateRequest, locked }) => {
+export const LockRequest = ({ request, updateState }) => {
   const requestLinksExtractor = new RequestLinksExtractor(request);
   const requestsApi = new InvenioRequestsAPI(requestLinksExtractor);
+  const { is_locked: isLocked } = request;
 
   const [loading, setLoading] = useState(false);
 
   return (
     <>
       <Divider />
-      {locked ? (
-        <RequestUnlockButton
+      {isLocked ? (
+        <RequestLockButton
           onClick={async () => {
             setLoading(true);
             await requestsApi.unlockRequest();
-            updateRequest({ locked: false });
+            updateState({ locked: false });
             setLoading(false);
             window.location.reload();
           }}
-          className="request-unlock-button"
+          className="request-lock-button"
           loading={loading}
+          content={i18next.t("Unlock conversation")}
+          icon="unlock"
         />
       ) : (
         <RequestLockButton
           onClick={async () => {
             setLoading(true);
             await requestsApi.lockRequest();
-            updateRequest({ locked: true });
+            updateState({ locked: true });
             setLoading(false);
             window.location.reload();
           }}
           className="request-lock-button"
           loading={loading}
+          content={i18next.t("Lock conversation")}
+          icon="lock"
         />
       )}
     </>
@@ -57,6 +60,5 @@ export const LockRequest = ({ request, updateRequest, locked }) => {
 
 LockRequest.propTypes = {
   request: PropTypes.object.isRequired,
-  updateRequest: PropTypes.func.isRequired,
-  locked: PropTypes.bool.isRequired,
+  updateState: PropTypes.func.isRequired,
 };
