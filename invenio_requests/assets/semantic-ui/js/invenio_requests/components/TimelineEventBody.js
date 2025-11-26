@@ -6,10 +6,10 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { Button, Popup } from "semantic-ui-react";
+import { Button, Popup, ButtonGroup } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_requests/i18next";
 
-export const TimelineEventBody = ({ content, format, quote }) => {
+export const TimelineEventBody = ({ payload, quote, quoteReply }) => {
   const ref = useRef(null);
   const [selectionRange, setSelectionRange] = useState(null);
 
@@ -55,15 +55,35 @@ export const TimelineEventBody = ({ content, format, quote }) => {
     return [selectionRect.x - refRect.x, -(selectionRect.y - refRect.y)];
   }, [selectionRange]);
 
-  const onQuoteClick = useCallback(() => {
-    if (!selectionRange) return;
-    quote(selectionRange.toString());
-    window.getSelection().removeAllRanges();
-  }, [selectionRange, quote]);
+  const onQuoteClick = useCallback(
+    (reply) => {
+      if (!selectionRange) return;
+      const selectionString = selectionRange.toString();
+      if (reply) {
+        quoteReply(selectionString);
+      } else {
+        quote(selectionString);
+      }
+      window.getSelection().removeAllRanges();
+    },
+    [selectionRange, quote, quoteReply]
+  );
 
   useEffect(() => {
     window.invenio?.onSearchResultsRendered();
   }, []);
+
+  const { format, content, event } = payload;
+
+  if (event === "comment_deleted") {
+    return (
+      <span ref={ref}>
+        <p className="requests-event-body-deleted">
+          {i18next.t("Comment was deleted.")}
+        </p>
+      </span>
+    );
+  }
 
   return (
     <Popup
@@ -83,24 +103,34 @@ export const TimelineEventBody = ({ content, format, quote }) => {
       }
       basic
     >
-      <Button
-        onClick={onQuoteClick}
-        icon="quote left"
-        content={i18next.t("Quote")}
-        size="small"
-        basic
-      />
+      <ButtonGroup basic size="small">
+        {quote && (
+          <Button
+            onClick={() => onQuoteClick(false)}
+            icon="quote left"
+            content={i18next.t("Quote")}
+          />
+        )}
+        {quoteReply && (
+          <Button
+            onClick={() => onQuoteClick(true)}
+            icon="reply"
+            content={i18next.t("Quote reply")}
+          />
+        )}
+      </ButtonGroup>
     </Popup>
   );
 };
 
 TimelineEventBody.propTypes = {
-  content: PropTypes.string,
-  format: PropTypes.string,
-  quote: PropTypes.func.isRequired,
+  payload: PropTypes.object,
+  quote: PropTypes.func,
+  quoteReply: PropTypes.func,
 };
 
 TimelineEventBody.defaultProps = {
-  content: "",
-  format: "",
+  payload: {},
+  quote: null,
+  quoteReply: null,
 };

@@ -34,6 +34,28 @@ export class RequestEventsLinksExtractor {
     }
     return this.#links.self_html;
   }
+
+  get repliesUrl() {
+    if (!this.#links.replies) {
+      throw TypeError(
+        i18next.t("{{link_name}} link missing from resource.", {
+          link_name: "Replies",
+        })
+      );
+    }
+    return this.#links.replies;
+  }
+
+  get replyUrl() {
+    if (!this.#links.reply) {
+      throw TypeError(
+        i18next.t("{{link_name}} link missing from resource.", {
+          link_name: "Reply",
+        })
+      );
+    }
+    return this.#links.reply;
+  }
 }
 
 export class InvenioRequestEventsApi {
@@ -53,5 +75,20 @@ export class InvenioRequestEventsApi {
 
   deleteComment = async () => {
     return await http.delete(this.#links.eventUrl);
+  };
+
+  getReplies = async (params) => {
+    return await http.get(this.#links.repliesUrl, {
+      params: {
+        expand: 1,
+        ...params,
+      },
+    });
+  };
+
+  submitReply = async (payload) => {
+    return await http.post(this.#links.replyUrl, payload, {
+      params: { expand: 1 },
+    });
   };
 }

@@ -8,11 +8,13 @@ import { timelineReducer } from "../timeline/state/reducer";
 import { commentEditorReducer } from "../timelineCommentEditor/state/reducer";
 import { combineReducers } from "redux";
 import { requestReducer } from "../request/state/reducer";
+import { timelineRepliesReducer } from "../timelineCommentReplies/state/reducer";
 
 export default function createReducers() {
   return combineReducers({
     timeline: timelineReducer,
     timelineCommentEditor: commentEditorReducer,
+    timelineReplies: timelineRepliesReducer,
     request: requestReducer,
   });
 }

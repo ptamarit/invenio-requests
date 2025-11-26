@@ -5,8 +5,8 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import { RichEditor } from "react-invenio-forms";
-import React, { useEffect, useRef } from "react";
-import { SaveButton } from "../components/Buttons";
+import React, { useCallback, useEffect, useRef } from "react";
+import { CancelButton, SaveButton } from "../components/Buttons";
 import { Container, Message, Icon } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { i18next } from "@translations/invenio_requests/i18next";
@@ -23,6 +23,9 @@ const TimelineCommentEditor = ({
   submitComment,
   userAvatar,
   canCreateComment,
+  autoFocus,
+  buttonLabel,
+  onCancel,
 }) => {
   useEffect(() => {
     restoreCommentContent();
@@ -37,6 +40,15 @@ const TimelineCommentEditor = ({
     editorRef.current.selection.collapse(false);
     editorRef.current.focus();
   }, [appendedCommentContent]);
+
+  const onInit = useCallback(
+    (_, editor) => {
+      editorRef.current = editor;
+      if (!autoFocus) return;
+      editor.focus();
+    },
+    [autoFocus]
+  );
 
   return (
     <div className="timeline-comment-editor-container">
@@ -63,17 +75,25 @@ const TimelineCommentEditor = ({
             onEditorChange={(_, editor) => {
               setCommentContent(editor.getContent());
             }}
+            onInit={onInit}
             minHeight={150}
-            onInit={(_, editor) => (editorRef.current = editor)}
             disabled={!canCreateComment}
           />
         </Container>
       </div>
       <div className="text-align-right rel-mt-1">
+        {onCancel && (
+          <CancelButton
+            size="medium"
+            className="mr-10"
+            onClick={onCancel}
+            disabled={isLoading}
+          />
+        )}
         <SaveButton
           icon="send"
           size="medium"
-          content={i18next.t("Comment")}
+          content={buttonLabel}
           loading={isLoading}
           onClick={() => submitComment(commentContent, "html")}
           disabled={!canCreateComment}
@@ -94,6 +114,9 @@ TimelineCommentEditor.propTypes = {
   restoreCommentContent: PropTypes.func.isRequired,
   userAvatar: PropTypes.string,
   canCreateComment: PropTypes.bool,
+  autoFocus: PropTypes.bool,
+  buttonLabel: PropTypes.string,
+  onCancel: PropTypes.func,
 };
 
 TimelineCommentEditor.defaultProps = {
@@ -104,6 +127,9 @@ TimelineCommentEditor.defaultProps = {
   error: "",
   userAvatar: "",
   canCreateComment: true,
+  autoFocus: false,
+  buttonLabel: i18next.t("Comment"),
+  onCancel: null,
 };
 
 export default TimelineCommentEditor;

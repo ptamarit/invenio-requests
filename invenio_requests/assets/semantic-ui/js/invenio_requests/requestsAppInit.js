@@ -35,6 +35,9 @@ import {
 const requestDetailsDiv = document.getElementById("request-detail");
 const request = JSON.parse(requestDetailsDiv.dataset.record);
 const defaultQueryParams = JSON.parse(requestDetailsDiv.dataset.defaultQueryConfig);
+const defaultReplyQueryParams = JSON.parse(
+  requestDetailsDiv.dataset.defaultReplyQueryConfig
+);
 const userAvatar = JSON.parse(requestDetailsDiv.dataset.userAvatar);
 const permissions = JSON.parse(requestDetailsDiv.dataset.permissions);
 const config = JSON.parse(requestDetailsDiv.dataset.config);
@@ -67,6 +70,7 @@ ReactDOM.render(
   <InvenioRequestsApp
     request={request}
     defaultQueryParams={defaultQueryParams}
+    defaultReplyQueryParams={defaultReplyQueryParams}
     overriddenCmps={{ ...defaultComponents, ...overriddenComponents }}
     userAvatar={userAvatar}
     permissions={permissions}

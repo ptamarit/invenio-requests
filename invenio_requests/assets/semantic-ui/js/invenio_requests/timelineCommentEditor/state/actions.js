@@ -16,31 +16,35 @@ import _cloneDeep from "lodash/cloneDeep";
 export const IS_LOADING = "eventEditor/IS_LOADING";
 export const HAS_ERROR = "eventEditor/HAS_ERROR";
 export const SUCCESS = "eventEditor/SUCCESS";
-export const SETTING_CONTENT = "eventEditor/SETTING_CONTENT";
-export const RESTORE_CONTENT = "eventEditor/RESTORE_CONTENT";
-export const APPEND_CONTENT = "eventEditor/APPENDING_CONTENT";
+export const PARENT_SET_DRAFT_CONTENT = "eventEditor/SETTING_CONTENT";
+export const PARENT_RESTORE_DRAFT_CONTENT = "eventEditor/RESTORE_CONTENT";
+export const PARENT_APPEND_DRAFT_CONTENT = "eventEditor/APPEND_CONTENT";
 
-const draftCommentKey = (requestId) => `draft-comment-${requestId}`;
-const setDraftComment = (requestId, content) => {
-  localStorage.setItem(draftCommentKey(requestId), content);
+const draftCommentKey = (requestId, parentRequestEventId) =>
+  `draft-comment-${requestId}${parentRequestEventId ? "-" + parentRequestEventId : ""}`;
+export const setDraftComment = (requestId, parentRequestEventId, content) => {
+  localStorage.setItem(draftCommentKey(requestId, parentRequestEventId), content);
 };
-const getDraftComment = (requestId) => {
-  return localStorage.getItem(draftCommentKey(requestId));
+export const getDraftComment = (requestId, parentRequestEventId) => {
+  return localStorage.getItem(draftCommentKey(requestId, parentRequestEventId));
 };
-const deleteDraftComment = (requestId) => {
-  localStorage.removeItem(draftCommentKey(requestId));
+export const deleteDraftComment = (requestId, parentRequestEventId) => {
+  localStorage.removeItem(draftCommentKey(requestId, parentRequestEventId));
 };
 
-export const setEventContent = (content) => {
+export const setEventContent = (content, parentRequestEventId, event) => {
   return async (dispatch, getState, config) => {
     dispatch({
-      type: SETTING_CONTENT,
-      payload: content,
+      type: event,
+      payload: {
+        parentRequestEventId,
+        content,
+      },
     });
     const { request } = getState();
 
     try {
-      setDraftComment(request.data.id, content);
+      setDraftComment(request.data.id, parentRequestEventId, content);
     } catch (e) {
       // This should not be a fatal error. The comment editor is still usable if
       // draft saving isn't working (e.g. on very old browsers or ultra-restricted
@@ -50,31 +54,44 @@ export const setEventContent = (content) => {
   };
 };
 
-export const restoreEventContent = () => {
+export const restoreEventContent = (parentRequestEventId, event) => {
   return (dispatch, getState, config) => {
     const { request } = getState();
     let savedDraft = null;
     try {
-      savedDraft = getDraftComment(request.data.id);
+      savedDraft = getDraftComment(request.data.id, parentRequestEventId);
     } catch (e) {
       console.warn("Failed to get saved comment:", e);
     }
 
     if (savedDraft) {
       dispatch({
-        type: RESTORE_CONTENT,
-        payload: savedDraft,
+        type: event,
+        payload: {
+          parentRequestEventId,
+          content: savedDraft,
+        },
       });
     }
   };
 };
 
-export const appendEventContent = (content, focus) => {
-  return async (dispatch, getState, config) => {
+export const appendEventContent = (parentRequestEventId, content, event) => {
+  return async (dispatch, getState) => {
     dispatch({
-      type: APPEND_CONTENT,
-      payload: content,
+      type: event,
+      payload: {
+        content,
+        parentRequestEventId,
+      },
     });
+
+    const { request } = getState();
+    try {
+      setDraftComment(request.data.id, parentRequestEventId, content);
+    } catch (e) {
+      console.warn("Failed to save comment:", e);
+    }
   };
 };
 

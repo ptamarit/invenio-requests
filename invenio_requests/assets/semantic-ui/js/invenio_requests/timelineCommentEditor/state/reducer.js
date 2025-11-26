@@ -9,9 +9,9 @@ import {
   IS_LOADING,
   HAS_ERROR,
   SUCCESS,
-  SETTING_CONTENT,
-  RESTORE_CONTENT,
-  APPEND_CONTENT,
+  PARENT_RESTORE_DRAFT_CONTENT,
+  PARENT_SET_DRAFT_CONTENT,
+  PARENT_APPEND_DRAFT_CONTENT,
 } from "./actions";
 
 const initialState = {
@@ -19,21 +19,20 @@ const initialState = {
   isLoading: false,
   commentContent: "",
   storedCommentContent: null,
-  appendedCommentContent: "",
 };
 
 export const commentEditorReducer = (state = initialState, action) => {
   switch (action.type) {
-    case SETTING_CONTENT:
-      return { ...state, commentContent: action.payload };
-    case APPEND_CONTENT:
+    case PARENT_APPEND_DRAFT_CONTENT:
       return {
         ...state,
-        commentContent: state.commentContent + action.payload,
+        commentContent: state.commentContent + action.payload.content,
         // We keep track of appended content separately to trigger the focus event only when
         // text is appended (not when the user is typing).
-        appendedCommentContent: state.appendedCommentContent + action.payload,
+        appendedCommentContent: state.appendedCommentContent + action.payload.content,
       };
+    case PARENT_SET_DRAFT_CONTENT:
+      return { ...state, commentContent: action.payload.content };
     case IS_LOADING:
       return { ...state, isLoading: true };
     case HAS_ERROR:
@@ -45,12 +44,12 @@ export const commentEditorReducer = (state = initialState, action) => {
         error: null,
         commentContent: "",
       };
-    case RESTORE_CONTENT:
+    case PARENT_RESTORE_DRAFT_CONTENT:
       return {
         ...state,
-        commentContent: action.payload,
+        commentContent: action.payload.content,
         // We'll never change this later, so it can be used as an `initialValue`
-        storedCommentContent: action.payload,
+        storedCommentContent: action.payload.content,
       };
     default:
       return state;

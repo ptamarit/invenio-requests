@@ -27,7 +27,7 @@ RequestsFeed.defaultProps = {
 };
 
 export const RequestEventItem = forwardRef(function RequestEventItem(
-  { id, children, selected },
+  { id, children, selected, isReply },
   ref
 ) {
   return (
@@ -36,7 +36,9 @@ export const RequestEventItem = forwardRef(function RequestEventItem(
       id={id}
       ref={ref}
     >
-      <div className="requests-event-container">{children}</div>
+      <div className={`requests-event-container${isReply ? " reply" : ""}`}>
+        {children}
+      </div>
     </div>
   );
 });
@@ -45,12 +47,14 @@ RequestEventItem.propTypes = {
   id: PropTypes.string,
   children: PropTypes.node,
   selected: PropTypes.bool,
+  isReply: PropTypes.bool,
 };
 
 RequestEventItem.defaultProps = {
   id: null,
   children: null,
   selected: false,
+  isReply: false,
 };
 
 export const RequestEventInnerContainer = ({ children, isEvent }) => (
@@ -69,8 +73,8 @@ RequestEventInnerContainer.defaultProps = {
   isEvent: false,
 };
 
-export const RequestEventAvatarContainer = ({ src, ...uiProps }) => (
-  <div className="requests-avatar-container">
+export const RequestEventAvatarContainer = ({ src, hasLine, ...uiProps }) => (
+  <div className={`requests-avatar-container${hasLine ? " has-line" : ""}`}>
     {src && <Image src={src} rounded avatar {...uiProps} />}
     {!src && <Icon size="large" name="user circle outline" />}
   </div>
@@ -78,10 +82,12 @@ export const RequestEventAvatarContainer = ({ src, ...uiProps }) => (
 
 RequestEventAvatarContainer.propTypes = {
   src: PropTypes.string,
+  hasLine: PropTypes.bool,
 };
 
 RequestEventAvatarContainer.defaultProps = {
   src: null,
+  hasLine: false,
 };
 
 export const RequestEventItemIconContainer = ({ name, size, color }) => (
@@ -96,15 +102,22 @@ RequestEventItemIconContainer.propTypes = {
   color: PropTypes.string.isRequired,
 };
 
-export const RequestEventItemBody = ({ isActionEvent, ...props }) => (
-  <Feed.Event {...props} className={isActionEvent ? "requests-action-event" : ""} />
+export const RequestEventItemBody = ({ isActionEvent, isReply, ...props }) => (
+  <Feed.Event
+    {...props}
+    className={
+      isActionEvent ? "requests-action-event" : isReply ? "requests-reply-event" : ""
+    }
+  />
 );
 
 RequestEventItemBody.propTypes = {
   isActionEvent: PropTypes.bool,
+  isReply: PropTypes.bool,
 };
 RequestEventItemBody.defaultProps = {
   isActionEvent: false,
+  isReply: false,
 };
 
 RequestsFeed.Content = RequestEventInnerContainer;

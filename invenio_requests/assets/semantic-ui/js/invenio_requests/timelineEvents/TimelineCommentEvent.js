@@ -9,7 +9,7 @@ import PropTypes from "prop-types";
 import React, { Component, createRef } from "react";
 import { Image } from "react-invenio-forms";
 import Overridable from "react-overridable";
-import { Container, Dropdown, Feed, Icon } from "semantic-ui-react";
+import { Divider, Container, Dropdown, Feed, Icon } from "semantic-ui-react";
 import { CancelButton, SaveButton } from "../components/Buttons";
 import Error from "../components/Error";
 import { RichEditor } from "react-invenio-forms";
@@ -18,6 +18,7 @@ import { TimelineEventBody } from "../components/TimelineEventBody";
 import { toRelativeTime } from "react-invenio-forms";
 import { isEventSelected } from "./utils";
 import { RequestEventsLinksExtractor } from "../api/InvenioRequestEventsApi.js";
+import { TimelineCommentReplies } from "../timelineCommentReplies/index.js";
 
 class TimelineCommentEvent extends Component {
   constructor(props) {
@@ -55,6 +56,9 @@ class TimelineCommentEvent extends Component {
   eventToType = ({ type, payload }) => {
     switch (type) {
       case "L":
+        if (payload?.event === "comment_deleted") {
+          return "comment";
+        }
         return payload?.event || "unknown";
       case "C":
         return "comment";
@@ -72,6 +76,16 @@ class TimelineCommentEvent extends Component {
     navigator.clipboard.writeText(new RequestEventsLinksExtractor(links).eventHtmlUrl);
   }
 
+  /**
+   * Append a quote of the comment's content to the new comment in the editor.
+   *
+   * @param {string} [text] - The text to quote
+   */
+  quote = (text, asReply) => {
+    const { appendCommentContent } = this.props;
+    appendCommentContent(`<blockquote>${text}</blockquote><br />`, asReply);
+  };
+
   render() {
     const {
       isLoading,
@@ -81,11 +95,19 @@ class TimelineCommentEvent extends Component {
       updateComment,
       deleteComment,
       toggleEditMode,
-      quote,
+      userAvatar: currentUserAvatar,
+      isReply,
+      allowQuote,
+      allowQuoteReply,
+      allowCopyLink,
     } = this.props;
     const { commentContent, isSelected } = this.state;
 
-    const commentHasBeenEdited = event?.revision_id > 1 && event?.payload;
+    const commentHasBeenDeleted = event?.payload?.event === "comment_deleted";
+
+    // A deleted comment is already visually distinct so doesn't need an additional "edited" label
+    const commentHasBeenEdited =
+      event?.revision_id > 1 && event?.payload && !commentHasBeenDeleted;
 
     const canDelete = event?.permissions?.can_delete_comment;
     const canUpdate = event?.permissions?.can_update_comment;
@@ -98,7 +120,12 @@ class TimelineCommentEvent extends Component {
       userName = null;
     if (isUser) {
       userAvatar = (
-        <RequestsFeed.Avatar src={expandedCreatedBy.links.avatar} as={Image} circular />
+        <RequestsFeed.Avatar
+          src={expandedCreatedBy.links.avatar}
+          as={Image}
+          circular
+          hasLine={isReply}
+        />
       );
       userName = expandedCreatedBy.profile?.full_name || expandedCreatedBy.username;
     } else if (isEmail) {
@@ -114,36 +141,57 @@ class TimelineCommentEvent extends Component {
 
     return (
       <Overridable id={`TimelineEvent.layout.${this.eventToType(event)}`} event={event}>
-        <RequestsFeed.Item id={eventItemId} ref={this.ref} selected={isSelected}>
+        <RequestsFeed.Item
+          id={eventItemId}
+          ref={this.ref}
+          selected={isSelected}
+          isReply={isReply}
+        >
           <RequestsFeed.Content>
             {userAvatar}
-            <RequestsFeed.Event>
+            <RequestsFeed.Event isReply={isReply}>
               <Feed.Content>
-                <Dropdown
-                  icon="ellipsis horizontal"
-                  className="right-floated"
-                  direction="left"
-                  aria-label={i18next.t("Actions")}
-                >
-                  <Dropdown.Menu>
-                    <Dropdown.Item onClick={() => quote(event.payload.content)}>
-                      {i18next.t("Quote")}
-                    </Dropdown.Item>
-                    <Dropdown.Item onClick={() => this.copyLink()}>
-                      {i18next.t("Copy link")}
-                    </Dropdown.Item>
-                    {canUpdate && (
-                      <Dropdown.Item onClick={() => toggleEditMode()}>
-                        {i18next.t("Edit")}
-                      </Dropdown.Item>
-                    )}
-                    {canDelete && (
-                      <Dropdown.Item onClick={() => deleteComment()}>
-                        {i18next.t("Delete")}
-                      </Dropdown.Item>
-                    )}
-                  </Dropdown.Menu>
-                </Dropdown>
+                {(!commentHasBeenDeleted || allowCopyLink) && (
+                  <Dropdown
+                    icon="ellipsis horizontal"
+                    className="right-floated"
+                    direction="left"
+                    aria-label={i18next.t("Actions")}
+                  >
+                    <Dropdown.Menu>
+                      {allowQuote && !commentHasBeenDeleted && (
+                        <Dropdown.Item
+                          onClick={() => this.quote(event.payload.content, false)}
+                        >
+                          {i18next.t("Quote")}
+                        </Dropdown.Item>
+                      )}
+                      {allowQuoteReply && !commentHasBeenDeleted && (
+                        <Dropdown.Item
+                          onClick={() => this.quote(event.payload.content, true)}
+                        >
+                          {i18next.t("Quote reply")}
+                        </Dropdown.Item>
+                      )}
+                      {/* We still allow copying a link to a deleted comment in case it has replies for example */}
+                      {allowCopyLink && (
+                        <Dropdown.Item onClick={() => this.copyLink()}>
+                          {i18next.t("Copy link")}
+                        </Dropdown.Item>
+                      )}
+                      {canUpdate && !commentHasBeenDeleted && (
+                        <Dropdown.Item onClick={() => toggleEditMode()}>
+                          {i18next.t("Edit")}
+                        </Dropdown.Item>
+                      )}
+                      {canDelete && !commentHasBeenDeleted && (
+                        <Dropdown.Item onClick={() => deleteComment()}>
+                          {i18next.t("Delete")}
+                        </Dropdown.Item>
+                      )}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                )}
                 <Feed.Summary>
                   <b>{userName}</b>
                   <Feed.Date>
@@ -167,9 +215,11 @@ class TimelineCommentEvent extends Component {
                     />
                   ) : (
                     <TimelineEventBody
-                      content={event?.payload?.content}
-                      format={event?.payload?.format}
-                      quote={quote}
+                      payload={event?.payload}
+                      quote={allowQuote ? (text) => this.quote(text, false) : null}
+                      quoteReply={
+                        allowQuoteReply ? (text) => this.quote(text, true) : null
+                      }
                     />
                   )}
 
@@ -185,6 +235,16 @@ class TimelineCommentEvent extends Component {
                 </Feed.Extra>
                 {commentHasBeenEdited && <Feed.Meta>{i18next.t("Edited")}</Feed.Meta>}
               </Feed.Content>
+
+              {!isReply && (
+                <>
+                  <Divider />
+                  <TimelineCommentReplies
+                    parentRequestEvent={event}
+                    userAvatar={currentUserAvatar}
+                  />
+                </>
+              )}
             </RequestsFeed.Event>
           </RequestsFeed.Content>
         </RequestsFeed.Item>
@@ -197,17 +257,27 @@ TimelineCommentEvent.propTypes = {
   event: PropTypes.object.isRequired,
   deleteComment: PropTypes.func.isRequired,
   updateComment: PropTypes.func.isRequired,
+  appendCommentContent: PropTypes.func.isRequired,
   toggleEditMode: PropTypes.func.isRequired,
-  quote: PropTypes.func.isRequired,
   isLoading: PropTypes.bool,
   isEditing: PropTypes.bool,
   error: PropTypes.string,
+  userAvatar: PropTypes.string,
+  isReply: PropTypes.bool,
+  allowQuote: PropTypes.bool,
+  allowQuoteReply: PropTypes.bool,
+  allowCopyLink: PropTypes.bool,
 };
 
 TimelineCommentEvent.defaultProps = {
   isLoading: false,
   isEditing: false,
   error: undefined,
+  userAvatar: "",
+  isReply: false,
+  allowQuote: true,
+  allowQuoteReply: true,
+  allowCopyLink: true,
 };
 
 export default Overridable.component("TimelineEvent", TimelineCommentEvent);

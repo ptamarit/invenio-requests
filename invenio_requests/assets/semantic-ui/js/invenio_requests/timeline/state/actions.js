@@ -12,6 +12,8 @@ export const HAS_ERROR = "timeline/HAS_ERROR";
 export const IS_REFRESHING = "timeline/REFRESHING";
 export const CHANGE_PAGE = "timeline/CHANGE_PAGE";
 export const MISSING_REQUESTED_EVENT = "timeline/MISSING_REQUESTED_EVENT";
+export const PARENT_UPDATED_COMMENT = "timeline/PARENT_UPDATED_COMMENT";
+export const PARENT_DELETED_COMMENT = "timeline/PARENT_DELETED_COMMENT";
 
 class intervalManager {
   static IntervalId = undefined;

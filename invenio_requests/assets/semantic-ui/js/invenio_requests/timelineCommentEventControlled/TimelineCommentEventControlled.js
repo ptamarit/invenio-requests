@@ -36,7 +36,7 @@ class TimelineCommentEventControlled extends Component {
     });
 
     try {
-      await updateComment({ content, format, event });
+      await updateComment({ content, format, requestEvent: event });
 
       this.setState({
         isLoading: false,
@@ -55,21 +55,19 @@ class TimelineCommentEventControlled extends Component {
   deleteComment = async () => {
     const { deleteComment, event, openConfirmModal } = this.props;
 
-    openConfirmModal(() => deleteComment({ event }));
-  };
-
-  /**
-   * Append a quote of the comment's content to the new comment in the editor.
-   *
-   * @param {string} [text] - The text to quote
-   */
-  quote = (text) => {
-    const { appendCommentContent } = this.props;
-    appendCommentContent(`<blockquote>${text}</blockquote><br />`);
+    openConfirmModal(() => deleteComment({ requestEvent: event }));
   };
 
   render() {
-    const { event } = this.props;
+    const {
+      event,
+      userAvatar,
+      isReply,
+      appendCommentContent,
+      allowQuote,
+      allowQuoteReply,
+      allowCopyLink,
+    } = this.props;
     const { isLoading, isEditing, error } = this.state;
 
     return (
@@ -77,12 +75,18 @@ class TimelineCommentEventControlled extends Component {
         <TimelineEvent
           updateComment={this.updateComment}
           deleteComment={this.deleteComment}
+          appendCommentContent={appendCommentContent}
           toggleEditMode={this.toggleEditMode}
           quote={this.quote}
           isLoading={isLoading}
           isEditing={isEditing}
           error={error}
           event={event}
+          userAvatar={userAvatar}
+          isReply={isReply}
+          allowQuote={allowQuote}
+          allowQuoteReply={allowQuoteReply}
+          allowCopyLink={allowCopyLink}
         />
       </Overridable>
     );
@@ -95,6 +99,19 @@ TimelineCommentEventControlled.propTypes = {
   deleteComment: PropTypes.func.isRequired,
   appendCommentContent: PropTypes.func.isRequired,
   openConfirmModal: PropTypes.func.isRequired,
+  userAvatar: PropTypes.string,
+  isReply: PropTypes.bool,
+  allowQuote: PropTypes.bool,
+  allowQuoteReply: PropTypes.bool,
+  allowCopyLink: PropTypes.bool,
+};
+
+TimelineCommentEventControlled.defaultProps = {
+  userAvatar: "",
+  isReply: false,
+  allowQuote: true,
+  allowQuoteReply: true,
+  allowCopyLink: true,
 };
 
 export default Overridable.component(
