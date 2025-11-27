@@ -34,35 +34,22 @@ export const LockRequest = ({ request, updateState }) => {
       <Divider />
       <Grid columns={2}>
         <Grid.Column floated="left" width={13}>
-          {isLocked ? (
-            <RequestLockButton
-              onClick={async () => {
-                setLoading(true);
+          <RequestLockButton
+            onClick={async () => {
+              setLoading(true);
+              if (isLocked) {
                 await requestsApi.unlockRequest();
-                updateState({ locked: false });
-                setLoading(false);
-                window.location.reload();
-              }}
-              className="request-lock-button"
-              loading={loading}
-              content={i18next.t("Unlock conversation")}
-              icon="unlock"
-            />
-          ) : (
-            <RequestLockButton
-              onClick={async () => {
-                setLoading(true);
+              } else {
                 await requestsApi.lockRequest();
-                updateState({ locked: true });
-                setLoading(false);
-                window.location.reload();
-              }}
-              className="request-lock-button"
-              loading={loading}
-              content={i18next.t("Lock conversation")}
-              icon="lock"
-            />
-          )}
+              }
+              updateState({ locked: !isLocked });
+              window.location.reload();
+            }}
+            className="request-lock-button"
+            loading={loading}
+            content={i18next.t(isLocked ? "Unlock conversation" : "Lock conversation")}
+            icon={isLocked ? "unlock" : "lock"}
+          />
         </Grid.Column>
         <Grid.Column
           floated="right"

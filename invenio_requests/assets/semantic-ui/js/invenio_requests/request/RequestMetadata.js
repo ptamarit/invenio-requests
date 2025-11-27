@@ -152,8 +152,6 @@ DeletedResource.propTypes = {
 };
 
 class RequestMetadata extends Component {
-  isResourceDeleted = (details) => details.is_ghost === true;
-
   componentDidMount() {
     const {
       request: { is_locked: isLocked },
@@ -161,6 +159,8 @@ class RequestMetadata extends Component {
     } = this.props;
     updateState({ locked: isLocked });
   }
+
+  isResourceDeleted = (details) => details.is_ghost === true;
 
   render() {
     const { request, config, permissions, updateState } = this.props;
