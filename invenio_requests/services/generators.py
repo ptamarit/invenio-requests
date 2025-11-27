@@ -19,6 +19,7 @@ from invenio_records_permissions.generators import ConditionalGenerator, Generat
 from invenio_records_resources.references import EntityGrant
 from invenio_search.engine import dsl
 
+from invenio_requests.customizations.event_types import LogEventType
 from invenio_requests.proxies import current_requests
 
 
@@ -201,6 +202,10 @@ class Commenter(Generator):
 class IfLocked(ConditionalGenerator):
     """Allows the action if the request is unlocked."""
 
-    def _condition(self, request=None, **kwargs):
+    def _condition(self, request=None, event_type=None, **kwargs):
         """Condition to choose generators set."""
+        # If the event type is a log event, we don't need to check if the request is locked
+        # Because it's not a comment event and we don't want to block logs
+        if event_type and event_type == LogEventType:
+            return False
         return request is not None and request.get("is_locked", False)

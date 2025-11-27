@@ -74,7 +74,9 @@ class RequestEventsService(RecordService):
         """
         request = self._get_request(request_id)
         try:
-            self.require_permission(identity, "create_comment", request=request)
+            self.require_permission(
+                identity, "create_comment", request=request, event_type=event_type
+            )
         except PermissionDeniedError:
             if request.get("is_locked", False):
                 raise RequestLockedError(
@@ -83,7 +85,9 @@ class RequestEventsService(RecordService):
                     )
                 )
             else:
-                raise PermissionDeniedError()
+                raise PermissionError(
+                    "You do not have permission to comment on this request."
+                )
 
         # Validate data (if there are errors, .load() raises)
         schema = self._wrap_schema(event_type.marshmallow_schema())

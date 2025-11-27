@@ -10,11 +10,11 @@
 
 """RequestEvent Resource Configuration."""
 
+from flask_resources import HTTPJSONException, create_error_handler
 from invenio_records_resources.resources import (
     RecordResourceConfig,
     SearchRequestArgsSchema,
 )
-from flask_resources import HTTPJSONException, create_error_handler
 from marshmallow import fields
 
 from ...errors import RequestLockedError

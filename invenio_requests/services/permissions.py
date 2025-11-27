@@ -89,8 +89,7 @@ class PermissionPolicy(RecordPermissionPolicy):
     # Request events/comments
     # Events are in most cases protected by the associated request.
     can_update_comment = [
-        IfLocked(then_=[Commenter()], else_=[Administration()]),
-        SystemProcess(),
+        IfLocked(then_=[Disable()], else_=[Commenter(), SystemProcess()]),
     ]
     can_delete_comment = [
         Commenter(),
@@ -99,11 +98,9 @@ class PermissionPolicy(RecordPermissionPolicy):
     # If you can read the request you can create events for the request.
     can_create_comment = [
         IfLocked(
-            then_=[Receiver()],
+            then_=[Disable()],
             else_=can_read,
         ),
-        SystemProcess(),
-        Administration(),
     ]
 
     # Needed by the search events permission because a permission_action must
