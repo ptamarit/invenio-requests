@@ -22,7 +22,8 @@ class RequestFilesResourceConfig(RecordResourceConfig):
         #       https://inveniordm.docs.cern.ch/reference/rest_api_drafts_records/#upload-a-draft-files-content
         "create": "/<id>/files/upload/<key>",  # TODO: Change from id to request_id ? It seems that "request_*" prefix is also a Flask thing.
         "item": "/<id>/files/<key>",
-        "list": "/<id>/files",
+        "item_content": "/<id>/files/<key>/content",
+        "list": "/<id>/files",  # TODO: This is not used in any UI.
         # "timeline": "/<request_id>/timeline",
         # "list": "/",
         # "user-prefix": "/user",

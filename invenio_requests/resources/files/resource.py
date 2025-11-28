@@ -49,12 +49,19 @@ class RequestFilesResource(RecordResource):
         routes = self.config.routes
         # raise ValueError("/api" + self.config.url_prefix + routes["create"])
         return [
-            # route("POST", routes["list"], self.create),
             # Are we sure that we want PUT and not POST?
             route("PUT", self.config.url_prefix + routes["create"], self.create),
             # route("GET", routes["item"], self.read),
             # route("PUT", routes["item"], self.update),
             route("DELETE", self.config.url_prefix + routes["item"], self.delete),
+            # TODO: How to make this endpoint non-API?
+            # route("GET", self.config.url_prefix + routes["item"], self.get_content),  # Non-API endpoint to download with Content-Disposition
+            route(
+                "GET", self.config.url_prefix + routes["item_content"], self.get_content
+            ),  # API endpoint to access file content
+            route(
+                "GET", self.config.url_prefix + routes["list"], self.list
+            ),  # TODO: This is not used in any UI.
             # route("GET", routes["timeline"], self.search),
         ]
 
@@ -133,6 +140,36 @@ class RequestFilesResource(RecordResource):
     #     )
     #     return item.to_dict(), 200
 
+    @request_view_args
+    def get_content(self):
+        """Get the file content."""
+        file = self.service.get_file(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["id"],
+            file_key=resource_requestctx.view_args["key"],
+        )
+        return file.send_file()
+
+    #     """Read logo's content."""
+    #     item = self.service.read_logo(
+    #         resource_requestctx.view_args["pid_value"],
+    #         g.identity,
+    #     )
+    #     return item.send_file(), 200
+
+    # @request_headers
+    @request_view_args
+    # @response_handler()
+    def list(self):
+        """List files."""
+        files = self.service.list_files(
+            identity=g.identity,
+            id_=resource_requestctx.view_args["id"],
+        )
+
+        # TODO: Return the information about the deleted file?
+        return files, 200
+
     # @request_headers
     @request_view_args
     # @response_handler()
@@ -142,7 +179,6 @@ class RequestFilesResource(RecordResource):
             identity=g.identity,
             id_=resource_requestctx.view_args["id"],
             file_key=resource_requestctx.view_args["key"],
-            # data=resource_requestctx.data,
         )
 
         # TODO: Return the information about the deleted file?

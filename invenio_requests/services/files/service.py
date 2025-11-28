@@ -110,7 +110,7 @@ class RequestFilesService(FileService):
         self.require_permission(identity, "read", request=request)
         # Return file metadata (key, size, mimetype, links, etc.)
 
-    def get_file_content(self, identity, id_, file_key):
+    def get_file(self, identity, id_, file_key):
         """Retrieve file content for download/display."""
         # resolve and check permissions
         request = self.request_cls.get_record(id_)
@@ -121,13 +121,14 @@ class RequestFilesService(FileService):
         request_file = request.files.get(file_key)
         if request_file is None:
             raise FileNotFoundError()
-        return self.files.file_result_item(
-            self,
-            identity,
-            request_file,
-            request,
-            # links_tpl=self.files.file_links_item_tpl(id_),
-        )
+        # return self.result_item(
+        #     self,
+        #     identity,
+        #     request_file,
+        #     request,
+        #     # links_tpl=self.files.file_links_item_tpl(id_),
+        # )
+        return request_file.file
 
     def list_files(self, identity, id_):
         """List all files for a request."""

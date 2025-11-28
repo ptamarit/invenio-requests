@@ -29,7 +29,7 @@ def assert_api_response(response, code, json):
     assert_api_response_json(json, response.json)
 
 
-def test_simple_files_flow(app, client_logged_as, example_request, location):
+def test_simple_files_flow(app, client_logged_as, example_request, headers, location):
     # Passing the `location` fixture to make sure that a default bucket location is defined.
     assert location.default == True
 
@@ -37,7 +37,8 @@ def test_simple_files_flow(app, client_logged_as, example_request, location):
     # key = "filename.ext"
     # data = BytesIO(b"test file content")
     key = "screenshot.png"
-    data = BytesIO(b"\x89PNG\r\n\x1a\n")
+    data_content = b"\x89PNG\r\n\x1a\n"
+    data = BytesIO(data_content)
 
     headers_binary = {
         # TODO: Use image/png instead of  a generic one?
@@ -69,28 +70,56 @@ def test_simple_files_flow(app, client_logged_as, example_request, location):
     }
     # assert_api_response(response, 200, expected_data) # TODO: Enable
 
+    # List files.
+    response = client.get(
+        f"/requests/{request_id}/files",
+        headers=headers,
+        data=data,
+    )
+    expected_data = ["screenshot.png"]
+    assert_api_response(response, 200, expected_data)
+
     # TODO: They key should have a UUID.
     key_with_uuid = f"{key}"
+
+    # Access the file.
+    response = client.get(
+        f"/requests/{request_id}/files/{key_with_uuid}/content",
+        headers=headers,
+        data=data,
+    )
+    assert 200 == response.status_code
+    assert data_content == response.data
 
     # Delete the file.
     response = client.delete(
         f"/requests/{request_id}/files/{key_with_uuid}",
-        headers=headers_binary,
+        headers=headers,
         data=data,
     )
     expected_data = None
     assert_api_response(response, 204, expected_data)
 
+    # List files.
+    response = client.get(
+        f"/requests/{request_id}/files",
+        headers=headers,
+        data=data,
+    )
+    expected_data = []
+    assert_api_response(response, 200, expected_data)
+
     # Delete the file again should fail
     with pytest.raises(FileNotFoundError):
         client.delete(
             f"/requests/{request_id}/files/{key_with_uuid}",
-            headers=headers_binary,
+            headers=headers,
             data=data,
         )
 
+    # No API endpoint here
     # <img src="/requests/{id}/files/uuid-screenshot.png"
+    # <img src="/requests/{id}/files/{file_key}"
 
     # Retrieve file content (API endpoint)
-    # GET /api/requests/{id}/files/{file_key}/content
-    # <img src="/requests/{id}/files/{file_key}"
+    # GET /requests/{id}/files/{file_key}/content
