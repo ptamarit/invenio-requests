@@ -42,12 +42,10 @@ const TimelineCommentEditor = ({
     <div className="timeline-comment-editor-container">
       {error && <Message negative>{error}</Message>}
       {!canCreateComment && (
-        <Message icon info>
-          <Icon name="info circle" />
+        <Message icon warning>
+          <Icon name="info circle" size="large" />
           <Message.Content>
-            {i18next.t(
-              "Adding and editing comments is not allowed when the conversation is locked."
-            )}
+            {i18next.t("Adding or editing comments is now locked.")}
           </Message.Content>
         </Message>
       )}

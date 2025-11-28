@@ -4,7 +4,7 @@
 // Invenio Requests is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
-import React from "react";
+import React, { Component } from "react";
 import { Divider, Popup, Icon, Grid } from "semantic-ui-react";
 import { RequestLockButton } from "@js/invenio_requests/components/Buttons";
 import {
@@ -12,66 +12,94 @@ import {
   InvenioRequestsAPI,
 } from "@js/invenio_requests/api/InvenioRequestApi";
 import PropTypes from "prop-types";
-import { useState } from "react";
 import { i18next } from "@translations/invenio_requests/i18next";
+import Overridable from "react-overridable";
+import Error from "../components/Error";
+import { errorSerializer } from "../api/serializers";
 
-export const LockRequest = ({ request, updateState }) => {
-  const requestLinksExtractor = new RequestLinksExtractor(request);
-  const requestsApi = new InvenioRequestsAPI(requestLinksExtractor);
-  const { is_locked: isLocked } = request;
+export class LockRequestComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false,
+      error: null,
+    };
+  }
 
-  const [loading, setLoading] = useState(false);
+  render() {
+    const { request, popupComponent } = this.props;
+    const { loading, error } = this.state;
 
-  const popupContent = isLocked
-    ? i18next.t(
-        "Unlocking the conversation will allow all users with access to the request to add or update comments."
-      )
-    : i18next.t(
-        "Locking the conversation will only allow the request receivers to add or update comments."
-      );
-  return (
-    <>
-      <Divider />
-      <Grid columns={2}>
-        <Grid.Column floated="left" width={13}>
-          <RequestLockButton
-            onClick={async () => {
-              setLoading(true);
-              if (isLocked) {
-                await requestsApi.unlockRequest();
-              } else {
-                await requestsApi.lockRequest();
-              }
-              updateState({ locked: !isLocked });
-              window.location.reload();
-            }}
-            className="request-lock-button"
-            loading={loading}
-            content={i18next.t(isLocked ? "Unlock conversation" : "Lock conversation")}
-            icon={isLocked ? "unlock" : "lock"}
-          />
-        </Grid.Column>
-        <Grid.Column
-          floated="right"
-          width={3}
-          verticalAlign="middle"
-          textAlign="center"
-        >
-          <Popup
-            content={popupContent}
-            trigger={
-              <span role="button" tabIndex="0">
-                <Icon name="question circle outline" />
-              </span>
-            }
-          />
-        </Grid.Column>
-      </Grid>
-    </>
-  );
-};
+    const requestLinksExtractor = new RequestLinksExtractor(request);
+    const requestsApi = new InvenioRequestsAPI(requestLinksExtractor);
+    const { is_locked: isLocked } = request;
 
-LockRequest.propTypes = {
+    return (
+      <>
+        <Divider />
+        <Grid columns={2}>
+          <Grid.Column floated="left" width={13}>
+            <RequestLockButton
+              onClick={async () => {
+                let response;
+                this.setState({ loading: true });
+                try {
+                  if (isLocked) {
+                    response = await requestsApi.unlockRequest();
+                  } else {
+                    response = await requestsApi.lockRequest();
+                  }
+                  window.location.reload();
+                } catch (error) {
+                  this.setState({ error: error, loading: false });
+                }
+              }}
+              className="request-lock-button"
+              loading={loading}
+              disabled={error !== null}
+              content={i18next.t(
+                isLocked ? "Unlock conversation" : "Lock conversation"
+              )}
+              icon={isLocked ? "unlock" : "lock"}
+            />
+          </Grid.Column>
+          <Grid.Column
+            floated="right"
+            width={3}
+            verticalAlign="middle"
+            textAlign="center"
+          >
+            {popupComponent}
+          </Grid.Column>
+        </Grid>
+        {error && <Error error={errorSerializer(error)} />}
+      </>
+    );
+  }
+}
+
+LockRequestComponent.propTypes = {
   request: PropTypes.object.isRequired,
-  updateState: PropTypes.func.isRequired,
+  popupComponent: PropTypes.node,
 };
+
+LockRequestComponent.defaultProps = {
+  popupComponent: (
+    <Popup
+      content={i18next.t(
+        // Default popup content
+        "Locking or unlocking the conversation will allow or disallow users with access to add/update comments."
+      )}
+      trigger={
+        <span role="button" tabIndex="0">
+          <Icon name="question circle outline" />
+        </span>
+      }
+    />
+  ),
+};
+
+export const LockRequest = Overridable.component(
+  "InvenioRequests.LockRequest",
+  LockRequestComponent
+);

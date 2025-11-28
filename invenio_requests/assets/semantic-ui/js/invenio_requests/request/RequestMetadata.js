@@ -152,18 +152,10 @@ DeletedResource.propTypes = {
 };
 
 class RequestMetadata extends Component {
-  componentDidMount() {
-    const {
-      request: { is_locked: isLocked },
-      updateState,
-    } = this.props;
-    updateState({ locked: isLocked });
-  }
-
   isResourceDeleted = (details) => details.is_ghost === true;
 
   render() {
-    const { request, config, permissions, updateState } = this.props;
+    const { request, config, permissions } = this.props;
     const { enableReviewers, allowGroupReviewers, maxReviewers } = config;
 
     const expandedCreatedBy = request.expanded?.created_by;
@@ -251,9 +243,7 @@ class RequestMetadata extends Component {
               <a href={`/records/${request.topic.record}`}>{request.title}</a>
             </>
           )}
-          {permissions.can_lock_request && (
-            <LockRequest request={request} updateState={updateState} />
-          )}
+          {permissions.can_lock_request && <LockRequest request={request} />}
         </>
       </Overridable>
     );
@@ -264,7 +254,6 @@ RequestMetadata.propTypes = {
   request: PropTypes.object.isRequired,
   config: PropTypes.object.isRequired,
   permissions: PropTypes.object.isRequired,
-  updateState: PropTypes.func.isRequired,
 };
 
 export default Overridable.component(
