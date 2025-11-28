@@ -51,14 +51,10 @@ class RequestFilesResource(RecordResource):
         return [
             # route("POST", routes["list"], self.create),
             # Are we sure that we want PUT and not POST?
-            route(
-                "PUT", "/api" + self.config.url_prefix + routes["create"], self.create
-            ),
+            route("PUT", self.config.url_prefix + routes["create"], self.create),
             # route("GET", routes["item"], self.read),
             # route("PUT", routes["item"], self.update),
-            route(
-                "DELETE", "/api" + self.config.url_prefix + routes["item"], self.delete
-            ),
+            route("DELETE", self.config.url_prefix + routes["item"], self.delete),
             # route("GET", routes["timeline"], self.search),
         ]
 

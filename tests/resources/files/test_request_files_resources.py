@@ -49,7 +49,7 @@ def test_simple_files_flow(app, client_logged_as, example_request, location):
 
     # Upload a file.
     response = client.put(
-        f"/api/requests/{request_id}/files/upload/{key}",
+        f"/requests/{request_id}/files/upload/{key}",
         headers=headers_binary,
         data=data,
     )
@@ -74,7 +74,7 @@ def test_simple_files_flow(app, client_logged_as, example_request, location):
 
     # Delete the file.
     response = client.delete(
-        f"/api/requests/{request_id}/files/{key_with_uuid}",
+        f"/requests/{request_id}/files/{key_with_uuid}",
         headers=headers_binary,
         data=data,
     )
@@ -84,7 +84,7 @@ def test_simple_files_flow(app, client_logged_as, example_request, location):
     # Delete the file again should fail
     with pytest.raises(FileNotFoundError):
         client.delete(
-            f"/api/requests/{request_id}/files/{key_with_uuid}",
+            f"/requests/{request_id}/files/{key_with_uuid}",
             headers=headers_binary,
             data=data,
         )

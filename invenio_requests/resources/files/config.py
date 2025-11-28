@@ -18,9 +18,11 @@ class RequestFilesResourceConfig(RecordResourceConfig):
     blueprint_name = "request_files"
     url_prefix = "/requests"
     routes = {
+        # TODO: Why not following the structure PUT `/<id>/files/<key>/content` as in:
+        #       https://inveniordm.docs.cern.ch/reference/rest_api_drafts_records/#upload-a-draft-files-content
         "create": "/<id>/files/upload/<key>",  # TODO: Change from id to request_id ? It seems that "request_*" prefix is also a Flask thing.
         "item": "/<id>/files/<key>",
-        # "list": "/<request_id>/comments",
+        "list": "/<id>/files",
         # "timeline": "/<request_id>/timeline",
         # "list": "/",
         # "user-prefix": "/user",
