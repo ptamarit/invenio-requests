@@ -16,7 +16,11 @@ from invenio_records_resources.services import (
 )
 from invenio_records_resources.services.base.config import ConfiguratorMixin, FromConfig
 from invenio_records_resources.services.records.links import pagination_links
-from invenio_records_resources.services.records.results import RecordItem, RecordList
+from invenio_records_resources.services.records.results import (
+    RecordItem,
+    RecordList,
+    FieldsResolver,
+)
 
 from invenio_requests.proxies import (
     current_request_type_registry,
@@ -39,6 +43,33 @@ class RequestEventItem(RecordItem):
 class RequestEventList(RecordList):
     """RequestEvent result item."""
 
+    def __init__(
+        self,
+        service,
+        identity,
+        results,
+        params=None,
+        links_tpl=None,
+        links_item_tpl=None,
+        nested_links_item=None,
+        schema=None,
+        expandable_fields=None,
+        expand=False,
+        request=None,
+    ):
+        """Constructor."""
+        self._identity = identity
+        self._results = results
+        self._service = service
+        self._schema = schema or service.schema
+        self._params = params
+        self._links_tpl = links_tpl
+        self._links_item_tpl = links_item_tpl
+        self._nested_links_item = nested_links_item
+        self._fields_resolver = FieldsResolver(expandable_fields)
+        self._expand = expand
+        self._request = request
+
     @property
     def hits(self):
         """Iterator over the hits."""
@@ -55,6 +86,7 @@ class RequestEventList(RecordList):
                 context=dict(
                     identity=self._identity,
                     record=record,
+                    request=self._request,  # Need to pass the request to the schema to get the permissions to check if locked
                     meta=hit.meta,
                 ),
             )

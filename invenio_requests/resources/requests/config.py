@@ -20,7 +20,7 @@ from invenio_records_resources.resources import (
 from invenio_records_resources.services.base.config import ConfiguratorMixin, FromConfig
 from marshmallow import fields
 
-from ...errors import CannotExecuteActionError, NoSuchActionError
+from ...errors import CannotExecuteActionError, NoSuchActionError, RequestLockedError
 from .fields import ReferenceString
 
 
@@ -47,6 +47,12 @@ request_error_handlers = {
     NoSuchActionError: create_error_handler(
         lambda e: HTTPJSONException(
             code=400,
+            description=str(e),
+        )
+    ),
+    RequestLockedError: create_error_handler(
+        lambda e: HTTPJSONException(
+            code=403,
             description=str(e),
         )
     ),

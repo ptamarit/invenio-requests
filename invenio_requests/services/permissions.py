@@ -89,7 +89,7 @@ class PermissionPolicy(RecordPermissionPolicy):
     # Request events/comments
     # Events are in most cases protected by the associated request.
     can_update_comment = [
-        IfLocked(then_=[Disable()], else_=[Commenter(), SystemProcess()]),
+        IfLocked(then_=[Administration()], else_=[Commenter(), SystemProcess()]),
     ]
     can_delete_comment = [
         Commenter(),

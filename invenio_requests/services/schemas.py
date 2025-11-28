@@ -47,10 +47,16 @@ class RequestEventSchema(BaseRecordSchema):
             service = current_requests.request_events_service
             return {
                 "can_update_comment": service.check_permission(
-                    self.context["identity"], "update_comment", event=obj
+                    self.context["identity"],
+                    "update_comment",
+                    event=obj,
+                    request=self.context.get("request", None),
                 ),
                 "can_delete_comment": service.check_permission(
-                    self.context["identity"], "delete_comment", event=obj
+                    self.context["identity"],
+                    "delete_comment",
+                    event=obj,
+                    request=self.context.get("request", None),
                 ),
             }
         else:

@@ -24,7 +24,7 @@ from invenio_search.engine import dsl
 
 from ...customizations import RequestActions
 from ...customizations.event_types import CommentEventType
-from ...errors import CannotExecuteActionError
+from ...errors import CannotExecuteActionError, RequestLockedError
 from ...proxies import current_events_service, current_request_type_registry
 from ...resolvers.registry import ResolverRegistry
 from ..results import EntityResolverExpandableField, MultiEntityResolverExpandableField
@@ -322,12 +322,13 @@ class RequestsService(RecordService):
         request = self.read(identity, id_)
         self.require_permission(identity, "lock_request", request=request._record)
 
+        if request.data["is_locked"]:
+            raise RequestLockedError(description="The request is already locked.")
         request.data["is_locked"] = True
         self.update(identity, id_, request.data, uow=uow)
 
         # Add LogEventType event for locking the request via components
         self.run_components("lock_request", identity, record=request, uow=uow)
-        flash(_("The conversation has been locked."), category="success")
 
     @unit_of_work()
     def unlock_request(self, identity, id_, uow=None):
@@ -335,9 +336,10 @@ class RequestsService(RecordService):
         request = self.read(identity, id_)
         self.require_permission(identity, "lock_request", request=request._record)
 
+        if not request.data["is_locked"]:
+            raise RequestLockedError(description="The request is already unlocked.")
         request.data["is_locked"] = False
         self.update(identity, id_, request.data, uow=uow)
 
         # Add LogEventType event for unlocking the request via components
         self.run_components("unlock_request", identity, record=request, uow=uow)
-        flash(_("The conversation has been unlocked."), category="success")

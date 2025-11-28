@@ -80,9 +80,7 @@ class RequestEventsService(RecordService):
         except PermissionDeniedError:
             if request.get("is_locked", False):
                 raise RequestLockedError(
-                    description=_(
-                        "Commenting is not allowed as this conversation is currently locked."
-                    )
+                    description=_("Commenting is now locked for this conversation.")
                 )
             else:
                 raise PermissionError(
@@ -304,6 +302,7 @@ class RequestEventsService(RecordService):
             ),
             expandable_fields=self.expandable_fields,
             expand=expand,
+            request=request,
         )
 
     def focused_list(
@@ -370,6 +369,7 @@ class RequestEventsService(RecordService):
             ),
             expandable_fields=self.expandable_fields,
             expand=expand,
+            request=request,
         )
 
     def scan(
@@ -405,6 +405,7 @@ class RequestEventsService(RecordService):
             ),
             expandable_fields=self.expandable_fields,
             expand=expand,
+            request=request,
         )
 
     # Utilities
