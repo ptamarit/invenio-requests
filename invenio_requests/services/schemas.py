@@ -74,6 +74,8 @@ class RequestSchema(BaseRecordSchema):
     type = fields.String()
     title = utils_fields.SanitizedUnicode(dump_default="")
     description = utils_fields.SanitizedUnicode()
+    is_locked = fields.Boolean(dump_default=False, load_default=False)
+    # `is_locked` field would be automatically added as False on dump if not present and loaded as False if not present
 
     # Dump-only
     number = fields.String(dump_only=True)
@@ -90,8 +92,6 @@ class RequestSchema(BaseRecordSchema):
     last_activity_at = utils_fields.TZDateTime(
         timezone=timezone.utc, format="iso", dump_only=True
     )
-
-    is_locked = fields.Boolean()
 
     class Meta:
         """Schema meta."""

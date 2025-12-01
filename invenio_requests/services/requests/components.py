@@ -136,7 +136,7 @@ class RequestReviewersComponent(ServiceComponent):
 
     def update(self, identity, data=None, record=None, uow=None, **kwargs):
         """Update the reviewers of a request."""
-        if data.get("reviewers", None):
+        if "reviewers" in data:
             # ensure there are not duplicates
             new_reviewers = self._ensure_no_duplicates(data["reviewers"])
             self._validate_reviewers(new_reviewers)

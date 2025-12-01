@@ -200,12 +200,8 @@ class Commenter(Generator):
 
 
 class IfLocked(ConditionalGenerator):
-    """Allows the action if the request is unlocked."""
+    """Disallows the action if the request is locked."""
 
-    def _condition(self, request=None, event_type=None, **kwargs):
+    def _condition(self, request=None, **kwargs):
         """Condition to choose generators set."""
-        # If the event type is a log event, we don't need to check if the request is locked
-        # Because it's not a comment event and we don't want to block logs
-        if event_type and event_type == LogEventType:
-            return False
         return request is not None and request.get("is_locked", False)

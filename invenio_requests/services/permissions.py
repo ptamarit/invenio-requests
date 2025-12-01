@@ -10,7 +10,6 @@
 
 """Request permissions."""
 
-from invenio_administration.generators import Administration
 from invenio_records_permissions import RecordPermissionPolicy
 from invenio_records_permissions.generators import (
     AnyUser,
@@ -83,13 +82,13 @@ class PermissionPolicy(RecordPermissionPolicy):
     can_lock_request = [
         Receiver(),
         SystemProcess(),
-        Administration(),
     ]
 
     # Request events/comments
     # Events are in most cases protected by the associated request.
     can_update_comment = [
-        IfLocked(then_=[Administration()], else_=[Commenter(), SystemProcess()]),
+        IfLocked(then_=[Disable()], else_=[Commenter()]),
+        SystemProcess(),
     ]
     can_delete_comment = [
         Commenter(),
@@ -101,6 +100,7 @@ class PermissionPolicy(RecordPermissionPolicy):
             then_=[Disable()],
             else_=can_read,
         ),
+        SystemProcess(),
     ]
 
     # Needed by the search events permission because a permission_action must

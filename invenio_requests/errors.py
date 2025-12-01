@@ -69,3 +69,23 @@ class RequestLockedError(PermissionDeniedError):
     def __str__(self):
         """Return str(self)."""
         return self.description
+
+
+class RequestEventPermissionError(PermissionDeniedError):
+    """Exception indicating that the request event permission is denied."""
+
+    def __init__(self, description=None):
+        """Constructor.
+
+        :param message: The message to display.
+        """
+        self._description = description
+
+    @property
+    def description(self):
+        """Return the description."""
+        return self._description
+
+    def __str__(self):
+        """Return str(self)."""
+        return self.description

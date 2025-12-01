@@ -17,9 +17,9 @@ from invenio_records_resources.services import (
 from invenio_records_resources.services.base.config import ConfiguratorMixin, FromConfig
 from invenio_records_resources.services.records.links import pagination_links
 from invenio_records_resources.services.records.results import (
+    FieldsResolver,
     RecordItem,
     RecordList,
-    FieldsResolver,
 )
 
 from invenio_requests.proxies import (

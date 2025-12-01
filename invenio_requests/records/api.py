@@ -156,5 +156,5 @@ class Request(Record):
     last_activity_at = LastActivity()
     """The last activity (derived from other fields)."""
 
-    is_locked = ModelField("is_locked", dump=False)
+    is_locked = DictField("is_locked")
     """Whether or not the request is locked."""
