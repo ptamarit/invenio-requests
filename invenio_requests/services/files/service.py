@@ -9,6 +9,7 @@
 """Requests service."""
 
 from invenio_db import db
+from base32_lib import base32
 from invenio_records_resources.services import FileService, ServiceSchemaWrapper
 from invenio_records_resources.services.uow import unit_of_work
 
@@ -66,7 +67,9 @@ class RequestFilesService(FileService):
             # raise ValueError("boom")
 
         # TODO: Is some validation needed on the filename to avoid weird characters?
-        request.files[key] = stream
+        unique_id = base32.generate(length=10, split_every=5, checksum=True)
+        unique_key =  f"{unique_id}-{key}"
+        request.files[unique_key] = stream
         request.commit()
         db.session.commit()
 
@@ -82,16 +85,23 @@ class RequestFilesService(FileService):
 
         # uow.register(RecordDeleteOp(request, indexer=self.indexer))
 
-        file_object_model = request.files[key].file.object_model
+        file_object_model = request.files[unique_key].file.object_model
 
         # TODO: Return a proper result_item.
-        return request.files[key].file.dumps()
+        result = request.files[unique_key].file.dumps()
+        result.pop("checksum")
+        result.pop("ext")
+        result.pop("object_version_id")
+        result["created"] = "2024-10-31T10:00:00Z"
+        result["original_filename"] = key
+        result["key"] = unique_key
+        return result
 
         # return self.result_item(
         #     self,
         #     identity,
-        #     # request.files[key].file,
-        #     # request.files[key].file.dumps(),
+        #     # request.files[unique_key].file,
+        #     # request.files[unique_key].file.dumps(),
         #     file_object_model,
         #     # request,
         #     # schema=self._wrap_schema(file_object_model.type.marshmallow_schema()),

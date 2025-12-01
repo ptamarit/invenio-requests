@@ -148,7 +148,7 @@ class RequestFilesResource(RecordResource):
             id_=resource_requestctx.view_args["id"],
             file_key=resource_requestctx.view_args["key"],
         )
-        return file.send_file()
+        return file.send_file(as_attachment=True)
 
     #     """Read logo's content."""
     #     item = self.service.read_logo(
