@@ -13,7 +13,8 @@ import pytest
 from invenio_records_resources.services.errors import PermissionDeniedError
 
 from invenio_requests.customizations.event_types import CommentEventType
-from invenio_requests.records.api import RequestEvent
+from invenio_requests.errors import RequestLockedError
+from invenio_requests.records.api import RequestEvent, RequestEventFormat
 
 
 def test_creator_and_receiver_can_comment(
@@ -152,3 +153,51 @@ def test_receiver_can_see_timeline_of_open_request(
         request_events_service.search(identity_stranger, request_id)
     # Receiver
     assert list(request_events_service.search(identity_simple_2, request_id))
+
+
+def test_commenting_on_locked_request(
+    app,
+    identity_simple,
+    identity_simple_2,
+    identity_stranger,
+    request_events_service,
+    requests_service,
+    events_service_data,
+    submit_request,
+):
+    request = submit_request(identity_simple)
+    comment = events_service_data["comment"]
+
+    # Creator can submit comment
+    item = request_events_service.create(
+        identity_simple, request.id, comment, CommentEventType
+    )
+    comment_id = item.id
+
+    requests_service.lock_request(identity_simple_2, request.id)
+
+    # Refresh index
+    RequestEvent.index.refresh()
+
+    # Receiver cannot submit comment
+    with pytest.raises(RequestLockedError):
+        request_events_service.create(
+            identity_simple_2, request.id, comment, CommentEventType
+        )
+    # Creator cannot edit comment
+    with pytest.raises(RequestLockedError):
+        request_events_service.update(identity_simple, comment_id, comment)
+    # Stranger cannot submit comment
+    with pytest.raises(RequestLockedError):
+        request_events_service.create(
+            identity_stranger, request.id, comment, CommentEventType
+        )
+
+    # Log events are not blocked by locked request
+    # For eg. decline action can be executed on locked request
+    requests_service.execute_action(identity_simple_2, request.id, "decline")
+    RequestEvent.index.refresh()
+
+    results = request_events_service.search(identity_simple_2, request.id)
+    assert 4 == results.total  # creation comment + comment + locked + declined
+    # Creation and submission events are not logged because they have log_event=False

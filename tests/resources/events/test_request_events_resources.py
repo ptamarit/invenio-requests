@@ -217,3 +217,22 @@ def test_empty_comment(
     )
     assert 400 == response.status_code
     assert expected_json == response.json
+
+
+def test_locked_request_comments(
+    app, client_logged_as, headers, events_resource_data, example_request
+):
+    client = client_logged_as("user2@example.org")
+    request_id = example_request.id
+    example_request.status = "submitted"
+    example_request.commit()
+
+    # Lock request
+    response = client.get(f"/requests/{request_id}/lock", headers=headers)
+    assert response.status_code == 204
+
+    # Comment on locked request is an error
+    response = client.post(
+        f"/requests/{request_id}/comments", headers=headers, json=events_resource_data
+    )
+    assert response.status_code == 403

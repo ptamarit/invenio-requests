@@ -11,6 +11,9 @@
 import copy
 from datetime import timezone as tz
 
+from invenio_requests.customizations.event_types import LogEventType
+from invenio_requests.records.api import RequestEvent
+
 
 def assert_api_response_json(expected_json, received_json):
     """Assert the REST API response's json."""
@@ -149,12 +152,15 @@ def test_simple_request_flow(app, client_logged_as, headers, example_request):
         "is_closed": False,
         "expires_at": None,
         "is_expired": False,
+        "is_locked": False,
         "links": {
             "self": f"https://127.0.0.1:5000/api/requests/{id_}",
             "self_html": f"https://127.0.0.1:5000/requests/{id_}",
             "timeline": f"https://127.0.0.1:5000/api/requests/{id_}/timeline",
             "timeline_focused": f"https://127.0.0.1:5000/api/requests/{id_}/timeline_focused",
             "comments": f"https://127.0.0.1:5000/api/requests/{id_}/comments",
+            "lock": f"https://127.0.0.1:5000/api/requests/{id_}/lock",
+            "unlock": f"https://127.0.0.1:5000/api/requests/{id_}/unlock",
             "actions": {
                 "submit": f"https://127.0.0.1:5000/api/requests/{id_}/actions/submit",
             },
@@ -178,6 +184,8 @@ def test_simple_request_flow(app, client_logged_as, headers, example_request):
                 "timeline": f"https://127.0.0.1:5000/api/requests/{id_}/timeline",
                 "timeline_focused": f"https://127.0.0.1:5000/api/requests/{id_}/timeline_focused",
                 "comments": f"https://127.0.0.1:5000/api/requests/{id_}/comments",
+                "lock": f"https://127.0.0.1:5000/api/requests/{id_}/lock",
+                "unlock": f"https://127.0.0.1:5000/api/requests/{id_}/unlock",
                 "actions": {
                     "cancel": f"https://127.0.0.1:5000/api/requests/{id_}/actions/cancel",  # noqa
                 },
@@ -201,9 +209,42 @@ def test_simple_request_flow(app, client_logged_as, headers, example_request):
                 "timeline": f"https://127.0.0.1:5000/api/requests/{id_}/timeline",
                 "timeline_focused": f"https://127.0.0.1:5000/api/requests/{id_}/timeline_focused",
                 "comments": f"https://127.0.0.1:5000/api/requests/{id_}/comments",
+                "lock": f"https://127.0.0.1:5000/api/requests/{id_}/lock",
+                "unlock": f"https://127.0.0.1:5000/api/requests/{id_}/unlock",
                 "actions": {},
             },
             "last_activity_at": response.json["updated"],
         }
     )
     assert_api_response(response, 200, expected_data)
+
+
+def test_lock_request(app, client_logged_as, headers, example_request):
+    client = client_logged_as("user2@example.org")
+    id_ = str(example_request.id)
+    example_request.status = "submitted"
+    example_request.commit()
+
+    # Lock request
+    response = client.get(f"/requests/{id_}/lock", headers=headers)
+    assert response.status_code == 204
+
+    # Refresh index
+    RequestEvent.index.refresh()
+
+    # Check last event is locked
+    response = client.get(f"/requests/{id_}/timeline?sort=newest", headers=headers)
+    assert response.json["hits"]["hits"][0]["type"] == LogEventType.type_id
+    assert response.json["hits"]["hits"][0]["payload"]["event"] == "locked"
+
+    # Unlock request
+    response = client.get(f"/requests/{id_}/unlock", headers=headers)
+    assert response.status_code == 204
+
+    # Refresh index
+    RequestEvent.index.refresh()
+
+    # Check last event is unlocked
+    response = client.get(f"/requests/{id_}/timeline?sort=newest", headers=headers)
+    assert response.json["hits"]["hits"][0]["type"] == LogEventType.type_id
+    assert response.json["hits"]["hits"][0]["payload"]["event"] == "unlocked"

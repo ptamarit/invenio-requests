@@ -22,9 +22,9 @@ def test_load_dump_only_field(app, identity_simple, submit_request, requests_ser
         },
     )
 
-    assert {} == data
+    assert {"is_locked": False} == data
     # This might seem surprising, but it's a side-effect of pre-load cleaning.
-    # That the data above is {}, is the most important part.
+    # That the data above doesn't have the "status" field because it is marked as dump_only, is the most important part.
     assert [] == errors
 
 
@@ -40,7 +40,7 @@ def test_load_additional_field(app, identity_simple, submit_request, requests_se
         },
     )
 
-    assert {"receiver": {"user": "42"}} == data
+    assert {"receiver": {"user": "42"}, "is_locked": False} == data
     # This might seem surprising, but it's a side-effect of pre-load cleaning.
-    # That the data above is {}, is the most important part.
+    # That the data above has the "is_locked" field because it is marked as load_default=False, is the most important part.
     assert [] == errors

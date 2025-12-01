@@ -180,3 +180,25 @@ def test_search_user_requests(
     ]["hits"]
 
     assert str(request_id) not in [h["id"] for h in hits]
+
+
+def test_lock_request(
+    app,
+    identity_simple,
+    identity_simple_2,
+    submit_request,
+    requests_service,
+):
+    request = submit_request(identity_simple)
+    request_id = request.id
+
+    # Lock request
+    requests_service.lock_request(identity_simple_2, request_id)
+    updated_request = requests_service.record_cls.get_record(request_id)
+    assert updated_request["is_locked"]
+
+    # Unlock request
+    requests_service.unlock_request(identity_simple_2, request_id)
+    updated_request = requests_service.record_cls.get_record(request_id)
+
+    assert not updated_request["is_locked"]

@@ -15,7 +15,7 @@ import pytest
 from invenio_access.permissions import system_identity
 from invenio_records_resources.services.errors import PermissionDeniedError
 
-from invenio_requests.errors import CannotExecuteActionError
+from invenio_requests.errors import CannotExecuteActionError, RequestLockedError
 from invenio_requests.records.api import RequestEventFormat
 
 
@@ -310,3 +310,36 @@ def test_only_system_and_creator_can_delete_request(
     # System CAN, but action doesn't allow
     with pytest.raises(CannotExecuteActionError):
         assert requests_service.delete(system_identity, request_id)
+
+
+def test_only_system_and_receiver_can_lock_request(
+    app,
+    identity_simple,
+    identity_simple_2,
+    identity_stranger,
+    requests_service,
+    submit_request,
+):
+    request = submit_request(identity_simple)
+    # System can lock request
+    requests_service.lock_request(system_identity, request.id)
+    updated_request = requests_service.record_cls.get_record(request.id)
+    assert updated_request["is_locked"]
+
+    # Locked request cannot be locked again
+    with pytest.raises(RequestLockedError):
+        requests_service.lock_request(system_identity, request.id)
+
+    # System can unlock request
+    requests_service.unlock_request(system_identity, request.id)
+    updated_request = requests_service.record_cls.get_record(request.id)
+    assert not updated_request["is_locked"]
+
+    # Stranger cannot lock request
+    with pytest.raises(PermissionDeniedError):
+        requests_service.lock_request(identity_stranger, request.id)
+
+    # Receiver can lock request
+    requests_service.lock_request(identity_simple_2, request.id)
+    updated_request = requests_service.record_cls.get_record(request.id)
+    assert updated_request["is_locked"]

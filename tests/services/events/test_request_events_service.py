@@ -19,6 +19,7 @@ from invenio_records_resources.services.records.components import ServiceCompone
 
 from invenio_requests.customizations import CommentEventType, LogEventType
 from invenio_requests.customizations.event_types import EventType
+from invenio_requests.errors import RequestEventPermissionError
 from invenio_requests.notifications.builders import (
     CommentRequestEventCreateNotificationBuilder,
 )
@@ -117,7 +118,7 @@ def test_delete_non_comment(
         item = request_events_service.create(system_identity, request_id, comment, typ)
         event_id = item.id
 
-        with pytest.raises(PermissionError):
+        with pytest.raises(RequestEventPermissionError):
             request_events_service.delete(system_identity, event_id)
 
 
