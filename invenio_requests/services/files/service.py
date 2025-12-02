@@ -155,7 +155,7 @@ class RequestFilesService(FileService):
 
         # resolve and check permissions
         request = self.request_cls.get_record(id_)
-        self.require_permission(identity, "action_delete", request=request)
+        # self.require_permission(identity, "action_delete", request=request)
         self.require_permission(identity, "update", record=request, request=request)
         # self.require_permission(
         #     identity, "delete_comment", request=request, event=event
