@@ -17,7 +17,7 @@ from invenio_records_resources.resources import (
 )
 from marshmallow import fields
 
-from ...errors import RequestLockedError
+from ...errors import RequestEventPermissionError, RequestLockedError
 
 
 class RequestCommentsSearchRequestArgsSchema(SearchRequestArgsSchema):
@@ -64,7 +64,13 @@ class RequestCommentsResourceConfig(RecordResourceConfig):
         RequestLockedError: create_error_handler(
             lambda e: HTTPJSONException(
                 code=403,
-                description=str(e),
+                description=e.description,
+            )
+        ),
+        RequestEventPermissionError: create_error_handler(
+            lambda e: HTTPJSONException(
+                code=403,
+                description=e.description,
             )
         ),
     }

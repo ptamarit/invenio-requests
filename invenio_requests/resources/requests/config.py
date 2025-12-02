@@ -53,7 +53,7 @@ request_error_handlers = {
     RequestLockedError: create_error_handler(
         lambda e: HTTPJSONException(
             code=403,
-            description=str(e),
+            description=e.description,
         )
     ),
 }

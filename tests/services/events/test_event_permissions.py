@@ -12,9 +12,9 @@
 import pytest
 from invenio_records_resources.services.errors import PermissionDeniedError
 
-from invenio_requests.customizations.event_types import CommentEventType
+from invenio_requests.customizations.event_types import CommentEventType, LogEventType
 from invenio_requests.errors import RequestLockedError
-from invenio_requests.records.api import RequestEvent, RequestEventFormat
+from invenio_requests.records.api import RequestEvent
 
 
 def test_creator_and_receiver_can_comment(
@@ -188,9 +188,14 @@ def test_commenting_on_locked_request(
     with pytest.raises(RequestLockedError):
         request_events_service.update(identity_simple, comment_id, comment)
     # Stranger cannot submit comment
-    with pytest.raises(RequestLockedError):
+    with pytest.raises(PermissionDeniedError):
         request_events_service.create(
             identity_stranger, request.id, comment, CommentEventType
+        )
+    # Stranger cannot submit log event manually
+    with pytest.raises(PermissionDeniedError):
+        request_events_service.create(
+            identity_stranger, request.id, {"payload": {"event": "test"}}, LogEventType
         )
 
     # Log events are not blocked by locked request

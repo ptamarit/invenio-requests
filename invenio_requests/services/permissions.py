@@ -10,6 +10,7 @@
 
 """Request permissions."""
 
+from invenio_administration.generators import Administration
 from invenio_records_permissions import RecordPermissionPolicy
 from invenio_records_permissions.generators import (
     AnyUser,
@@ -47,10 +48,12 @@ class PermissionPolicy(RecordPermissionPolicy):
             ],
             [Creator(), Receiver(), Reviewers(), Topic()],
         ),
+        Administration(),
         SystemProcess(),
     ]
 
     can_update = [
+        Administration(),
         SystemProcess(),
         Status(["created"], [Creator()]),
         Status(["submitted"], [Creator(), Receiver()]),
@@ -64,6 +67,7 @@ class PermissionPolicy(RecordPermissionPolicy):
             ["submitted", "deleted", "cancelled", "expired", "accepted", "declined"],
             [Disable()],
         ),
+        Administration(),
         SystemProcess(),
     ]
 
@@ -87,7 +91,7 @@ class PermissionPolicy(RecordPermissionPolicy):
     # Request events/comments
     # Events are in most cases protected by the associated request.
     can_update_comment = [
-        IfLocked(then_=[Disable()], else_=[Commenter()]),
+        IfLocked(then_=[Administration()], else_=[Commenter()]),
         SystemProcess(),
     ]
     can_delete_comment = [
@@ -97,7 +101,7 @@ class PermissionPolicy(RecordPermissionPolicy):
     # If you can read the request you can create events for the request.
     can_create_comment = [
         IfLocked(
-            then_=[Disable()],
+            then_=[Administration()],
             else_=can_read,
         ),
         SystemProcess(),

@@ -43,31 +43,10 @@ class RequestEventItem(RecordItem):
 class RequestEventList(RecordList):
     """RequestEvent result item."""
 
-    def __init__(
-        self,
-        service,
-        identity,
-        results,
-        params=None,
-        links_tpl=None,
-        links_item_tpl=None,
-        nested_links_item=None,
-        schema=None,
-        expandable_fields=None,
-        expand=False,
-        request=None,
-    ):
+    def __init__(self, *args, **kwargs):
         """Constructor."""
-        self._identity = identity
-        self._results = results
-        self._service = service
-        self._schema = schema or service.schema
-        self._params = params
-        self._links_tpl = links_tpl
-        self._links_item_tpl = links_item_tpl
-        self._nested_links_item = nested_links_item
-        self._fields_resolver = FieldsResolver(expandable_fields)
-        self._expand = expand
+        request = kwargs.pop("request", None)
+        super().__init__(*args, **kwargs)
         self._request = request
 
     @property

@@ -192,19 +192,22 @@ class RequestType:
                 RefBaseSchema.create_from_dict(cls.allowed_receiver_ref_types),
                 allow_none=cls.receiver_can_be_none,
             ),
-            "reviewers": ma.fields.List(
+            "topic": ma.fields.Nested(
+                RefBaseSchema.create_from_dict(cls.allowed_topic_ref_types),
+                allow_none=cls.topic_can_be_none,
+            ),
+        }
+
+        if cls.reviewers_can_be_none():
+            # if the config is enabled, add the reviewers field to the schema
+            additional_fields["reviewers"] = ma.fields.List(
                 ma.fields.Nested(
                     MultipleEntityReferenceBaseSchema.create_from_dict(
                         cls.allowed_reviewers_ref_types()
                     ),
                     allow_none=cls.reviewers_can_be_none(),
                 )
-            ),
-            "topic": ma.fields.Nested(
-                RefBaseSchema.create_from_dict(cls.allowed_topic_ref_types),
-                allow_none=cls.topic_can_be_none,
-            ),
-        }
+            )
 
         # If a payload schema is defined, add it to the request schema
         if cls.payload_schema is not None:
