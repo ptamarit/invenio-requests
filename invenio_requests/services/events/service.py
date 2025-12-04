@@ -77,6 +77,11 @@ class RequestEventsService(RecordService):
         # Validate data (if there are errors, .load() raises)
         schema = self._wrap_schema(event_type.marshmallow_schema())
 
+        # "files": [
+        #   {"file_id": "abc-1234-..."},
+        #   {"file_id": "def-5678-..."}
+        # ]
+
         data, errors = schema.load(
             data,
             context={"identity": identity},
@@ -88,6 +93,7 @@ class RequestEventsService(RecordService):
             request_id=str(request.id),
             type=event_type,
         )
+        breakpoint()
         event.update(data)
         event.created_by = self._get_creator(identity, request=request)
 
@@ -174,7 +180,12 @@ class RequestEventsService(RecordService):
         )
         event["payload"]["content"] = data["payload"]["content"]
         event["payload"]["format"] = data["payload"]["format"]
-
+        breakpoint()
+        # "files": [
+        #   {"file_id": "abc-1234-..."},
+        #   {"file_id": "def-5678-..."}
+        # ]
+        
         # Run components
         self.run_components(
             "update_comment",

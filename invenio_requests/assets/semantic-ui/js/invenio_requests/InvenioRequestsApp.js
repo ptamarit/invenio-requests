@@ -31,7 +31,7 @@ export class InvenioRequestsApp extends Component {
       requestsApi: requestsApi || defaultRequestsApi,
       request,
       requestEventsApi: requestEventsApi || defaultRequestEventsApi,
-      refreshIntervalMs: 5000,
+      refreshIntervalMs: 60000,
       defaultQueryParams,
     };
 

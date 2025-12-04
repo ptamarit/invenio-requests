@@ -5,12 +5,13 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import { connect } from "react-redux";
-import { submitComment, setEventContent, restoreEventContent } from "./state/actions";
+import { submitComment, setEventContent, setEventFiles, restoreEventContent } from "./state/actions";
 import TimelineCommentEditorComponent from "./TimelineCommentEditor";
 
 const mapDispatchToProps = {
   submitComment,
   setCommentContent: setEventContent,
+  setCommentFiles: setEventFiles,
   restoreCommentContent: restoreEventContent,
 };
 

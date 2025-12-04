@@ -34,6 +34,27 @@ export const setEventContent = (content) => {
   return async (dispatch, getState, config) => {
     dispatch({
       type: SETTING_CONTENT,
+      // TODO: Dispatch the list of files here too?
+      payload: content,
+    });
+    const { request } = getState();
+
+    try {
+      setDraftComment(request.data.id, content);
+    } catch (e) {
+      // This should not be a fatal error. The comment editor is still usable if
+      // draft saving isn't working (e.g. on very old browsers or ultra-restricted
+      // environments with 0 storage quota.)
+      console.warn("Failed to save comment:", e);
+    }
+  };
+};
+
+export const setEventFiles = (content) => {
+  return async (dispatch, getState, config) => {
+    dispatch({
+      type: SETTING_CONTENT,
+      // TODO: Dispatch the list of files here too?
       payload: content,
     });
     const { request } = getState();
@@ -68,9 +89,11 @@ export const restoreEventContent = () => {
   };
 };
 
-export const submitComment = (content, format) => {
+export const submitComment = (content, format, files) => {
   return async (dispatch, getState, config) => {
     const { timeline: timelineState, request } = getState();
+
+    console.log("actions.submitComment");
 
     dispatch(clearTimelineInterval());
 
@@ -78,7 +101,7 @@ export const submitComment = (content, format) => {
       type: IS_LOADING,
     });
 
-    const payload = payloadSerializer(content, format || "html");
+    const payload = payloadSerializer(content, format || "html", files);
 
     try {
       /* Because of the delay in ES indexing we need to handle the updated state on the client-side until it is ready to be retrieved from the server.

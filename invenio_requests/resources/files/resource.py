@@ -148,6 +148,7 @@ class RequestFilesResource(RecordResource):
             id_=resource_requestctx.view_args["id"],
             file_key=resource_requestctx.view_args["key"],
         )
+        # TODO: Is there a way to send the file with the `original_filename` instead of with the `key`?
         return file.send_file(as_attachment=True)
 
     #     """Read logo's content."""

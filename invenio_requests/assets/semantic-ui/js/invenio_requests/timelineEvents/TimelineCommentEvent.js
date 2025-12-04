@@ -152,7 +152,11 @@ class TimelineCommentEvent extends Component {
                 <Feed.Extra text={!isEditing}>
                   {error && <Error error={error} />}
 
+                  {/* TODO: These are existing comments in the timeline. */}
+                  {/* TODO: Inject the request ID here for file uploading? */}
                   {isEditing ? (
+                    <>
+                    <small>TimelineCommentEvent.js</small>
                     <RichEditor
                       initialValue={event?.payload?.content}
                       inputValue={commentContent}
@@ -161,10 +165,12 @@ class TimelineCommentEvent extends Component {
                       }}
                       minHeight={150}
                     />
+                    </>
                   ) : (
                     <TimelineEventBody
                       content={event?.payload?.content}
                       format={event?.payload?.format}
+                      files={event?.payload?.files}
                     />
                   )}
 

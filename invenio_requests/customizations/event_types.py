@@ -198,6 +198,14 @@ class CommentEventType(EventType):
                 validate=validate.OneOf(choices=[e.value for e in RequestEventFormat]),
                 load_default=RequestEventFormat.HTML.value,
             ),
+            files=fields.List(
+                fields.Dict(
+                    keys=fields.String(validate=OneOf(("file_id"))),
+                    # TODO: Fix Object of type UUID is not JSON serializable
+                    # values=fields.UUID(required=True),
+                    values=fields.String(required=True),
+                )
+            )
         )
 
     payload_required = True

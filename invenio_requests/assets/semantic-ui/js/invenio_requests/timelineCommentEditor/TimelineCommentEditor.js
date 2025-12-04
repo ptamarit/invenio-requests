@@ -5,7 +5,7 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import { RichEditorWithFiles } from "react-invenio-forms";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { SaveButton } from "../components/Buttons";
 import { Container, Message } from "semantic-ui-react";
 import PropTypes from "prop-types";
@@ -25,7 +25,9 @@ const TimelineCommentEditor = ({
   useEffect(() => {
     restoreCommentContent();
   }, [restoreCommentContent]);
-
+  
+  const [files, setFiles] = useState([]);
+  
   return (
     <div className="timeline-comment-editor-container">
       {error && <Message negative>{error}</Message>}
@@ -42,9 +44,15 @@ const TimelineCommentEditor = ({
             inputValue={commentContent}
             // initialValue is not allowed to change, so we use `storedCommentContent` which is set at most once
             initialValue={storedCommentContent}
+            files={files}
+            setFiles={setFiles}
             onEditorChange={(event, editor) => {
               // TODO: Store the list of files too, and not only on editor change, but also on files change.
               setCommentContent(editor.getContent());
+              // setCommentContent({
+              //   content: editor.getContent(),
+              //   files: editor.getFiles(),
+              // })
             }}
             minHeight={150}
             // editorConfig={{}}
@@ -57,7 +65,7 @@ const TimelineCommentEditor = ({
           size="medium"
           content={i18next.t("Comment")}
           loading={isLoading}
-          onClick={() => submitComment(commentContent, "html")}
+          onClick={() => submitComment(commentContent, "html", files)}
         />
       </div>
     </div>

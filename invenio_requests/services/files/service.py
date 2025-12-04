@@ -10,6 +10,7 @@
 
 from invenio_db import db
 from base32_lib import base32
+from os.path import splitext
 from invenio_records_resources.services import FileService, ServiceSchemaWrapper
 from invenio_records_resources.services.uow import unit_of_work
 
@@ -68,7 +69,8 @@ class RequestFilesService(FileService):
 
         # TODO: Is some validation needed on the filename to avoid weird characters?
         unique_id = base32.generate(length=10, split_every=5, checksum=True)
-        unique_key =  f"{unique_id}-{key}"
+        key_root, key_ext = splitext(key)
+        unique_key =  f"{key_root}-{unique_id}{key_ext}"
         request.files[unique_key] = stream
         request.commit()
         db.session.commit()
