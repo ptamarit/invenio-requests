@@ -7,6 +7,7 @@
 
 """Custom exceptions used in the Invenio-Requests module."""
 
+from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.errors import PermissionDeniedError
 
 
@@ -54,7 +55,7 @@ class CannotExecuteActionError(ActionError):
 class RequestLockedError(PermissionDeniedError):
     """Exception indicating that the request is locked."""
 
-    def __init__(self, description="The request is locked."):
+    def __init__(self, description=_("The request is locked.")):
         """Constructor.
 
         :param message: The message to display.
