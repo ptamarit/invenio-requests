@@ -27,6 +27,7 @@ def test_alembic(base_app, database):
     tables = [x for x in db.metadata.tables]
     assert "request_metadata" in tables
     assert "request_events" in tables
+    assert "request_files" in tables
 
     # Check that Alembic agrees that there's no further tables to create.
     assert len(ext.alembic.compare_metadata()) == 0

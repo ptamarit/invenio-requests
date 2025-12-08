@@ -96,6 +96,11 @@ class RequestEventsService(RecordService):
         # Validate data (if there are errors, .load() raises)
         schema = self._wrap_schema(event_type.marshmallow_schema())
 
+        # "files": [
+        #   {"file_id": "abc-1234-..."},
+        #   {"file_id": "def-5678-..."}
+        # ]
+
         data, errors = schema.load(
             data,
             context={"identity": identity},
@@ -142,7 +147,9 @@ class RequestEventsService(RecordService):
                 )
             )
 
-        return self.result_item(
+        # TODO: Here include the
+
+        result_item = self.result_item(
             self,
             identity,
             event,
@@ -153,6 +160,9 @@ class RequestEventsService(RecordService):
             expandable_fields=self.expandable_fields,
             expand=expand,
         )
+
+        breakpoint()
+        return result_item
 
     def read(self, identity, id_, expand=False):
         """Retrieve a record."""
@@ -207,6 +217,11 @@ class RequestEventsService(RecordService):
         )
         event["payload"]["content"] = data["payload"]["content"]
         event["payload"]["format"] = data["payload"]["format"]
+        breakpoint()
+        # "files": [
+        #   {"file_id": "abc-1234-..."},
+        #   {"file_id": "def-5678-..."}
+        # ]
 
         # Run components
         self.run_components(
@@ -310,7 +325,7 @@ class RequestEventsService(RecordService):
             **kwargs,
         ).execute()
 
-        return self.result_list(
+        result = self.result_list(
             self,
             identity,
             search_result,
@@ -326,6 +341,8 @@ class RequestEventsService(RecordService):
             expand=expand,
             request=request,
         )
+        breakpoint()
+        return result
 
     def focused_list(
         self,

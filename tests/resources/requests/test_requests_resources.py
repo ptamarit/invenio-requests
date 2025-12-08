@@ -262,3 +262,5 @@ def test_lock_request_disabled(
     # Lock request is not allowed
     response = client.get(f"/requests/{id_}/lock", headers=headers)
     assert response.status_code == 403
+
+# TODO: More tests here?

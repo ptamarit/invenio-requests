@@ -18,13 +18,17 @@ const initialState = {
   error: null,
   isLoading: false,
   commentContent: "",
+  // commentContent: {comment: "", files: []},
   storedCommentContent: null,
   appendedCommentContent: "",
+  // filesList: ,
 };
 
 export const commentEditorReducer = (state = initialState, action) => {
+  console.log(`commentEditorReducer ${action.type}`);
   switch (action.type) {
     case SETTING_CONTENT:
+      // TODO: File list here?
       return { ...state, commentContent: action.payload };
     case APPEND_CONTENT:
       return {
@@ -44,11 +48,14 @@ export const commentEditorReducer = (state = initialState, action) => {
         isLoading: false,
         error: null,
         commentContent: "",
+        files: [],
+        // commentContent: {comment: "", files: []},
       };
     case RESTORE_CONTENT:
       return {
         ...state,
         commentContent: action.payload,
+        files: ['todo.txt'],
         // We'll never change this later, so it can be used as an `initialValue`
         storedCommentContent: action.payload,
       };

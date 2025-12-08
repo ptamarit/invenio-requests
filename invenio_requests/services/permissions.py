@@ -127,3 +127,5 @@ class PermissionPolicy(RecordPermissionPolicy):
     # be provided to create_search(), but the event search is already protected
     # by request's can_read, thus we use a dummy permission for the search.
     can_unused = [AnyUser()]
+
+    # TODO: Create new permissions here.

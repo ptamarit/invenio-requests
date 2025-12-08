@@ -13,12 +13,15 @@ from functools import partial
 
 from invenio_records.dumpers import SearchDumper
 from invenio_records.systemfields import ConstantField, DictField, ModelField
-from invenio_records_resources.records.api import Record
-from invenio_records_resources.records.systemfields import IndexField
+from invenio_records_resources.records.api import FileRecord, Record
+from invenio_records_resources.records.systemfields import FilesField, IndexField
+from werkzeug.local import LocalProxy
 
 from ..customizations import RequestState as State
 from .dumpers import CalculatedFieldDumperExt, GrantTokensDumperExt
-from .models import RequestEventModel, RequestMetadata
+from .models import RequestEventModel, RequestFileMetadata, RequestMetadata
+
+# from .proxies import current_requests
 from .systemfields import (
     EntityReferenceField,
     EventTypeField,
@@ -82,6 +85,24 @@ class RequestEvent(Record):
 
     created_by = EntityReferenceField("created_by", check_referenced)
     """Who created the event."""
+
+
+def get_files_quota(record=None):
+    """Get bucket quota configuration for request files."""
+    # Returns quota_size and max_file_size from Flask config
+    # with defaults (100MB total quota, 10MB max file size)
+    return dict(
+        quota_size=10**8,  # 100MB
+        max_file_size=10**7,  # 10MB
+    )
+
+
+class RequestFile(FileRecord):
+    """Request file API."""
+
+    model_cls = RequestFileMetadata
+    # record_cls = LocalProxy(lambda: Request)  # TODO: Cyclic dependency?
+    # record_cls = current_requests  # TODO: Is this OK or should I use what's above?
 
 
 class Request(Record):
@@ -158,3 +179,16 @@ class Request(Record):
 
     is_locked = DictField("is_locked")
     """Whether or not the request is locked."""
+
+    bucket_id = ModelField(dump=False)
+    bucket = ModelField(dump=False)
+
+    # Files NOT dumped or stored in JSON - internal only
+    files = FilesField(
+        store=False,  # Don't serialize to request JSON
+        dump=False,  # Don't include in dumps()
+        file_cls=RequestFile,
+        delete=False,  # Manual management via service
+        create=False,  # Lazy initialization
+        bucket_args=get_files_quota,  # Quota config
+    )

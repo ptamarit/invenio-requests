@@ -4,8 +4,8 @@
 // Invenio RDM Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
-import { RichEditor } from "react-invenio-forms";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { RichEditorWithFiles } from "react-invenio-forms";
 import { SaveButton } from "../components/Buttons";
 import { Container, Message, Icon } from "semantic-ui-react";
 import PropTypes from "prop-types";
@@ -38,6 +38,8 @@ const TimelineCommentEditor = ({
     editorRef.current.focus();
   }, [appendedCommentContent]);
 
+  const [files, setFiles] = useState([]);
+
   return (
     <div className="timeline-comment-editor-container">
       {error && <Message negative>{error}</Message>}
@@ -56,16 +58,27 @@ const TimelineCommentEditor = ({
           disabled={!canCreateComment}
         />
         <Container fluid className="ml-0-mobile mr-0-mobile fluid-mobile">
-          <RichEditor
+          {/* TODO: This is the comment at the bottom of the timeline. */}
+          {/* TODO: Inject the request ID here for file uploading? */}
+          <small>TimelineCommentEditor.js</small>
+          <RichEditorWithFiles
             inputValue={commentContent}
             // initialValue is not allowed to change, so we use `storedCommentContent` which is set at most once
             initialValue={storedCommentContent}
-            onEditorChange={(_, editor) => {
+            files={files}
+            setFiles={setFiles}
+            onEditorChange={(event, editor) => {
+              // TODO: Store the list of files too, and not only on editor change, but also on files change.
               setCommentContent(editor.getContent());
+              // setCommentContent({
+              //   content: editor.getContent(),
+              //   files: editor.getFiles(),
+              // })
             }}
             minHeight={150}
             onInit={(_, editor) => (editorRef.current = editor)}
             disabled={!canCreateComment}
+            // editorConfig={{}}
           />
         </Container>
       </div>
@@ -75,7 +88,7 @@ const TimelineCommentEditor = ({
           size="medium"
           content={i18next.t("Comment")}
           loading={isLoading}
-          onClick={() => submitComment(commentContent, "html")}
+          onClick={() => submitComment(commentContent, "html", files)}
           disabled={!canCreateComment}
         />
       </div>

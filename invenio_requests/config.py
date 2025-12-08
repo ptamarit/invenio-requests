@@ -135,3 +135,13 @@ REQUESTS_REVIEWERS_MAX_NUMBER = 15
 
 REQUESTS_LOCKING_ENABLED = False
 """Enable locking/unlocking for request conversations."""
+
+# TODO: This needs to be documented in docs-invenio-rdm.
+REQUESTS_COMMENTS_ALLOWED_EXTRA_HTML_TAGS = ["img"]
+"""Extend allowed HTML tags list for requests comments content."""
+
+# TODO: Keep `title` and `loading` for consistency with pages (even though we do not propose them in the editor)?
+REQUESTS_COMMENTS_ALLOWED_EXTRA_HTML_ATTRS = {
+    "img": ["src", "alt", "title", "width", "height", "loading"],
+}
+"""Extend allowed HTML attrs list for requests comments content."""
