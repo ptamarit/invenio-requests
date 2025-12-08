@@ -9,7 +9,7 @@ import PropTypes from "prop-types";
 import { ButtonGroup, Button, Popup } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_requests/i18next";
 
-export const TimelineEventBody = ({ content, format, quote }) => {
+export const TimelineEventBody = ({ content, format, quote, files }) => {
   const ref = useRef(null);
   const [selectionRange, setSelectionRange] = useState(null);
 
@@ -91,7 +91,7 @@ export const TimelineEventBody = ({ content, format, quote }) => {
 
   const filesList = files.map((file) => (
     <ButtonGroup key={file.key} floated='left' className="mr-10 mt-10">
-      <Button basic color='grey' icon='file' content={`${file.original_filename} (12.3 MB)`} as='a' href={`/api/requests/TODOreqID/files/${file.key}/content`} />
+      <Button basic color='grey' icon='file' content={`${file.original_filename} ${file.key} (12.3 MB)`} as='a' href={`/api/requests/TODOreqID/files/${file.key}/content`} />
       <Button icon='linkify' title="Copy link" onClick={() => this.copyLink(file.key)} />
     </ButtonGroup>
   ))

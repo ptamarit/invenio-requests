@@ -7,7 +7,14 @@ export const payloadSerializer = (content, format, files) => ({
   payload: {
     content,
     format,
-    files: files.map(file => ({"file_id": file.file_id})),
+    files: files.map(file => ({
+      "file_id": file.file_id,
+      // "key": file.key,
+      // "original_filename": file.original_filename,
+      // "size": 123,
+      // "mimetype": "image/png",
+      // "created": "2024-01-01",
+    })),
   },
 });
 

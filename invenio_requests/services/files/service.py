@@ -73,6 +73,8 @@ class RequestFilesService(FileService):
         key_root, key_ext = splitext(key)
         unique_key = f"{key_root}-{unique_id}{key_ext}"
         request.files[unique_key] = stream
+        # Store the original filename in RequestFileMetadata.json (field from RecordMetadataBase)
+        request.files[unique_key].model.data = {"original_filename": key}
         request.commit()
         db.session.commit()
         # // TODO: Check files in records.

@@ -200,8 +200,9 @@ class CommentEventType(EventType):
                 load_default=RequestEventFormat.HTML.value,
             ),
             files=fields.List(
+                # TODO: Expand information here or not?
                 fields.Dict(
-                    keys=fields.String(validate=OneOf(("file_id"))),
+                    keys=fields.String(validate=OneOf(("file_id", "key", "original_filename", "size", "mimetype", "created"))),
                     # TODO: Fix Object of type UUID is not JSON serializable
                     # values=fields.UUID(required=True),
                     values=fields.String(required=True),

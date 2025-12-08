@@ -100,6 +100,8 @@ class RequestEventsService(RecordService):
         #   {"file_id": "abc-1234-..."},
         #   {"file_id": "def-5678-..."}
         # ]
+        breakpoint()
+        # TODO: Dump extra stuff in OpenSearch
 
         data, errors = schema.load(
             data,

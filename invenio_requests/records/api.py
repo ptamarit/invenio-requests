@@ -11,14 +11,16 @@
 from enum import Enum
 from functools import partial
 
+from invenio_records.systemfields.relations.field import RelationsField
 from invenio_records.dumpers import SearchDumper
+from invenio_records.systemfields.relations import PKListRelation
 from invenio_records.systemfields import ConstantField, DictField, ModelField
 from invenio_records_resources.records.api import FileRecord, Record
 from invenio_records_resources.records.systemfields import FilesField, IndexField
 from werkzeug.local import LocalProxy
 
 from ..customizations import RequestState as State
-from .dumpers import CalculatedFieldDumperExt, GrantTokensDumperExt
+from .dumpers import CalculatedFieldDumperExt, GrantTokensDumperExt, FilesDumperExt
 from .models import RequestEventModel, RequestFileMetadata, RequestMetadata
 
 # from .proxies import current_requests
@@ -85,6 +87,21 @@ class RequestEvent(Record):
 
     created_by = EntityReferenceField("created_by", check_referenced)
     """Who created the event."""
+
+    # relations = RelationsField(
+    #     # Multiple authors
+    #     files=PKListRelation(
+    #         'payload.files',
+    #         record_cls=FileRecord
+    #     ),
+    # )
+
+    dumper = SearchDumper(
+        extensions=[
+            FilesDumperExt(),
+        ]
+    )
+    """Search dumper with configured extensions."""
 
 
 def get_files_quota(record=None):
