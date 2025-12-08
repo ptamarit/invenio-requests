@@ -321,7 +321,7 @@ class RequestsService(RecordService):
         request = self.read(identity, id_)
         self.require_permission(identity, "lock_request", request=request._record)
 
-        if request.data["is_locked"]:
+        if request.data.get("is_locked", False):
             raise RequestLockedError(description=_("The request is already locked."))
         request.data["is_locked"] = True
         self.update(identity, id_, request.data, uow=uow)
@@ -335,7 +335,7 @@ class RequestsService(RecordService):
         request = self.read(identity, id_)
         self.require_permission(identity, "lock_request", request=request._record)
 
-        if not request.data["is_locked"]:
+        if not request.data.get("is_locked", False):
             raise RequestLockedError(description=_("The request is already unlocked."))
         request.data["is_locked"] = False
         self.update(identity, id_, request.data, uow=uow)

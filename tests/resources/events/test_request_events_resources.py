@@ -220,12 +220,16 @@ def test_empty_comment(
 
 
 def test_locked_request_comments(
-    app, client_logged_as, headers, events_resource_data, example_request
+    app,
+    client_logged_as,
+    headers,
+    events_resource_data,
+    request_with_locking_enabled,
+    monkeypatch,
 ):
+    monkeypatch.setitem(app.config, "REQUESTS_LOCKING_ENABLED", True)
     client = client_logged_as("user2@example.org")
-    request_id = example_request.id
-    example_request.status = "submitted"
-    example_request.commit()
+    request_id = request_with_locking_enabled.id
 
     # Lock request
     response = client.get(f"/requests/{request_id}/lock", headers=headers)

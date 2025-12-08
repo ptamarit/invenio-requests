@@ -152,7 +152,6 @@ def test_simple_request_flow(app, client_logged_as, headers, example_request):
         "is_closed": False,
         "expires_at": None,
         "is_expired": False,
-        "is_locked": False,
         "links": {
             "self": f"https://127.0.0.1:5000/api/requests/{id_}",
             "self_html": f"https://127.0.0.1:5000/requests/{id_}",
@@ -219,13 +218,14 @@ def test_simple_request_flow(app, client_logged_as, headers, example_request):
     assert_api_response(response, 200, expected_data)
 
 
-def test_lock_request(app, client_logged_as, headers, example_request):
+def test_lock_request_enabled(
+    app, client_logged_as, headers, request_with_locking_enabled, monkeypatch
+):
+    monkeypatch.setitem(app.config, "REQUESTS_LOCKING_ENABLED", True)
     client = client_logged_as("user2@example.org")
-    id_ = str(example_request.id)
-    example_request.status = "submitted"
-    example_request.commit()
+    id_ = str(request_with_locking_enabled.id)
 
-    # Lock request
+    # Lock request is allowed when locking is enabled
     response = client.get(f"/requests/{id_}/lock", headers=headers)
     assert response.status_code == 204
 
@@ -248,3 +248,17 @@ def test_lock_request(app, client_logged_as, headers, example_request):
     response = client.get(f"/requests/{id_}/timeline?sort=newest", headers=headers)
     assert response.json["hits"]["hits"][0]["type"] == LogEventType.type_id
     assert response.json["hits"]["hits"][0]["payload"]["event"] == "unlocked"
+
+
+def test_lock_request_disabled(
+    app, client_logged_as, headers, example_request, monkeypatch
+):
+    monkeypatch.setitem(app.config, "REQUESTS_LOCKING_ENABLED", False)
+    client = client_logged_as("user2@example.org")
+    id_ = str(example_request.id)
+    example_request.status = "submitted"
+    example_request.commit()
+
+    # Lock request is not allowed
+    response = client.get(f"/requests/{id_}/lock", headers=headers)
+    assert response.status_code == 403

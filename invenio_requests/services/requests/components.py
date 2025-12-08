@@ -48,9 +48,11 @@ class RequestDataComponent(DataComponent):
     def update(self, identity, data=None, record=None, **kwargs):
         """Update an existing record (request)."""
         if record.status == "created":
-            keys = ("title", "description", "payload", "receiver", "topic", "is_locked")
+            keys = ("title", "description", "payload", "receiver", "topic")
         else:
-            keys = ("title", "description", "is_locked")
+            keys = ("title", "description")
+        if current_app.config["REQUESTS_LOCKING_ENABLED"]:
+            keys = keys + ("is_locked",)
 
         for k in keys:
             if k in data:

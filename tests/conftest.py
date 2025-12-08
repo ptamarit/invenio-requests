@@ -383,6 +383,28 @@ def example_request(identity_simple, request_record_input_data, user1, user2):
 
 
 @pytest.fixture()
+def request_with_locking_enabled(
+    identity_simple, request_record_input_data, user1, user2, database, app, monkeypatch
+):
+    """Example request with locking enabled (submitted state) where we clear the schema cache for the dynamic schema to work on config change."""
+    monkeypatch.setitem(app.config, "REQUESTS_LOCKING_ENABLED", True)
+    requests_service = current_requests.requests_service
+    current_requests._schema_cache.clear()
+    request = requests_service.create(
+        identity_simple,
+        request_record_input_data,
+        RequestType,
+        receiver=user2.user,
+        creator=user1.user,
+    )._request
+    request.status = "submitted"
+    request.commit()
+    database.session.commit()
+    requests_service.indexer.index_by_id(request.id)
+    return request
+
+
+@pytest.fixture()
 def client_logged_as(client, users, superuser, moderator_user):
     """Logs in a user to the client."""
 

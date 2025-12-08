@@ -9,6 +9,9 @@
 
 """Service tests."""
 
+import pytest
+from invenio_records_resources.services.errors import PermissionDeniedError
+
 from invenio_requests.customizations.event_types import CommentEventType
 from invenio_requests.records.api import Request, RequestEvent, RequestEventFormat
 
@@ -184,21 +187,27 @@ def test_search_user_requests(
 
 def test_lock_request(
     app,
-    identity_simple,
     identity_simple_2,
-    submit_request,
+    request_with_locking_enabled,
     requests_service,
+    monkeypatch,
 ):
-    request = submit_request(identity_simple)
+    monkeypatch.setitem(app.config, "REQUESTS_LOCKING_ENABLED", True)
+    request = request_with_locking_enabled
     request_id = request.id
 
     # Lock request
     requests_service.lock_request(identity_simple_2, request_id)
     updated_request = requests_service.record_cls.get_record(request_id)
-    assert updated_request["is_locked"]
+    assert updated_request["is_locked"] == True
 
     # Unlock request
     requests_service.unlock_request(identity_simple_2, request_id)
     updated_request = requests_service.record_cls.get_record(request_id)
 
-    assert not updated_request["is_locked"]
+    assert updated_request["is_locked"] == False
+
+    # Locking is disabled
+    monkeypatch.setitem(app.config, "REQUESTS_LOCKING_ENABLED", False)
+    with pytest.raises(PermissionDeniedError):
+        requests_service.lock_request(identity_simple_2, request_id)

@@ -11,6 +11,7 @@
 """RequestEvents Service."""
 
 import sqlalchemy.exc
+from flask import current_app
 from flask_principal import AnonymousIdentity
 from invenio_i18n import lazy_gettext as _
 from invenio_notifications.services.uow import NotificationOp
@@ -79,13 +80,17 @@ class RequestEventsService(RecordService):
             if event_type.type_id != LogEventType.type_id:
                 self.require_permission(identity, "create_comment", request=request)
         except PermissionDeniedError:
-            if request.get("is_locked", False):
+            if current_app.config.get(
+                "REQUESTS_LOCKING_ENABLED", False
+            ) and request.get("is_locked", False):
                 raise RequestLockedError(
                     description=_("Commenting is now locked for this conversation.")
                 )
             else:
                 raise RequestEventPermissionError(
-                    _("You do not have permission to comment on this conversation.")
+                    description=_(
+                        "You do not have permission to comment on this conversation."
+                    )
                 )
 
         # Validate data (if there are errors, .load() raises)
@@ -178,18 +183,22 @@ class RequestEventsService(RecordService):
                 identity, "update_comment", request=request, event=event
             )
         except PermissionDeniedError:
-            if request.get("is_locked", False):
+            if current_app.config.get(
+                "REQUESTS_LOCKING_ENABLED", False
+            ) and request.get("is_locked", False):
                 raise RequestLockedError(
                     description=_("Updating is now locked for this comment.")
                 )
             else:
                 raise RequestEventPermissionError(
-                    _("You do not have permission to update this comment.")
+                    description=_("You do not have permission to update this comment.")
                 )
         self.check_revision_id(event, revision_id)
 
         if event.type != CommentEventType:
-            raise RequestEventPermissionError(_("You cannot update this event."))
+            raise RequestEventPermissionError(
+                description=_("You cannot update this event.")
+            )
 
         schema = self._wrap_schema(event.type.marshmallow_schema())
         data, errors = schema.load(
@@ -241,7 +250,9 @@ class RequestEventsService(RecordService):
         self.check_revision_id(event, revision_id)
 
         if event.type != CommentEventType:
-            raise RequestEventPermissionError(_("You cannot delete this event."))
+            raise RequestEventPermissionError(
+                description=_("You cannot delete this event.")
+            )
 
         # update the event for the deleted comment with a LogEvent
         event.type = LogEventType

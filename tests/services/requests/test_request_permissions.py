@@ -314,13 +314,14 @@ def test_only_system_and_creator_can_delete_request(
 
 def test_only_system_and_receiver_can_lock_request(
     app,
-    identity_simple,
     identity_simple_2,
     identity_stranger,
     requests_service,
-    submit_request,
+    request_with_locking_enabled,
+    monkeypatch,
 ):
-    request = submit_request(identity_simple)
+    monkeypatch.setitem(app.config, "REQUESTS_LOCKING_ENABLED", True)
+    request = request_with_locking_enabled
     # System can lock request
     requests_service.lock_request(system_identity, request.id)
     updated_request = requests_service.record_cls.get_record(request.id)
@@ -343,3 +344,8 @@ def test_only_system_and_receiver_can_lock_request(
     requests_service.lock_request(identity_simple_2, request.id)
     updated_request = requests_service.record_cls.get_record(request.id)
     assert updated_request["is_locked"]
+
+    # Locking is disabled
+    monkeypatch.setitem(app.config, "REQUESTS_LOCKING_ENABLED", False)
+    with pytest.raises(PermissionDeniedError):
+        requests_service.lock_request(system_identity, request.id)

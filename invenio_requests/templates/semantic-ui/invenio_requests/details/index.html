@@ -49,7 +49,7 @@
          data-default-query-config='{{ dict(size=config["REQUESTS_TIMELINE_PAGE_SIZE"]) | tojson }}'
          data-user-avatar='{{ user_avatar | tojson }}'
          data-permissions='{{ permissions | tojson }}'
-         data-config='{{ dict(allowGroupReviewers=config["USERS_RESOURCES_GROUPS_ENABLED"], enableReviewers=config["REQUESTS_REVIEWERS_ENABLED"], maxReviewers=config["REQUESTS_REVIEWERS_MAX_NUMBER"]) | tojson }}'
+         data-config='{{ dict(allowGroupReviewers=config["USERS_RESOURCES_GROUPS_ENABLED"], enableReviewers=config["REQUESTS_REVIEWERS_ENABLED"], maxReviewers=config["REQUESTS_REVIEWERS_MAX_NUMBER"], lockingEnabled=config["REQUESTS_LOCKING_ENABLED"]) | tojson }}'
     >{# react app root #}
       <div class="ui grid">
         <div class="stretched row">

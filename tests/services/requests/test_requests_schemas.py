@@ -9,6 +9,8 @@
 
 """Schemas tests."""
 
+from invenio_requests.proxies import current_requests
+
 
 def test_load_dump_only_field(app, identity_simple, submit_request, requests_service):
     request = submit_request(identity_simple)
@@ -22,13 +24,18 @@ def test_load_dump_only_field(app, identity_simple, submit_request, requests_ser
         },
     )
 
-    assert {"is_locked": False} == data
+    assert {} == data
     # This might seem surprising, but it's a side-effect of pre-load cleaning.
     # That the data above doesn't have the "status" field because it is marked as dump_only, is the most important part.
     assert [] == errors
 
 
-def test_load_additional_field(app, identity_simple, submit_request, requests_service):
+def test_load_additional_field(
+    app, identity_simple, submit_request, requests_service, monkeypatch
+):
+    monkeypatch.setitem(app.config, "REQUESTS_LOCKING_ENABLED", True)
+    current_requests._schema_cache.clear()
+
     request = submit_request(identity_simple)
     schema = requests_service._wrap_schema(request.type.marshmallow_schema())
 

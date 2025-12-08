@@ -129,6 +129,11 @@ class RequestType:
         """Return whether reviewers can be None."""
         return current_app.config.get("REQUESTS_REVIEWERS_ENABLED", False)
 
+    @classmethod
+    def locking_enabled(cls):
+        """Return whether locking is enabled."""
+        return current_app.config.get("REQUESTS_LOCKING_ENABLED", False)
+
     allowed_topic_ref_types = []
     """A list of allowed TYPE keys for ``topic`` reference dicts."""
 
@@ -207,6 +212,12 @@ class RequestType:
                     ),
                     allow_none=cls.reviewers_can_be_none(),
                 )
+            )
+
+        if cls.locking_enabled():
+            # `is_locked` field would be automatically added as False on dump if not present and loaded as False if not present
+            additional_fields["is_locked"] = ma.fields.Boolean(
+                dump_default=False, load_default=False
             )
 
         # If a payload schema is defined, add it to the request schema

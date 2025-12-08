@@ -163,9 +163,11 @@ def test_commenting_on_locked_request(
     request_events_service,
     requests_service,
     events_service_data,
-    submit_request,
+    request_with_locking_enabled,
+    monkeypatch,
 ):
-    request = submit_request(identity_simple)
+    monkeypatch.setitem(app.config, "REQUESTS_LOCKING_ENABLED", True)
+    request = request_with_locking_enabled
     comment = events_service_data["comment"]
 
     # Creator can submit comment
@@ -204,5 +206,5 @@ def test_commenting_on_locked_request(
     RequestEvent.index.refresh()
 
     results = request_events_service.search(identity_simple_2, request.id)
-    assert 4 == results.total  # creation comment + comment + locked + declined
+    assert 3 == results.total  # comment + locked + declined
     # Creation and submission events are not logged because they have log_event=False

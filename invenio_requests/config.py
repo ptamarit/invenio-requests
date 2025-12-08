@@ -132,3 +132,6 @@ REQUESTS_REVIEWERS_ENABLED = False
 
 REQUESTS_REVIEWERS_MAX_NUMBER = 15
 """Maximum number of reviewers allowed for a request."""
+
+REQUESTS_LOCKING_ENABLED = False
+"""Enable locking/unlocking for request conversations."""
