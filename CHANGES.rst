@@ -9,6 +9,12 @@
 Changes
 =======
 
+Version v10.5.0 (released 2025-12-08)
+
+- feat(comments): add locking conversation feature to request comments
+- feat(events): quote comments in replies
+- fix(request): remove record link for draft inclusion
+
 Version v10.4.0 (released 2025-11-21)
 
 - feat(comments): add deep linking to specific comments in request timeline
