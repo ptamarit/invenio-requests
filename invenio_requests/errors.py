@@ -55,12 +55,12 @@ class CannotExecuteActionError(ActionError):
 class RequestLockedError(PermissionDeniedError):
     """Exception indicating that the request is locked."""
 
-    def __init__(self, description=_("The request is locked.")):
+    def __init__(self, description=None):
         """Constructor.
 
         :param message: The message to display.
         """
-        self._description = description
+        self._description = description or _("The request is locked.")
 
     @property
     def description(self):
@@ -80,7 +80,7 @@ class RequestEventPermissionError(PermissionDeniedError):
 
         :param message: The message to display.
         """
-        self._description = description
+        self._description = description or _("Permission denied.")
 
     @property
     def description(self):
