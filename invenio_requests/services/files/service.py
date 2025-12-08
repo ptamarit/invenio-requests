@@ -8,9 +8,10 @@
 
 """Requests service."""
 
-from invenio_db import db
-from base32_lib import base32
 from os.path import splitext
+
+from base32_lib import base32
+from invenio_db import db
 from invenio_records_resources.services import FileService, ServiceSchemaWrapper
 from invenio_records_resources.services.uow import unit_of_work
 
@@ -70,10 +71,15 @@ class RequestFilesService(FileService):
         # TODO: Is some validation needed on the filename to avoid weird characters?
         unique_id = base32.generate(length=10, split_every=5, checksum=True)
         key_root, key_ext = splitext(key)
-        unique_key =  f"{key_root}-{unique_id}{key_ext}"
+        unique_key = f"{key_root}-{unique_id}{key_ext}"
         request.files[unique_key] = stream
         request.commit()
         db.session.commit()
+        # // TODO: Check files in records.
+        # When indexing, dumper dumps more information in OpenSearch.
+        # Not expand flag, resolvable entity, easier than expand madness.
+        # Pre-dump, post-dump, or specific file dumper.
+        
 
         # run components
         # self.run_components("delete", identity, record=request, uow=uow)
@@ -88,6 +94,8 @@ class RequestFilesService(FileService):
         # uow.register(RecordDeleteOp(request, indexer=self.indexer))
 
         file_object_model = request.files[unique_key].file.object_model
+
+        breakpoint()
 
         # TODO: Return a proper result_item.
         result = request.files[unique_key].file.dumps()

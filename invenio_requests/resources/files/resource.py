@@ -98,6 +98,7 @@ class RequestFilesResource(RecordResource):
             # data=resource_requestctx.data,
             stream=resource_requestctx.data["request_stream"],
             content_length=resource_requestctx.data["request_content_length"],
+            # expand=resource_requestctx.args.get("expand", False),
         )
         # TODO: 201 instead of 200?
         # return item.to_dict(), 200

@@ -10,8 +10,8 @@
 import inspect
 
 import marshmallow as ma
-from marshmallow import RAISE, fields, validate
 from flask import current_app
+from marshmallow import RAISE, fields, validate
 from marshmallow.validate import OneOf
 from marshmallow_utils import fields as utils_fields
 
@@ -35,10 +35,11 @@ class DynamicSanitizedHTML(utils_fields.SanitizedHTML):
         )
         self.attrs = self.attrs = dict(
             **current_app.config.get("ALLOWED_HTML_ATTRS", {}),
-            **current_app.config["REQUESTS_COMMENTS_ALLOWED_EXTRA_HTML_ATTRS"]
+            **current_app.config["REQUESTS_COMMENTS_ALLOWED_EXTRA_HTML_ATTRS"],
         )
 
         return super()._deserialize(value, attr, data, **kwargs)
+
 
 class EventType:
     """Base class for event types."""
@@ -205,7 +206,7 @@ class CommentEventType(EventType):
                     # values=fields.UUID(required=True),
                     values=fields.String(required=True),
                 )
-            )
+            ),
         )
 
     payload_required = True

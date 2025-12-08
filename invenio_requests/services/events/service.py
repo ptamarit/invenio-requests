@@ -93,7 +93,6 @@ class RequestEventsService(RecordService):
             request_id=str(request.id),
             type=event_type,
         )
-        breakpoint()
         event.update(data)
         event.created_by = self._get_creator(identity, request=request)
 
@@ -129,7 +128,9 @@ class RequestEventsService(RecordService):
                 )
             )
 
-        return self.result_item(
+        # TODO: Here include the
+
+        result_item = self.result_item(
             self,
             identity,
             event,
@@ -140,6 +141,9 @@ class RequestEventsService(RecordService):
             expandable_fields=self.expandable_fields,
             expand=expand,
         )
+
+        breakpoint()
+        return result_item
 
     def read(self, identity, id_, expand=False):
         """Retrieve a record."""
@@ -185,7 +189,7 @@ class RequestEventsService(RecordService):
         #   {"file_id": "abc-1234-..."},
         #   {"file_id": "def-5678-..."}
         # ]
-        
+
         # Run components
         self.run_components(
             "update_comment",
@@ -286,7 +290,7 @@ class RequestEventsService(RecordService):
             **kwargs,
         ).execute()
 
-        return self.result_list(
+        result = self.result_list(
             self,
             identity,
             search_result,
@@ -301,6 +305,8 @@ class RequestEventsService(RecordService):
             expandable_fields=self.expandable_fields,
             expand=expand,
         )
+        breakpoint()
+        return result
 
     def focused_list(
         self,
