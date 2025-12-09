@@ -19,6 +19,8 @@ export const SUCCESS = "eventEditor/SUCCESS";
 export const SETTING_CONTENT = "eventEditor/SETTING_CONTENT";
 export const RESTORE_CONTENT = "eventEditor/RESTORE_CONTENT";
 export const APPEND_CONTENT = "eventEditor/APPENDING_CONTENT";
+export const SETTING_FILES = "eventEditor/SETTING_FILES";
+export const RESTORE_FILES = "eventEditor/RESTORE_FILES";
 
 const draftCommentKey = (requestId) => `draft-comment-${requestId}`;
 const setDraftComment = (requestId, content) => {
@@ -31,11 +33,22 @@ const deleteDraftComment = (requestId) => {
   localStorage.removeItem(draftCommentKey(requestId));
 };
 
+const draftFilesKey = (requestId) => `draft-files-${requestId}`;
+// TODO: Is it safe to JSON stringify/parse with localStorage?
+const setDraftFiles = (requestId, files) => {
+  localStorage.setItem(draftFilesKey(requestId), JSON.stringify(files));
+};
+const getDraftFiles = (requestId) => {
+  return JSON.parse(localStorage.getItem(draftFilesKey(requestId)));
+};
+const deleteDraftFiles = (requestId) => {
+  localStorage.removeItem(draftFilesKey(requestId));
+};
+
 export const setEventContent = (content) => {
   return async (dispatch, getState, config) => {
     dispatch({
       type: SETTING_CONTENT,
-      // TODO: Dispatch the list of files here too?
       payload: content,
     });
     const { request } = getState();
@@ -51,17 +64,16 @@ export const setEventContent = (content) => {
   };
 };
 
-export const setEventFiles = (content) => {
+export const setEventFiles = (files) => {
   return async (dispatch, getState, config) => {
     dispatch({
-      type: SETTING_CONTENT,
-      // TODO: Dispatch the list of files here too?
-      payload: content,
+      type: SETTING_FILES,
+      payload: files,
     });
     const { request } = getState();
 
     try {
-      setDraftComment(request.data.id, content);
+      setDraftFiles(request.data.id, files);
     } catch (e) {
       // This should not be a fatal error. The comment editor is still usable if
       // draft saving isn't working (e.g. on very old browsers or ultra-restricted
@@ -84,6 +96,25 @@ export const restoreEventContent = () => {
     if (savedDraft) {
       dispatch({
         type: RESTORE_CONTENT,
+        payload: savedDraft,
+      });
+    }
+  };
+};
+
+export const restoreEventFiles = () => {
+  return (dispatch, getState, config) => {
+    const { request } = getState();
+    let savedDraft = null;
+    try {
+      savedDraft = getDraftFiles(request.data.id);
+    } catch (e) {
+      console.warn("Failed to get saved files:", e);
+    }
+
+    if (savedDraft) {
+      dispatch({
+        type: RESTORE_FILES,
         payload: savedDraft,
       });
     }
@@ -132,7 +163,7 @@ export const submitComment = (content, format, files) => {
 
       try {
         deleteDraftComment(request.data.id);
-        // TODO: Delete draft files here too?
+        deleteDraftFiles(request.data.id);
       } catch (e) {
         console.warn("Failed to delete saved comment:", e);
       }

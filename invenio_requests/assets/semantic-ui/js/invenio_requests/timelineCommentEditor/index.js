@@ -5,7 +5,7 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import { connect } from "react-redux";
-import { submitComment, setEventContent, setEventFiles, restoreEventContent } from "./state/actions";
+import { submitComment, setEventContent, setEventFiles, restoreEventContent, restoreEventFiles } from "./state/actions";
 import TimelineCommentEditorComponent from "./TimelineCommentEditor";
 
 const mapDispatchToProps = {
@@ -13,6 +13,7 @@ const mapDispatchToProps = {
   setCommentContent: setEventContent,
   setCommentFiles: setEventFiles,
   restoreCommentContent: restoreEventContent,
+  restoreCommentFiles: restoreEventFiles,
 };
 
 const mapStateToProps = (state) => ({
@@ -21,6 +22,7 @@ const mapStateToProps = (state) => ({
   commentContent: state.timelineCommentEditor.commentContent,
   storedCommentContent: state.timelineCommentEditor.storedCommentContent,
   appendedCommentContent: state.timelineCommentEditor.appendedCommentContent,
+  files: state.timelineCommentEditor.files,
 });
 
 export const TimelineCommentEditor = connect(

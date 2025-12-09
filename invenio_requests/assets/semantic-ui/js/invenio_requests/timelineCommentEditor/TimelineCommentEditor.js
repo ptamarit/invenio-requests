@@ -15,11 +15,13 @@ import { RequestEventAvatarContainer } from "../components/RequestsFeed";
 const TimelineCommentEditor = ({
   isLoading,
   commentContent,
-  files: initialFiles,
   storedCommentContent,
   restoreCommentContent,
   setCommentContent,
   appendedCommentContent,
+  files,
+  restoreCommentFiles,
+  setCommentFiles,
   error,
   submitComment,
   userAvatar,
@@ -28,6 +30,10 @@ const TimelineCommentEditor = ({
   useEffect(() => {
     restoreCommentContent();
   }, [restoreCommentContent]);
+
+  useEffect(() => {
+    restoreCommentFiles();
+  }, [restoreCommentFiles]);
 
   const editorRef = useRef(null);
   useEffect(() => {
@@ -39,7 +45,10 @@ const TimelineCommentEditor = ({
     editorRef.current.focus();
   }, [appendedCommentContent]);
 
-  const [files, setFiles] = useState(initialFiles);
+  // const [files, setFiles] = useState(initialFiles);
+  // // TODO: Copy necessary?
+  // const files = [...initialFiles];
+  // // , setFiles] = useState(initialFiles);
 
   return (
     <div className="timeline-comment-editor-container">
@@ -67,7 +76,9 @@ const TimelineCommentEditor = ({
             // initialValue is not allowed to change, so we use `storedCommentContent` which is set at most once
             initialValue={storedCommentContent}
             files={files}
-            setFiles={setFiles}
+            setFiles={(files) => {
+              setCommentFiles(files);
+            }}
             onEditorChange={(event, editor) => {
               // TODO: Store the list of files too, and not only on editor change, but also on files change.
               setCommentContent(editor.getContent());

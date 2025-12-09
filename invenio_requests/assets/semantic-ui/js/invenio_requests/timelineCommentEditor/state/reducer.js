@@ -12,12 +12,15 @@ import {
   SETTING_CONTENT,
   RESTORE_CONTENT,
   APPEND_CONTENT,
+  SETTING_FILES,
+  RESTORE_FILES,
 } from "./actions";
 
 const initialState = {
   error: null,
   isLoading: false,
   commentContent: "",
+  files: [],
   // commentContent: {comment: "", files: []},
   storedCommentContent: null,
   appendedCommentContent: "",
@@ -28,8 +31,9 @@ export const commentEditorReducer = (state = initialState, action) => {
   console.log(`commentEditorReducer ${action.type}`);
   switch (action.type) {
     case SETTING_CONTENT:
-      // TODO: File list here?
       return { ...state, commentContent: action.payload };
+    case SETTING_FILES:
+      return { ...state, files: action.payload };
     case APPEND_CONTENT:
       return {
         ...state,
@@ -47,24 +51,20 @@ export const commentEditorReducer = (state = initialState, action) => {
         ...state,
         isLoading: false,
         error: null,
-        commentContent: "New commentContent",
-        files: [{
-          "file_id": "8700081d-9cd5-4e11-85c2-07785c648306",
-          "key": "test123-hyvs2-xc292.zip",
-          "original_filename": "test123.zip",
-          "size": "421",
-          "mimetype": "application/zip",
-          "created": "2025-12-09 10:06:07.945497"
-        }],
-        // commentContent: {comment: "", files: []},
+        commentContent: "",
+        files: [],
       };
     case RESTORE_CONTENT:
       return {
         ...state,
         commentContent: action.payload,
-        files: ['todo.txt'],
         // We'll never change this later, so it can be used as an `initialValue`
         storedCommentContent: action.payload,
+      };
+    case RESTORE_FILES:
+      return {
+        ...state,
+        files: action.payload,
       };
     default:
       return state;
