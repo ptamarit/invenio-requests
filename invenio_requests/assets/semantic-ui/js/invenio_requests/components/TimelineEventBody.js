@@ -61,6 +61,10 @@ export const TimelineEventBody = ({ content, format, quote }) => {
     window.getSelection().removeAllRanges();
   }, [selectionRange, quote]);
 
+  useEffect(() => {
+    window.invenio?.onSearchResultsRendered();
+  }, []);
+
   return (
     <Popup
       eventsEnabled={false}
