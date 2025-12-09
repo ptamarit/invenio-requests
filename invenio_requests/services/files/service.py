@@ -97,7 +97,7 @@ class RequestFilesService(FileService):
 
         file_object_model = request.files[unique_key].file.object_model
 
-        breakpoint()
+        # breakpoint()
 
         # TODO: Return a proper result_item.
         result = request.files[unique_key].file.dumps()

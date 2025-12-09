@@ -100,7 +100,7 @@ class RequestEventsService(RecordService):
         #   {"file_id": "abc-1234-..."},
         #   {"file_id": "def-5678-..."}
         # ]
-        breakpoint()
+        # breakpoint()
         # TODO: Dump extra stuff in OpenSearch
 
         data, errors = schema.load(
@@ -163,7 +163,7 @@ class RequestEventsService(RecordService):
             expand=expand,
         )
 
-        breakpoint()
+        # breakpoint()
         return result_item
 
     def read(self, identity, id_, expand=False):
@@ -219,7 +219,7 @@ class RequestEventsService(RecordService):
         )
         event["payload"]["content"] = data["payload"]["content"]
         event["payload"]["format"] = data["payload"]["format"]
-        breakpoint()
+        # breakpoint()
         # "files": [
         #   {"file_id": "abc-1234-..."},
         #   {"file_id": "def-5678-..."}
@@ -343,7 +343,7 @@ class RequestEventsService(RecordService):
             expand=expand,
             request=request,
         )
-        breakpoint()
+        # breakpoint()
         return result
 
     def focused_list(
