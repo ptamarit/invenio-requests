@@ -220,11 +220,9 @@ class RequestEventsService(RecordService):
         )
         event["payload"]["content"] = data["payload"]["content"]
         event["payload"]["format"] = data["payload"]["format"]
-        # breakpoint()
-        # "files": [
-        #   {"file_id": "abc-1234-..."},
-        #   {"file_id": "def-5678-..."}
-        # ]
+        # Here we are either adding or removing files.
+        event["payload"]["files"] = data["payload"]["files"]
+        breakpoint()
 
         # Run components
         self.run_components(
@@ -241,6 +239,9 @@ class RequestEventsService(RecordService):
 
         # Reindex the request to update events-related computed fields
         uow.register(RecordIndexOp(request, indexer=requests_service.indexer))
+
+        # TODO: This is clearly not the correct way of expanding files information here.
+        FilesDumperExt().dump(event, data)
 
         breakpoint()
 

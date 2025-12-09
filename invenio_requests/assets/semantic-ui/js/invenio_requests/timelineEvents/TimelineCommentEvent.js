@@ -169,6 +169,9 @@ class TimelineCommentEvent extends Component {
                         this.setState({ commentContent: editor.getContent() });
                       }}
                       files={files}
+                      setFiles={(files) => {
+                        this.setState({ files: files })
+                      }}
                       minHeight={150}
                     />
                     </>
