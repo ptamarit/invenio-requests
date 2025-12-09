@@ -27,7 +27,7 @@ export class LockRequestComponent extends Component {
   }
 
   render() {
-    const { request, popupComponent } = this.props;
+    const { request, popupComponent, lockHelpText, unlockHelpText } = this.props;
     const { loading, error } = this.state;
 
     const requestLinksExtractor = new RequestLinksExtractor(request);
@@ -69,7 +69,7 @@ export class LockRequestComponent extends Component {
             verticalAlign="middle"
             textAlign="center"
           >
-            {popupComponent}
+            {popupComponent({ content: isLocked ? unlockHelpText : lockHelpText })}
           </Grid.Column>
         </Grid>
         {error && <Error error={errorSerializer(error)} />}
@@ -80,22 +80,27 @@ export class LockRequestComponent extends Component {
 
 LockRequestComponent.propTypes = {
   request: PropTypes.object.isRequired,
-  popupComponent: PropTypes.node,
+  popupComponent: PropTypes.func,
+  lockHelpText: PropTypes.string,
+  unlockHelpText: PropTypes.string,
 };
 
 LockRequestComponent.defaultProps = {
-  popupComponent: (
+  popupComponent: (props) => (
     <Popup
-      content={i18next.t(
-        // Default popup content
-        "Locking or unlocking the conversation will allow or disallow users with access to add/update comments."
-      )}
       trigger={
         <span role="button" tabIndex="0">
           <Icon name="question circle outline" />
         </span>
       }
+      {...props}
     />
+  ),
+  lockHelpText: i18next.t(
+    "Locking the conversation will disallow users with access to add/update comments."
+  ),
+  unlockHelpText: i18next.t(
+    "Unlocking the conversation will allow users with access to add/update comments."
   ),
 };
 
