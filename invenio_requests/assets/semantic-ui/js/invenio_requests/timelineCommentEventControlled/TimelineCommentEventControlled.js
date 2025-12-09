@@ -21,10 +21,14 @@ class TimelineCommentEventControlled extends Component {
     };
   }
 
+  renderMathJax = () => {
+    window.invenio?.onSearchResultsRendered();
+  };
+
   toggleEditMode = () => {
     const { isEditing } = this.state;
 
-    this.setState({ isEditing: !isEditing, error: null });
+    this.setState({ isEditing: !isEditing, error: null }, this.renderMathJax);
   };
 
   updateComment = async (content, format) => {
@@ -39,11 +43,14 @@ class TimelineCommentEventControlled extends Component {
     try {
       await updateComment({ content, format, event });
 
-      this.setState({
-        isLoading: false,
-        isEditing: false,
-        error: null,
-      });
+      this.setState(
+        {
+          isLoading: false,
+          isEditing: false,
+          error: null,
+        },
+        this.renderMathJax
+      );
     } catch (error) {
       this.setState({
         isLoading: false,
