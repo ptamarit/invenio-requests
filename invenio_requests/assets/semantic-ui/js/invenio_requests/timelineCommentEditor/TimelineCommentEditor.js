@@ -15,6 +15,7 @@ import { RequestEventAvatarContainer } from "../components/RequestsFeed";
 const TimelineCommentEditor = ({
   isLoading,
   commentContent,
+  files: initialFiles,
   storedCommentContent,
   restoreCommentContent,
   setCommentContent,
@@ -38,7 +39,7 @@ const TimelineCommentEditor = ({
     editorRef.current.focus();
   }, [appendedCommentContent]);
 
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState(initialFiles);
 
   return (
     <div className="timeline-comment-editor-container">
@@ -98,6 +99,7 @@ const TimelineCommentEditor = ({
 
 TimelineCommentEditor.propTypes = {
   commentContent: PropTypes.string,
+  files: PropTypes.array,
   storedCommentContent: PropTypes.string,
   appendedCommentContent: PropTypes.string,
   isLoading: PropTypes.bool,
@@ -111,6 +113,7 @@ TimelineCommentEditor.propTypes = {
 
 TimelineCommentEditor.defaultProps = {
   commentContent: "",
+  files: [],
   storedCommentContent: null,
   appendedCommentContent: "",
   isLoading: false,

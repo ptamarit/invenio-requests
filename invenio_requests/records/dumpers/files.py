@@ -34,7 +34,8 @@ class FilesDumperExt(SearchDumperExt):
         if not payload_files:
             return
         
-        request_id = data["request_id"]
+        # request_id = data["request_id"]
+        request_id = request_event["request_id"]
 
         # Import here to avoid circular dependency.
         from invenio_requests.records.api import RequestFile

@@ -47,8 +47,15 @@ export const commentEditorReducer = (state = initialState, action) => {
         ...state,
         isLoading: false,
         error: null,
-        commentContent: "",
-        files: [],
+        commentContent: "New commentContent",
+        files: [{
+          "file_id": "8700081d-9cd5-4e11-85c2-07785c648306",
+          "key": "test123-hyvs2-xc292.zip",
+          "original_filename": "test123.zip",
+          "size": "421",
+          "mimetype": "application/zip",
+          "created": "2025-12-09 10:06:07.945497"
+        }],
         // commentContent: {comment: "", files: []},
       };
     case RESTORE_CONTENT:

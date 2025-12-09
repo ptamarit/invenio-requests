@@ -10,6 +10,7 @@
 
 """RequestEvents Service."""
 
+from invenio_requests.records.dumpers.files import FilesDumperExt
 import sqlalchemy.exc
 from flask import current_app
 from flask_principal import AnonymousIdentity
@@ -149,7 +150,8 @@ class RequestEventsService(RecordService):
                 )
             )
 
-        # TODO: Here include the
+        # TODO: This is clearly not the correct way of expanding files information here.
+        FilesDumperExt().dump(event, data)
 
         result_item = self.result_item(
             self,
@@ -163,7 +165,6 @@ class RequestEventsService(RecordService):
             expand=expand,
         )
 
-        # breakpoint()
         return result_item
 
     def read(self, identity, id_, expand=False):
@@ -240,6 +241,8 @@ class RequestEventsService(RecordService):
 
         # Reindex the request to update events-related computed fields
         uow.register(RecordIndexOp(request, indexer=requests_service.indexer))
+
+        breakpoint()
 
         return self.result_item(
             self,

@@ -132,6 +132,7 @@ export const submitComment = (content, format, files) => {
 
       try {
         deleteDraftComment(request.data.id);
+        // TODO: Delete draft files here too?
       } catch (e) {
         console.warn("Failed to delete saved comment:", e);
       }
