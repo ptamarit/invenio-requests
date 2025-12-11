@@ -122,6 +122,9 @@ const timelineReload = (dispatch, getState, config) => {
 
   if (concurrentRequests) return;
 
+  if (document.hidden) return;
+
+  // TODO: Or false?
   dispatch(fetchTimeline());
 };
 

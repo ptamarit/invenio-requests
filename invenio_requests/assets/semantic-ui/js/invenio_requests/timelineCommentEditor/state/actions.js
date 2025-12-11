@@ -19,6 +19,8 @@ export const SUCCESS = "eventEditor/SUCCESS";
 export const SETTING_CONTENT = "eventEditor/SETTING_CONTENT";
 export const RESTORE_CONTENT = "eventEditor/RESTORE_CONTENT";
 export const APPEND_CONTENT = "eventEditor/APPENDING_CONTENT";
+export const SETTING_FILES = "eventEditor/SETTING_FILES";
+export const RESTORE_FILES = "eventEditor/RESTORE_FILES";
 
 const draftCommentKey = (requestId) => `draft-comment-${requestId}`;
 const setDraftComment = (requestId, content) => {
@@ -31,6 +33,18 @@ const deleteDraftComment = (requestId) => {
   localStorage.removeItem(draftCommentKey(requestId));
 };
 
+const draftFilesKey = (requestId) => `draft-files-${requestId}`;
+// TODO: Is it safe to JSON stringify/parse with localStorage?
+const setDraftFiles = (requestId, files) => {
+  localStorage.setItem(draftFilesKey(requestId), JSON.stringify(files));
+};
+const getDraftFiles = (requestId) => {
+  return JSON.parse(localStorage.getItem(draftFilesKey(requestId)));
+};
+const deleteDraftFiles = (requestId) => {
+  localStorage.removeItem(draftFilesKey(requestId));
+};
+
 export const setEventContent = (content) => {
   return async (dispatch, getState, config) => {
     dispatch({
@@ -41,6 +55,25 @@ export const setEventContent = (content) => {
 
     try {
       setDraftComment(request.data.id, content);
+    } catch (e) {
+      // This should not be a fatal error. The comment editor is still usable if
+      // draft saving isn't working (e.g. on very old browsers or ultra-restricted
+      // environments with 0 storage quota.)
+      console.warn("Failed to save comment:", e);
+    }
+  };
+};
+
+export const setEventFiles = (files) => {
+  return async (dispatch, getState, config) => {
+    dispatch({
+      type: SETTING_FILES,
+      payload: files,
+    });
+    const { request } = getState();
+
+    try {
+      setDraftFiles(request.data.id, files);
     } catch (e) {
       // This should not be a fatal error. The comment editor is still usable if
       // draft saving isn't working (e.g. on very old browsers or ultra-restricted
@@ -69,6 +102,25 @@ export const restoreEventContent = () => {
   };
 };
 
+export const restoreEventFiles = () => {
+  return (dispatch, getState, config) => {
+    const { request } = getState();
+    let savedDraft = null;
+    try {
+      savedDraft = getDraftFiles(request.data.id);
+    } catch (e) {
+      console.warn("Failed to get saved files:", e);
+    }
+
+    if (savedDraft) {
+      dispatch({
+        type: RESTORE_FILES,
+        payload: savedDraft,
+      });
+    }
+  };
+};
+
 export const appendEventContent = (content, focus) => {
   return async (dispatch, getState, config) => {
     dispatch({
@@ -78,9 +130,11 @@ export const appendEventContent = (content, focus) => {
   };
 };
 
-export const submitComment = (content, format) => {
+export const submitComment = (content, format, files) => {
   return async (dispatch, getState, config) => {
     const { timeline: timelineState, request } = getState();
+
+    console.log("actions.submitComment");
 
     dispatch(clearTimelineInterval());
 
@@ -88,7 +142,7 @@ export const submitComment = (content, format) => {
       type: IS_LOADING,
     });
 
-    const payload = payloadSerializer(content, format || "html");
+    const payload = payloadSerializer(content, format || "html", files);
 
     try {
       /* Because of the delay in ES indexing we need to handle the updated state on the client-side until it is ready to be retrieved from the server.
@@ -109,6 +163,7 @@ export const submitComment = (content, format) => {
 
       try {
         deleteDraftComment(request.data.id);
+        deleteDraftFiles(request.data.id);
       } catch (e) {
         console.warn("Failed to delete saved comment:", e);
       }

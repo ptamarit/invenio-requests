@@ -18,9 +18,9 @@ from invenio_requests.records.api import RequestEvent
 def assert_api_response_json(expected_json, received_json):
     """Assert the REST API response's json."""
     # We don't compare dynamic times at this point
-    received_json.pop("created")
-    received_json.pop("updated")
-    received_json.pop("revision_id")
+    # received_json.pop("created")
+    # received_json.pop("updated")
+    # received_json.pop("revision_id")
     assert expected_json == received_json
 
 
@@ -262,3 +262,6 @@ def test_lock_request_disabled(
     # Lock request is not allowed
     response = client.get(f"/requests/{id_}/lock", headers=headers)
     assert response.status_code == 403
+
+
+# TODO: More tests here?

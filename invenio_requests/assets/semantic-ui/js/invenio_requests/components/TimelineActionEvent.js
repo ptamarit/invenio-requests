@@ -56,6 +56,7 @@ class TimelineActionEvent extends Component {
                     <TimelineEventBody
                       content={eventContent}
                       format={event?.payload?.format}
+                      files={event?.payload?.files}
                     />{" "}
                     {toRelativeTime(event.created, i18next.language)}
                   </Feed.Date>

@@ -11,7 +11,9 @@
 import uuid
 
 from invenio_db import db
+from invenio_files_rest.models import Bucket
 from invenio_records.models import RecordMetadataBase
+from invenio_records_resources.records import FileRecordModelMixin
 from sqlalchemy import func
 from sqlalchemy.dialects import mysql
 from sqlalchemy.exc import IntegrityError
@@ -35,6 +37,30 @@ class RequestMetadata(db.Model, RecordMetadataBase):
         default=None,
         nullable=True,
     )
+
+    # Files attachment support
+    bucket_id = db.Column(
+        UUIDType,
+        db.ForeignKey(Bucket.id, ondelete="RESTRICT"),
+        nullable=True,  # Nullable for lazy initialization (bucket only created on first file upload)
+        index=True,
+    )
+    bucket = db.relationship(Bucket)
+
+
+class RequestFileMetadata(db.Model, RecordMetadataBase, FileRecordModelMixin):
+    """Files associated with a request."""
+
+    # """Request file metadata."""
+
+    __record_model_cls__ = RequestMetadata
+
+    # TODO: The community table is named `communities_files` (communities plural).
+    #       On the other hand, all the other request tables are singular (`request_metadata`, `request_events`).
+    __tablename__ = "request_files"
+
+    # JSON field structure: {"original_filename": "..."}
+    # Comments track file associations via payload.files array (by file_id)
 
 
 class RequestEventModel(db.Model, RecordMetadataBase):

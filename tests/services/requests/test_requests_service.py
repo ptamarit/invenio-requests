@@ -211,3 +211,22 @@ def test_lock_request(
     monkeypatch.setitem(app.config, "REQUESTS_LOCKING_ENABLED", False)
     with pytest.raises(PermissionDeniedError):
         requests_service.lock_request(identity_simple_2, request_id)
+    assert not updated_request["is_locked"]
+
+
+# TODO: More tests here?
+def test_create_file(
+    app, identity_simple, submit_request, request_events_service, request_files_service
+):
+    # Submit a request
+    request = submit_request(identity_simple)
+    request_id = request.id
+
+    request_files_service.create_file()
+
+    assert "submitted" == request.status
+    results = request_events_service.search(identity_simple, request_id)
+    assert 1 == results.total
+    hits = list(results.hits)
+    assert CommentEventType.type_id == hits[0]["type"]
+    assert "Can I belong to the community?" == hits[0]["payload"]["content"]

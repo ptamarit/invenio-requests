@@ -72,6 +72,8 @@ export class RequestAction extends Component {
               <Modal.Description>
                 {i18next.t("Add comment (optional)")}
                 <Divider hidden />
+                {/* TODO: File upload in initial upload form? */}
+                <small>RequestAction.js</small>
                 <RichEditor
                   inputValue={() => actionComment}
                   onChange={this.onCommentChange}

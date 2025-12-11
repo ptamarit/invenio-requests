@@ -30,6 +30,7 @@ from invenio_requests.customizations import CommentEventType
 from invenio_requests.customizations.event_types import LogEventType
 from invenio_requests.proxies import current_requests_service as requests_service
 from invenio_requests.records.api import RequestEventFormat
+from invenio_requests.records.dumpers.files import FilesDumperExt
 from invenio_requests.services.results import EntityResolverExpandableField
 
 from ...errors import RequestEventPermissionError, RequestLockedError
@@ -96,6 +97,13 @@ class RequestEventsService(RecordService):
         # Validate data (if there are errors, .load() raises)
         schema = self._wrap_schema(event_type.marshmallow_schema())
 
+        # "files": [
+        #   {"file_id": "abc-1234-..."},
+        #   {"file_id": "def-5678-..."}
+        # ]
+        # breakpoint()
+        # TODO: Dump extra stuff in OpenSearch
+
         data, errors = schema.load(
             data,
             context={"identity": identity},
@@ -142,7 +150,10 @@ class RequestEventsService(RecordService):
                 )
             )
 
-        return self.result_item(
+        # TODO: This is clearly not the correct way of expanding files information here.
+        FilesDumperExt().dump(event, data)
+
+        result_item = self.result_item(
             self,
             identity,
             event,
@@ -153,6 +164,8 @@ class RequestEventsService(RecordService):
             expandable_fields=self.expandable_fields,
             expand=expand,
         )
+
+        return result_item
 
     def read(self, identity, id_, expand=False):
         """Retrieve a record."""
@@ -207,6 +220,9 @@ class RequestEventsService(RecordService):
         )
         event["payload"]["content"] = data["payload"]["content"]
         event["payload"]["format"] = data["payload"]["format"]
+        # Here we are either adding or removing files.
+        event["payload"]["files"] = data["payload"]["files"]
+        # breakpoint()
 
         # Run components
         self.run_components(
@@ -223,6 +239,11 @@ class RequestEventsService(RecordService):
 
         # Reindex the request to update events-related computed fields
         uow.register(RecordIndexOp(request, indexer=requests_service.indexer))
+
+        # TODO: This is clearly not the correct way of expanding files information here.
+        FilesDumperExt().dump(event, data)
+
+        # breakpoint()
 
         return self.result_item(
             self,
@@ -310,7 +331,7 @@ class RequestEventsService(RecordService):
             **kwargs,
         ).execute()
 
-        return self.result_list(
+        result = self.result_list(
             self,
             identity,
             search_result,
@@ -326,6 +347,8 @@ class RequestEventsService(RecordService):
             expand=expand,
             request=request,
         )
+        # breakpoint()
+        return result
 
     def focused_list(
         self,

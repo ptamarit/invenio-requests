@@ -23,6 +23,12 @@ def requests_service(app):
 
 
 @pytest.fixture(scope="module")
+def request_files_service(app):
+    """Request Factory fixture."""
+    return current_requests.request_files_service
+
+
+@pytest.fixture(scope="module")
 def request_events_service(app):
     """Request Factory fixture."""
     return current_requests.request_events_service

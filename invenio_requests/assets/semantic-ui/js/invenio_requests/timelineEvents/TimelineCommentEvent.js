@@ -12,7 +12,7 @@ import Overridable from "react-overridable";
 import { Container, Dropdown, Feed, Icon } from "semantic-ui-react";
 import { CancelButton, SaveButton } from "../components/Buttons";
 import Error from "../components/Error";
-import { RichEditor } from "react-invenio-forms";
+import { RichEditorWithFiles } from "react-invenio-forms";
 import RequestsFeed from "../components/RequestsFeed";
 import { TimelineEventBody } from "../components/TimelineEventBody";
 import { toRelativeTime } from "react-invenio-forms";
@@ -27,6 +27,7 @@ class TimelineCommentEvent extends Component {
 
     this.state = {
       commentContent: event?.payload?.content,
+      files: event?.payload?.files,
       isSelected: false,
     };
     this.ref = createRef(null);
@@ -83,7 +84,7 @@ class TimelineCommentEvent extends Component {
       toggleEditMode,
       quote,
     } = this.props;
-    const { commentContent, isSelected } = this.state;
+    const { commentContent, files, isSelected } = this.state;
 
     const commentHasBeenEdited = event?.revision_id > 1 && event?.payload;
 
@@ -156,20 +157,30 @@ class TimelineCommentEvent extends Component {
                 <Feed.Extra text={!isEditing}>
                   {error && <Error error={error} />}
 
+                  {/* TODO: These are existing comments in the timeline. */}
+                  {/* TODO: Inject the request ID here for file uploading? */}
                   {isEditing ? (
-                    <RichEditor
+                    <>
+                    <small>TimelineCommentEvent.js</small>
+                    <RichEditorWithFiles
                       initialValue={event?.payload?.content}
                       inputValue={commentContent}
                       onEditorChange={(event, editor) => {
                         this.setState({ commentContent: editor.getContent() });
                       }}
+                      files={files}
+                      setFiles={(files) => {
+                        this.setState({ files: files })
+                      }}
                       minHeight={150}
                     />
+                    </>
                   ) : (
                     <TimelineEventBody
                       content={event?.payload?.content}
                       format={event?.payload?.format}
                       quote={quote}
+                      files={event?.payload?.files}
                     />
                   )}
 
@@ -177,7 +188,7 @@ class TimelineCommentEvent extends Component {
                     <Container fluid className="mt-15" textAlign="right">
                       <CancelButton onClick={() => toggleEditMode()} />
                       <SaveButton
-                        onClick={() => updateComment(commentContent, "html")}
+                        onClick={() => updateComment(commentContent, "html", files)}
                         loading={isLoading}
                       />
                     </Container>

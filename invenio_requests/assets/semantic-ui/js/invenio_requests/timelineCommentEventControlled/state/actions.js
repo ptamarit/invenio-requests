@@ -14,12 +14,12 @@ import { payloadSerializer } from "../../api/serializers";
 import _cloneDeep from "lodash/cloneDeep";
 import { i18next } from "../../../../translations/invenio_requests/i18next";
 
-export const updateComment = ({ content, format, event }) => {
+export const updateComment = ({ content, format, files, event }) => {
   return async (dispatch, getState, config) => {
     dispatch(clearTimelineInterval());
     const commentsApi = config.requestEventsApi(event.links);
 
-    const payload = payloadSerializer(content, format);
+    const payload = payloadSerializer(content, format, files);
 
     dispatch({ type: IS_REFRESHING });
 

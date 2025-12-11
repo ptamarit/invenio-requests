@@ -6,10 +6,37 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { Button, Popup } from "semantic-ui-react";
+import { ButtonGroup, Button, Popup } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_requests/i18next";
+import { humanReadableBytes } from "react-invenio-forms";
 
-export const TimelineEventBody = ({ content, format, quote }) => {
+function getCookie(cname) {
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(";");
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == " ") {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
+// TODO: Use nested_links_item
+function getRequestId() {
+  const prefix = "/requests/";
+  const url = window.location.href;
+  const index = url.indexOf(prefix);
+  const start = index + prefix.length;
+  const end = start + 36;
+  return url.substring(start, end);
+}
+
+export const TimelineEventBody = ({ content, format, quote, files }) => {
   const ref = useRef(null);
   const [selectionRange, setSelectionRange] = useState(null);
 
@@ -65,7 +92,7 @@ export const TimelineEventBody = ({ content, format, quote }) => {
     window.invenio?.onSearchResultsRendered();
   }, []);
 
-  return (
+  const contentResult = (
     <Popup
       eventsEnabled={false}
       open={!!tooltipOffset}
@@ -92,15 +119,26 @@ export const TimelineEventBody = ({ content, format, quote }) => {
       />
     </Popup>
   );
+
+  const filesList = files.map((file) => (
+    <ButtonGroup key={file.key} floated='left' className="mr-10 mt-10">
+      <Button basic color='grey' icon='file' content={`${file.original_filename} (${humanReadableBytes(parseInt(file.size, 10), true)})`} as='a' href={`/api/requests/${getRequestId()}/files/${file.key}/content`} />
+      <Button icon='linkify' title="Copy link" onClick={() => this.copyLink(file.key)} />
+    </ButtonGroup>
+  ))
+
+  return <>{contentResult}<small>Files:</small>{filesList}</>;
 };
 
 TimelineEventBody.propTypes = {
   content: PropTypes.string,
   format: PropTypes.string,
   quote: PropTypes.func.isRequired,
+  files: PropTypes.array,
 };
 
 TimelineEventBody.defaultProps = {
   content: "",
   format: "",
+  files: [],
 };
