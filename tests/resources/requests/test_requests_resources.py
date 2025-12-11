@@ -18,9 +18,9 @@ from invenio_requests.records.api import RequestEvent
 def assert_api_response_json(expected_json, received_json):
     """Assert the REST API response's json."""
     # We don't compare dynamic times at this point
-    # received_json.pop("created")
-    # received_json.pop("updated")
-    # received_json.pop("revision_id")
+    received_json.pop("created")
+    received_json.pop("updated")
+    received_json.pop("revision_id")
     assert expected_json == received_json
 
 
@@ -167,6 +167,7 @@ def test_simple_request_flow(app, client_logged_as, headers, example_request):
         "reviewers": [],
         "last_reply": None,
         "last_activity_at": example_request.updated.replace(tzinfo=tz.utc).isoformat(),
+        "files": {"enabled": True},
     }
     assert_api_response(response, 200, expected_data)
 

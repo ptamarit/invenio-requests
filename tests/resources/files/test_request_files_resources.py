@@ -110,6 +110,8 @@ def test_simple_files_flow(app, client_logged_as, example_request, headers, loca
     assert 204 == response.status_code
     assert None == response.json
 
+    # TODO: Assert access rights here?
+
     # # List files.
     # response = client.get(
     #     f"/requests/{request_id}/files",

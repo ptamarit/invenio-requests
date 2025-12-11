@@ -31,7 +31,10 @@ class FilesDumperExt(SearchDumperExt):
 
         # TODO: Better to get the request_id and list of files from `data` or `request_event`?
         # [UUID(file["file_id"]) for file in request_event["payload"].get("files", [])]
-        payload_files = data["payload"].get("files", [])
+
+        # The test test_delete_non_comment does not provide a payload so we use get to be safe here.
+        # payload_files = data["payload"].get("files", [])
+        payload_files = data.get("payload", {}).get("files", [])
 
         # Nothing to do if the comment has no files.
         if not payload_files:
@@ -54,6 +57,7 @@ class FilesDumperExt(SearchDumperExt):
             if file_details is not None:
                 payload_file["key"] = file_details.file.key
                 # TODO: This is not stored in the File metadata, so how can we retrieve it?
+                # TODO: Inside a ["metadata"] subkey?
                 payload_file["original_filename"] = file_details.model.data[
                     "original_filename"
                 ]
@@ -88,4 +92,7 @@ class FilesDumperExt(SearchDumperExt):
         # Called when loading existing comments
         # data["payload"]["files"][0]["file_id"]
         # data["payload"].get("files", [])
-        data.pop(self.files_field, None)
+
+        # TODO: This is useless
+        # data.pop(self.files_field, None)
+        pass
