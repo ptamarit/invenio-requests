@@ -52,18 +52,25 @@ class FilesDumperExt(SearchDumperExt):
             request_file.file.file_id: request_file for request_file in request_files
         }
 
+        # raise ValueError("Boom")
+
         for payload_file in payload_files:
-            file_details = request_files_by_file_id.get(UUID(payload_file["file_id"]))
-            if file_details is not None:
-                payload_file["key"] = file_details.file.key
-                # TODO: This is not stored in the File metadata, so how can we retrieve it?
-                # TODO: Inside a ["metadata"] subkey?
-                payload_file["original_filename"] = file_details.model.data[
-                    "original_filename"
-                ]
-                payload_file["size"] = file_details.file.size
-                payload_file["mimetype"] = file_details.file.mimetype
-                payload_file["created"] = file_details.file.created
+            payload_file_uuid = UUID(payload_file["file_id"])
+            file_details = request_files_by_file_id.get(payload_file_uuid)
+            if file_details is None:
+                raise ValueError(
+                    f"No file with ID {payload_file_uuid} associated with the request {request_id}"
+                )
+
+            payload_file["key"] = file_details.file.key
+            # TODO: This is not stored in the File metadata, so how can we retrieve it?
+            # TODO: Inside a ["metadata"] subkey?
+            payload_file["original_filename"] = file_details.model.data[
+                "original_filename"
+            ]
+            payload_file["size"] = file_details.file.size
+            payload_file["mimetype"] = file_details.file.mimetype
+            payload_file["created"] = file_details.file.created
             # request_files_list.append(request_file.file.file_id)
             # if request_file.file.file_id in request_event_payload_file_ids:
             # results.append(request_file)

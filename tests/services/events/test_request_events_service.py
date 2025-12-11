@@ -58,7 +58,7 @@ def test_simple_flow(
     assert comment["payload"] == {
         "content": item_dict["payload"]["content"],
         "format": item_dict["payload"]["format"],
-        "files": item_dict["payload"]["files"],
+        # "files": item_dict["payload"]["files"],
     }
     id_ = item.id
 

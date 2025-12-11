@@ -221,7 +221,9 @@ class RequestEventsService(RecordService):
         event["payload"]["content"] = data["payload"]["content"]
         event["payload"]["format"] = data["payload"]["format"]
         # Here we are either adding or removing files.
-        event["payload"]["files"] = data["payload"]["files"]
+        # Could it be that we do not send files in the payload? At least it's the case in our tests.
+        if "files" in data["payload"]:
+            event["payload"]["files"] = data["payload"]["files"]
         # breakpoint()
 
         # Run components
