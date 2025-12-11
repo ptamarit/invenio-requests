@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v11.0.0 (released 2025-12-11)
+
+- feat(comments): add backend support for single-threaded comment replies
+
 Version v10.5.0 (released 2025-12-08)
 
 - feat(comments): add locking conversation feature to request comments
