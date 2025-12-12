@@ -12,20 +12,28 @@ import {
   SETTING_CONTENT,
   RESTORE_CONTENT,
   APPEND_CONTENT,
+  SETTING_FILES,
+  RESTORE_FILES,
 } from "./actions";
 
 const initialState = {
   error: null,
   isLoading: false,
   commentContent: "",
+  files: [],
+  // commentContent: {comment: "", files: []},
   storedCommentContent: null,
   appendedCommentContent: "",
+  // filesList: ,
 };
 
 export const commentEditorReducer = (state = initialState, action) => {
+  console.log(`commentEditorReducer ${action.type}`);
   switch (action.type) {
     case SETTING_CONTENT:
       return { ...state, commentContent: action.payload };
+    case SETTING_FILES:
+      return { ...state, files: action.payload };
     case APPEND_CONTENT:
       return {
         ...state,
@@ -44,6 +52,7 @@ export const commentEditorReducer = (state = initialState, action) => {
         isLoading: false,
         error: null,
         commentContent: "",
+        files: [],
       };
     case RESTORE_CONTENT:
       return {
@@ -51,6 +60,11 @@ export const commentEditorReducer = (state = initialState, action) => {
         commentContent: action.payload,
         // We'll never change this later, so it can be used as an `initialValue`
         storedCommentContent: action.payload,
+      };
+    case RESTORE_FILES:
+      return {
+        ...state,
+        files: action.payload,
       };
     default:
       return state;

@@ -10,11 +10,35 @@
 import inspect
 
 import marshmallow as ma
+from flask import current_app
 from marshmallow import RAISE, fields, validate
 from marshmallow.validate import OneOf
 from marshmallow_utils import fields as utils_fields
 
 from ..proxies import current_requests
+
+
+# TODO: Name not great, specific to comments...
+# TODO: Write tests similar to: https://github.com/inveniosoftware/invenio-pages/blob/v7.2.1/tests/services/test_services.py#L198-L245
+class DynamicSanitizedHTML(utils_fields.SanitizedHTML):
+    """A subclass of SanitizedHTML that dynamically configures allowed HTML tags and attributes based on application settings."""
+
+    def __init__(self, *args, **kwargs):
+        """Initializes DynamicSanitizedHTML with dynamic tag and attribute settings."""
+        super().__init__(tags=None, attrs=None, *args, **kwargs)
+
+    def _deserialize(self, value, attr, data, **kwargs):
+        """Deserialize value with dynamic HTML tags and attributes based on Flask app context or defaults."""
+        self.tags = (
+            current_app.config.get("ALLOWED_HTML_TAGS", [])
+            + current_app.config["REQUESTS_COMMENTS_ALLOWED_EXTRA_HTML_TAGS"]
+        )
+        self.attrs = self.attrs = dict(
+            **current_app.config.get("ALLOWED_HTML_ATTRS", {}),
+            **current_app.config["REQUESTS_COMMENTS_ALLOWED_EXTRA_HTML_ATTRS"],
+        )
+
+        return super()._deserialize(value, attr, data, **kwargs)
 
 
 class EventType:
@@ -178,12 +202,32 @@ class CommentEventType(EventType):
         from invenio_requests.records.api import RequestEventFormat
 
         return dict(
-            content=utils_fields.SanitizedHTML(
+            content=DynamicSanitizedHTML(
                 required=True, validate=validate.Length(min=1)
             ),
             format=fields.Str(
                 validate=validate.OneOf(choices=[e.value for e in RequestEventFormat]),
                 load_default=RequestEventFormat.HTML.value,
+            ),
+            files=fields.List(
+                # TODO: Expand information here or not?
+                fields.Dict(
+                    keys=fields.String(
+                        validate=OneOf(
+                            (
+                                "file_id",
+                                "key",
+                                "original_filename",
+                                "size",
+                                "mimetype",
+                                "created",
+                            )
+                        )
+                    ),
+                    # TODO: Fix Object of type UUID is not JSON serializable
+                    # values=fields.UUID(required=True),
+                    values=fields.String(required=True),
+                )
             ),
         )
 

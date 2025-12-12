@@ -26,7 +26,7 @@ class TimelineCommentEventControlled extends Component {
     this.setState({ isEditing: !isEditing, error: null });
   };
 
-  updateComment = async (content, format) => {
+  updateComment = async (content, format, files) => {
     const { updateComment, event } = this.props;
 
     if (!content) return;
@@ -36,7 +36,7 @@ class TimelineCommentEventControlled extends Component {
     });
 
     try {
-      await updateComment({ content, format, event });
+      await updateComment({ content, format, files, event });
 
       this.setState({
         isLoading: false,
@@ -72,6 +72,7 @@ class TimelineCommentEventControlled extends Component {
     const { event } = this.props;
     const { isLoading, isEditing, error } = this.state;
 
+    // TODO: Here maybe?
     return (
       <Overridable id="TimelineCommentEventControlled.layout">
         <TimelineEvent

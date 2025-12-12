@@ -124,6 +124,7 @@ def test_simple_comment_flow(
 
     # User 2 gets the timeline (will be sorted)
     response = client.get(f"/requests/{request_id}/timeline", headers=headers)
+    # TODO: Assert that files are present here.
     assert 200 == response.status_code
     assert 2 == response.json["hits"]["total"]
     # User 2 cannot update or delete the comment created by user 1
@@ -169,6 +170,7 @@ def test_timeline_links(
 
     response = client.get(f"/requests/{request_id}/timeline", headers=headers)
     search_record_links = response.json["links"]
+    # TODO: More assertions here?
 
     expected_links = {
         # NOTE: Variations are covered in records-resources
@@ -961,3 +963,75 @@ def test_join_relationship_queries(
     results_dict = result.to_dict()
     child_contents = [hit["payload"]["content"] for hit in results_dict["hits"]["hits"]]
     assert "Updated first reply for join test" in child_contents
+
+
+# def test_files_request_comments(
+#     app,
+#     client_logged_as,
+#     headers,
+#     events_resource_data,
+#     example_request,
+# ):
+#     client = client_logged_as("user1@example.org")
+#     request_id = example_request.id
+
+#     data = copy.deepcopy(events_resource_data)
+#     response = client.post(
+#         f"/requests/{request_id}/comments", headers=headers, json=data
+#     )
+
+#     expected_json = {
+#         "errors": [
+#             {"field": "payload", "messages": ["Missing data for required field."]}
+#         ],
+#         "message": "A validation error occurred.",
+#         "status": 400,
+#     }
+#     assert 400 == response.status_code
+#     assert expected_json == response.json
+
+#     # Comment {} is an error
+#     response = client.post(f"/requests/{request_id}/comments", headers=headers, json={})
+#     assert 400 == response.status_code
+#     assert expected_json == response.json
+
+#     # Comment empty content is an error
+#     data = copy.deepcopy(events_resource_data)
+#     data["payload"]["content"] = ""
+#     response = client.post(
+#         f"/requests/{request_id}/comments", headers=headers, json=data
+#     )
+#     assert 400 == response.status_code
+#     expected_json = {
+#         **expected_json,
+#         "errors": [
+#             {"field": "payload.content", "messages": ["Shorter than minimum length 1."]}
+#         ],
+#     }
+#     assert expected_json == response.json
+
+#     # Update with empty comment is an error
+#     # (first create one correctly)
+#     data["payload"]["content"] = "This is a comment."
+#     response = client.post(
+#         f"/requests/{request_id}/comments", headers=headers, json=data
+#     )
+#     assert 400 == response.status_code
+#     assert expected_json == response.json
+
+#     # ---
+#     client = client_logged_as("user2@example.org")
+#     request_id = request_with_locking_enabled.id
+
+#     # Lock request
+#     response = client.get(f"/requests/{request_id}/lock", headers=headers)
+#     assert response.status_code == 204
+
+#     # Comment on locked request is an error
+#     response = client.post(
+#         f"/requests/{request_id}/comments", headers=headers, json=events_resource_data
+#     )
+#     assert response.status_code == 403
+
+
+# # TODO: More tests here?

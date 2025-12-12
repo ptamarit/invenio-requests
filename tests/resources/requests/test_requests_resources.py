@@ -167,6 +167,7 @@ def test_simple_request_flow(app, client_logged_as, headers, example_request):
         "reviewers": [],
         "last_reply": None,
         "last_activity_at": example_request.updated.replace(tzinfo=tz.utc).isoformat(),
+        "files": {"enabled": True},
     }
     assert_api_response(response, 200, expected_data)
 
@@ -262,3 +263,6 @@ def test_lock_request_disabled(
     # Lock request is not allowed
     response = client.get(f"/requests/{id_}/lock", headers=headers)
     assert response.status_code == 403
+
+
+# TODO: More tests here?

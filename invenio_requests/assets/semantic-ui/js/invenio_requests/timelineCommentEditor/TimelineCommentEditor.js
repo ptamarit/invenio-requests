@@ -4,8 +4,8 @@
 // Invenio RDM Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
-import { RichEditor } from "react-invenio-forms";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { RichEditorWithFiles } from "react-invenio-forms";
 import { SaveButton } from "../components/Buttons";
 import { Container, Message, Icon } from "semantic-ui-react";
 import PropTypes from "prop-types";
@@ -19,6 +19,9 @@ const TimelineCommentEditor = ({
   restoreCommentContent,
   setCommentContent,
   appendedCommentContent,
+  files,
+  restoreCommentFiles,
+  setCommentFiles,
   error,
   submitComment,
   userAvatar,
@@ -27,6 +30,10 @@ const TimelineCommentEditor = ({
   useEffect(() => {
     restoreCommentContent();
   }, [restoreCommentContent]);
+
+  useEffect(() => {
+    restoreCommentFiles();
+  }, [restoreCommentFiles]);
 
   const editorRef = useRef(null);
   useEffect(() => {
@@ -37,6 +44,11 @@ const TimelineCommentEditor = ({
     editorRef.current.selection.collapse(false);
     editorRef.current.focus();
   }, [appendedCommentContent]);
+
+  // const [files, setFiles] = useState(initialFiles);
+  // // TODO: Copy necessary?
+  // const files = [...initialFiles];
+  // // , setFiles] = useState(initialFiles);
 
   return (
     <div className="timeline-comment-editor-container">
@@ -56,16 +68,29 @@ const TimelineCommentEditor = ({
           disabled={!canCreateComment}
         />
         <Container fluid className="ml-0-mobile mr-0-mobile fluid-mobile">
-          <RichEditor
+          {/* TODO: This is the comment at the bottom of the timeline. */}
+          {/* TODO: Inject the request ID here for file uploading? */}
+          <small>TimelineCommentEditor.js</small>
+          <RichEditorWithFiles
             inputValue={commentContent}
             // initialValue is not allowed to change, so we use `storedCommentContent` which is set at most once
             initialValue={storedCommentContent}
-            onEditorChange={(_, editor) => {
+            files={files}
+            setFiles={(files) => {
+              setCommentFiles(files);
+            }}
+            onEditorChange={(event, editor) => {
+              // TODO: Store the list of files too, and not only on editor change, but also on files change.
               setCommentContent(editor.getContent());
+              // setCommentContent({
+              //   content: editor.getContent(),
+              //   files: editor.getFiles(),
+              // })
             }}
             minHeight={150}
             onInit={(_, editor) => (editorRef.current = editor)}
             disabled={!canCreateComment}
+            // editorConfig={{}}
           />
         </Container>
       </div>
@@ -75,7 +100,7 @@ const TimelineCommentEditor = ({
           size="medium"
           content={i18next.t("Comment")}
           loading={isLoading}
-          onClick={() => submitComment(commentContent, "html")}
+          onClick={() => submitComment(commentContent, "html", files)}
           disabled={!canCreateComment}
         />
       </div>
@@ -85,6 +110,7 @@ const TimelineCommentEditor = ({
 
 TimelineCommentEditor.propTypes = {
   commentContent: PropTypes.string,
+  files: PropTypes.array,
   storedCommentContent: PropTypes.string,
   appendedCommentContent: PropTypes.string,
   isLoading: PropTypes.bool,
@@ -98,6 +124,7 @@ TimelineCommentEditor.propTypes = {
 
 TimelineCommentEditor.defaultProps = {
   commentContent: "",
+  files: [],
   storedCommentContent: null,
   appendedCommentContent: "",
   isLoading: false,
