@@ -12,11 +12,7 @@ import {
   PARENT_DELETED_COMMENT,
   PARENT_UPDATED_COMMENT,
 } from "../timeline/state/actions";
-import {
-  appendEventContent,
-  PARENT_APPEND_DRAFT_CONTENT,
-} from "../timelineCommentEditor/state/actions";
-import { REPLY_APPEND_DRAFT_CONTENT } from "../timelineCommentReplies/state/actions";
+import { appendEventContent } from "../timelineCommentReplies/state/actions";
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   updateComment: async (payload) =>
@@ -35,14 +31,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         loadingEvent: IS_REFRESHING,
       })
     ),
-  appendCommentContent: (content, asReply) =>
-    dispatch(
-      appendEventContent(
-        ownProps.event.id,
-        content,
-        asReply ? REPLY_APPEND_DRAFT_CONTENT : PARENT_APPEND_DRAFT_CONTENT
-      )
-    ),
+  appendCommentContent: (content) =>
+    dispatch(appendEventContent(ownProps.event.id, content)),
 });
 
 export const TimelineCommentEventControlled = connect(

@@ -9,7 +9,7 @@ import PropTypes from "prop-types";
 import { Button, Popup, ButtonGroup } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_requests/i18next";
 
-export const TimelineEventBody = ({ payload, quote, quoteReply }) => {
+export const TimelineEventBody = ({ payload, quoteReply }) => {
   const ref = useRef(null);
   const [selectionRange, setSelectionRange] = useState(null);
 
@@ -55,19 +55,12 @@ export const TimelineEventBody = ({ payload, quote, quoteReply }) => {
     return [selectionRect.x - refRect.x, -(selectionRect.y - refRect.y)];
   }, [selectionRange]);
 
-  const onQuoteClick = useCallback(
-    (reply) => {
-      if (!selectionRange) return;
-      const selectionString = selectionRange.toString();
-      if (reply) {
-        quoteReply(selectionString);
-      } else {
-        quote(selectionString);
-      }
-      window.getSelection().removeAllRanges();
-    },
-    [selectionRange, quote, quoteReply]
-  );
+  const onQuoteClick = useCallback(() => {
+    if (!selectionRange) return;
+    const selectionString = selectionRange.toString();
+    quoteReply(selectionString);
+    window.getSelection().removeAllRanges();
+  }, [selectionRange, quoteReply]);
 
   useEffect(() => {
     window.invenio?.onSearchResultsRendered();
@@ -104,20 +97,11 @@ export const TimelineEventBody = ({ payload, quote, quoteReply }) => {
       basic
     >
       <ButtonGroup basic size="small">
-        {quote && (
-          <Button
-            onClick={() => onQuoteClick(false)}
-            icon="quote left"
-            content={i18next.t("Quote")}
-          />
-        )}
-        {quoteReply && (
-          <Button
-            onClick={() => onQuoteClick(true)}
-            icon="reply"
-            content={i18next.t("Quote reply")}
-          />
-        )}
+        <Button
+          onClick={onQuoteClick}
+          icon="reply"
+          content={i18next.t("Quote reply")}
+        />
       </ButtonGroup>
     </Popup>
   );
@@ -125,12 +109,9 @@ export const TimelineEventBody = ({ payload, quote, quoteReply }) => {
 
 TimelineEventBody.propTypes = {
   payload: PropTypes.object,
-  quote: PropTypes.func,
-  quoteReply: PropTypes.func,
+  quoteReply: PropTypes.func.isRequired,
 };
 
 TimelineEventBody.defaultProps = {
   payload: {},
-  quote: null,
-  quoteReply: null,
 };

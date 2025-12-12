@@ -24,7 +24,8 @@ const TimelineCommentEditor = ({
   userAvatar,
   canCreateComment,
   autoFocus,
-  buttonLabel,
+  saveButtonLabel,
+  saveButtonIcon,
   onCancel,
 }) => {
   useEffect(() => {
@@ -91,9 +92,9 @@ const TimelineCommentEditor = ({
           />
         )}
         <SaveButton
-          icon="send"
+          icon={saveButtonIcon}
           size="medium"
-          content={buttonLabel}
+          content={saveButtonLabel}
           loading={isLoading}
           onClick={() => submitComment(commentContent, "html")}
           disabled={!canCreateComment}
@@ -115,7 +116,8 @@ TimelineCommentEditor.propTypes = {
   userAvatar: PropTypes.string,
   canCreateComment: PropTypes.bool,
   autoFocus: PropTypes.bool,
-  buttonLabel: PropTypes.string,
+  saveButtonLabel: PropTypes.string,
+  saveButtonIcon: PropTypes.string,
   onCancel: PropTypes.func,
 };
 
@@ -128,7 +130,8 @@ TimelineCommentEditor.defaultProps = {
   userAvatar: "",
   canCreateComment: true,
   autoFocus: false,
-  buttonLabel: i18next.t("Comment"),
+  saveButtonLabel: i18next.t("Comment"),
+  saveButtonIcon: "send",
   onCancel: null,
 };
 

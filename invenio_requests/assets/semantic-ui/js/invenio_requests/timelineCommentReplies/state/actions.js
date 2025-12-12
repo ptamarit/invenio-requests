@@ -5,14 +5,17 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import { errorSerializer, payloadSerializer } from "../../api/serializers";
-import { deleteDraftComment } from "../../timelineCommentEditor/state/actions";
-import { selectCommentChildren, selectCommentRepliesStatus } from "./reducer";
+import {
+  deleteDraftComment,
+  setDraftComment,
+} from "../../timelineCommentEditor/state/actions";
+import { selectCommentReplies, selectCommentRepliesStatus } from "./reducer";
 
 export const IS_LOADING = "timelineReplies/IS_LOADING";
 export const IS_SUBMITTING = "timelineReplies/IS_SUBMITTING";
 export const IS_REPLYING = "timelineReplies/IS_REPLYING";
 export const IS_NOT_REPLYING = "timelineReplies/IS_NOT_REPLYING";
-export const HAS_DATA = "timelineReplies/HAS_DATA";
+export const HAS_NEW_DATA = "timelineReplies/HAS_DATA";
 export const IS_SUBMISSION_COMPLETE = "timelineReplies/IS_SUBMISSION_COMPLETE";
 export const HAS_ERROR = "timelineReplies/HAS_ERROR";
 export const SET_PAGE = "timelineReplies/SET_PAGE";
@@ -22,6 +25,25 @@ export const REPLY_SET_DRAFT_CONTENT = "timelineReplies/SET_DRAFT_CONTENT";
 export const REPLY_RESTORE_DRAFT_CONTENT = "timelineReplies/RESTORE_DRAFT_CONTENT";
 export const REPLY_UPDATE_COMMENT = "timelineReplies/UPDATE_COMMENT";
 export const REPLY_DELETE_COMMENT = "timelineReplies/DELETE_COMMENT";
+
+export const appendEventContent = (parentRequestEventId, content) => {
+  return (dispatch, getState) => {
+    dispatch({
+      type: REPLY_APPEND_DRAFT_CONTENT,
+      payload: {
+        content,
+        parentRequestEventId,
+      },
+    });
+
+    const { request } = getState();
+    try {
+      setDraftComment(request.data.id, parentRequestEventId, content);
+    } catch (e) {
+      console.warn("Failed to save comment:", e);
+    }
+  };
+};
 
 export const setIsReplying = (parentRequestEventId, isReplying) => {
   return (dispatch) => {
@@ -47,7 +69,7 @@ export const setInitialReplies = (parentRequestEvent) => {
     const pageSize = defaultReplyQueryParams.size ?? 5;
 
     dispatch({
-      type: HAS_DATA,
+      type: HAS_NEW_DATA,
       payload: {
         position: "top",
         parentRequestEventId: parentRequestEvent.id,
@@ -65,7 +87,7 @@ export const loadOlderReplies = (parentRequestEvent) => {
   return async (dispatch, getState, config) => {
     const { timelineReplies } = getState();
     const { page } = selectCommentRepliesStatus(timelineReplies, parentRequestEvent.id);
-    const childComments = selectCommentChildren(timelineReplies, parentRequestEvent.id);
+    const commentReplies = selectCommentReplies(timelineReplies, parentRequestEvent.id);
     const { defaultReplyQueryParams } = config ?? {};
     const pageSize = defaultReplyQueryParams.size ?? 5;
 
@@ -82,7 +104,7 @@ export const loadOlderReplies = (parentRequestEvent) => {
     });
 
     const hits = response.data.hits.hits;
-    const totalLocalCommentCount = childComments.length + hits.length;
+    const totalLocalCommentCount = commentReplies.length + hits.length;
     const hasMore = totalLocalCommentCount < response.data.hits.total;
 
     let nextPage = response.data.page;
@@ -91,7 +113,7 @@ export const loadOlderReplies = (parentRequestEvent) => {
     }
 
     dispatch({
-      type: HAS_DATA,
+      type: HAS_NEW_DATA,
       payload: {
         position: "top",
         parentRequestEventId: parentRequestEvent.id,
@@ -130,12 +152,12 @@ export const submitReply = (parentRequestEvent, content, format) => {
       }
 
       await dispatch({
-        type: HAS_DATA,
+        type: HAS_NEW_DATA,
         payload: {
           position: "bottom",
           parentRequestEventId: parentRequestEvent.id,
           newChildComments: [response.data],
-          newCount: 1,
+          increaseCountBy: 1,
         },
       });
 

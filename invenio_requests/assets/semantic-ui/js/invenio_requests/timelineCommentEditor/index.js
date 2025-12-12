@@ -17,9 +17,8 @@ import TimelineCommentEditorComponent from "./TimelineCommentEditor";
 const mapDispatchToProps = {
   submitComment,
   setCommentContent: (content) =>
-    setEventContent(content, undefined, PARENT_SET_DRAFT_CONTENT),
-  restoreCommentContent: () =>
-    restoreEventContent(undefined, PARENT_RESTORE_DRAFT_CONTENT),
+    setEventContent(content, null, PARENT_SET_DRAFT_CONTENT),
+  restoreCommentContent: () => restoreEventContent(null, PARENT_RESTORE_DRAFT_CONTENT),
 };
 
 const mapStateToProps = (state) => ({

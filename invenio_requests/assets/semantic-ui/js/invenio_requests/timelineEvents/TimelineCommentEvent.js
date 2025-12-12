@@ -81,9 +81,9 @@ class TimelineCommentEvent extends Component {
    *
    * @param {string} [text] - The text to quote
    */
-  quote = (text, asReply) => {
+  quoteReply = (text) => {
     const { appendCommentContent } = this.props;
-    appendCommentContent(`<blockquote>${text}</blockquote><br />`, asReply);
+    appendCommentContent(`<blockquote>${text}</blockquote><br />`);
   };
 
   render() {
@@ -97,7 +97,6 @@ class TimelineCommentEvent extends Component {
       toggleEditMode,
       userAvatar: currentUserAvatar,
       isReply,
-      allowQuote,
       allowQuoteReply,
       allowCopyLink,
     } = this.props;
@@ -159,16 +158,9 @@ class TimelineCommentEvent extends Component {
                     aria-label={i18next.t("Actions")}
                   >
                     <Dropdown.Menu>
-                      {allowQuote && !commentHasBeenDeleted && (
-                        <Dropdown.Item
-                          onClick={() => this.quote(event.payload.content, false)}
-                        >
-                          {i18next.t("Quote")}
-                        </Dropdown.Item>
-                      )}
                       {allowQuoteReply && !commentHasBeenDeleted && (
                         <Dropdown.Item
-                          onClick={() => this.quote(event.payload.content, true)}
+                          onClick={() => this.quoteReply(event.payload.content, true)}
                         >
                           {i18next.t("Quote reply")}
                         </Dropdown.Item>
@@ -216,10 +208,7 @@ class TimelineCommentEvent extends Component {
                   ) : (
                     <TimelineEventBody
                       payload={event?.payload}
-                      quote={allowQuote ? (text) => this.quote(text, false) : null}
-                      quoteReply={
-                        allowQuoteReply ? (text) => this.quote(text, true) : null
-                      }
+                      quoteReply={this.quoteReply}
                     />
                   )}
 
@@ -238,7 +227,7 @@ class TimelineCommentEvent extends Component {
 
               {!isReply && (
                 <>
-                  <Divider />
+                  <Divider className="requests-reply-top-divider" />
                   <TimelineCommentReplies
                     parentRequestEvent={event}
                     userAvatar={currentUserAvatar}
@@ -264,7 +253,6 @@ TimelineCommentEvent.propTypes = {
   error: PropTypes.string,
   userAvatar: PropTypes.string,
   isReply: PropTypes.bool,
-  allowQuote: PropTypes.bool,
   allowQuoteReply: PropTypes.bool,
   allowCopyLink: PropTypes.bool,
 };
@@ -275,7 +263,6 @@ TimelineCommentEvent.defaultProps = {
   error: undefined,
   userAvatar: "",
   isReply: false,
-  allowQuote: true,
   allowQuoteReply: true,
   allowCopyLink: true,
 };

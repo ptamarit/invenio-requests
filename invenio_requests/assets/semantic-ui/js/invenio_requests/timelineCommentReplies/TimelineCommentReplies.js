@@ -48,8 +48,7 @@ class TimelineCommentReplies extends Component {
     setCommentContent(content, parentRequestEvent.id);
   };
 
-  appendCommentContent = (content, asReply) => {
-    if (!asReply) return;
+  appendCommentContent = (content) => {
     const { appendCommentContent, parentRequestEvent, setIsReplying } = this.props;
     setIsReplying(parentRequestEvent.id, true);
     appendCommentContent(content, parentRequestEvent.id);
@@ -87,7 +86,7 @@ class TimelineCommentReplies extends Component {
 
   render() {
     const {
-      childComments,
+      commentReplies,
       userAvatar,
       draftContent,
       storedDraftContent,
@@ -103,12 +102,12 @@ class TimelineCommentReplies extends Component {
     const { isExpanded, deleteModalAction } = this.state;
     const hasReplies = totalReplyCount > 0;
 
-    const notYetLoadedCommentCount = totalReplyCount - childComments.length;
+    const notYetLoadedCommentCount = totalReplyCount - commentReplies.length;
     const nextLoadSize =
       notYetLoadedCommentCount >= pageSize ? pageSize : notYetLoadedCommentCount;
 
     return (
-      <>
+      <div className="requests-reply-container">
         {hasReplies && (
           <>
             <Button
@@ -116,12 +115,12 @@ class TimelineCommentReplies extends Component {
               onClick={this.onRepliesClick}
               className="text-only requests-reply-expand"
             >
-              {i18next.t("Replies")}
-              <span className="requests-reply-count ml-5">{totalReplyCount}</span>
               <Icon
                 name={`caret ${isExpanded ? "down" : "right"}`}
                 className="requests-reply-caret"
               />
+              {i18next.t("Replies")}
+              <span className="requests-reply-count ml-5">{totalReplyCount}</span>
             </Button>
 
             {(isExpanded || isReplying) && (
@@ -136,7 +135,7 @@ class TimelineCommentReplies extends Component {
                     {i18next.t("Load {{count}} more", { count: nextLoadSize })}
                   </Button>
                 )}
-                {childComments.map((c) => (
+                {commentReplies.map((c) => (
                   <TimelineCommentEventControlled
                     key={c.id}
                     event={c}
@@ -145,7 +144,6 @@ class TimelineCommentReplies extends Component {
                     updateComment={this.updateComment}
                     deleteComment={this.deleteComment}
                     appendCommentContent={this.appendCommentContent}
-                    allowQuote={false}
                     allowCopyLink={false}
                   />
                 ))}
@@ -181,19 +179,20 @@ class TimelineCommentReplies extends Component {
             userAvatar={userAvatar}
             isLoading={submitting}
             error={error}
-            buttonLabel={i18next.t("Reply")}
+            saveButtonLabel={i18next.t("Reply")}
+            saveButtonIcon="reply"
             onCancel={this.onCancelClick}
             // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus
           />
         )}
-      </>
+      </div>
     );
   }
 }
 
 TimelineCommentReplies.propTypes = {
-  childComments: PropTypes.array.isRequired,
+  commentReplies: PropTypes.array.isRequired,
   parentRequestEvent: PropTypes.object.isRequired,
   loadOlderReplies: PropTypes.func.isRequired,
   userAvatar: PropTypes.string,

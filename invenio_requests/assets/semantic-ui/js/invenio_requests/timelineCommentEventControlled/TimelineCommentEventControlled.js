@@ -36,7 +36,7 @@ class TimelineCommentEventControlled extends Component {
     });
 
     try {
-      await updateComment({ content, format, requestEvent: event });
+      await updateComment({ content, format, requestEventData: event });
 
       this.setState({
         isLoading: false,
@@ -55,7 +55,7 @@ class TimelineCommentEventControlled extends Component {
   deleteComment = async () => {
     const { deleteComment, event, openConfirmModal } = this.props;
 
-    openConfirmModal(() => deleteComment({ requestEvent: event }));
+    openConfirmModal(() => deleteComment({ requestEventData: event }));
   };
 
   render() {
@@ -64,7 +64,6 @@ class TimelineCommentEventControlled extends Component {
       userAvatar,
       isReply,
       appendCommentContent,
-      allowQuote,
       allowQuoteReply,
       allowCopyLink,
     } = this.props;
@@ -84,7 +83,6 @@ class TimelineCommentEventControlled extends Component {
           event={event}
           userAvatar={userAvatar}
           isReply={isReply}
-          allowQuote={allowQuote}
           allowQuoteReply={allowQuoteReply}
           allowCopyLink={allowCopyLink}
         />
@@ -101,7 +99,6 @@ TimelineCommentEventControlled.propTypes = {
   openConfirmModal: PropTypes.func.isRequired,
   userAvatar: PropTypes.string,
   isReply: PropTypes.bool,
-  allowQuote: PropTypes.bool,
   allowQuoteReply: PropTypes.bool,
   allowCopyLink: PropTypes.bool,
 };
@@ -109,7 +106,6 @@ TimelineCommentEventControlled.propTypes = {
 TimelineCommentEventControlled.defaultProps = {
   userAvatar: "",
   isReply: false,
-  allowQuote: true,
   allowQuoteReply: true,
   allowCopyLink: true,
 };

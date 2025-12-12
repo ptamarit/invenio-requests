@@ -18,7 +18,6 @@ export const HAS_ERROR = "eventEditor/HAS_ERROR";
 export const SUCCESS = "eventEditor/SUCCESS";
 export const PARENT_SET_DRAFT_CONTENT = "eventEditor/SETTING_CONTENT";
 export const PARENT_RESTORE_DRAFT_CONTENT = "eventEditor/RESTORE_CONTENT";
-export const PARENT_APPEND_DRAFT_CONTENT = "eventEditor/APPEND_CONTENT";
 
 const draftCommentKey = (requestId, parentRequestEventId) =>
   `draft-comment-${requestId}${parentRequestEventId ? "-" + parentRequestEventId : ""}`;
@@ -72,25 +71,6 @@ export const restoreEventContent = (parentRequestEventId, event) => {
           content: savedDraft,
         },
       });
-    }
-  };
-};
-
-export const appendEventContent = (parentRequestEventId, content, event) => {
-  return async (dispatch, getState) => {
-    dispatch({
-      type: event,
-      payload: {
-        content,
-        parentRequestEventId,
-      },
-    });
-
-    const { request } = getState();
-    try {
-      setDraftComment(request.data.id, parentRequestEventId, content);
-    } catch (e) {
-      console.warn("Failed to save comment:", e);
     }
   };
 };

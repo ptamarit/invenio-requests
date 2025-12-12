@@ -11,13 +11,13 @@ export const updateComment = ({
   content,
   format,
   parentRequestEventId,
-  requestEvent,
+  requestEventData,
   successEvent,
   loadingEvent,
 }) => {
   return async (dispatch, getState, config) => {
     dispatch(clearTimelineInterval());
-    const commentsApi = config.requestEventsApi(requestEvent.links);
+    const commentsApi = config.requestEventsApi(requestEventData.links);
 
     const payload = payloadSerializer(content, format);
 
@@ -44,13 +44,13 @@ export const updateComment = ({
 
 export const deleteComment = ({
   parentRequestEventId,
-  requestEvent,
+  requestEventData,
   loadingEvent,
   successEvent,
 }) => {
   return async (dispatch, getState, config) => {
     dispatch(clearTimelineInterval());
-    const commentsApi = config.requestEventsApi(requestEvent.links);
+    const commentsApi = config.requestEventsApi(requestEventData.links);
 
     dispatch({
       type: loadingEvent,
@@ -64,7 +64,7 @@ export const deleteComment = ({
     dispatch({
       type: successEvent,
       payload: {
-        deletedCommentId: requestEvent.id,
+        deletedCommentId: requestEventData.id,
         parentRequestEventId: parentRequestEventId,
       },
     });

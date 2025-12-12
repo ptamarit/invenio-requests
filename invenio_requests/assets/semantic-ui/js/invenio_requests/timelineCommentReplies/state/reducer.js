@@ -7,7 +7,7 @@
 import {
   CLEAR_DRAFT,
   HAS_ERROR,
-  HAS_DATA,
+  HAS_NEW_DATA,
   IS_LOADING,
   IS_SUBMISSION_COMPLETE,
   IS_SUBMITTING,
@@ -21,25 +21,25 @@ import {
   IS_NOT_REPLYING,
 } from "./actions";
 import _cloneDeep from "lodash/cloneDeep";
-import { i18next } from "@translations/invenio_requests/i18next";
 
 // Store lists of child comments and status objects, both grouped by parent request event ID.
 // This follows Redux recommendations for a neater and more maintainable state shape: https://redux.js.org/usage/structuring-reducers/normalizing-state-shape#designing-a-normalized-state
 export const initialState = {
-  childComments: {},
-  status: {},
+  commentRepliesData: {},
+  commentStatuses: {},
 };
 
-export const selectCommentChildren = (state, parentRequestEventId) => {
-  const { childComments } = state;
-  if (Object.prototype.hasOwnProperty.call(childComments, parentRequestEventId)) {
-    return childComments[parentRequestEventId];
+export const selectCommentReplies = (state, parentRequestEventId) => {
+  const { commentRepliesData } = state;
+  if (Object.prototype.hasOwnProperty.call(commentRepliesData, parentRequestEventId)) {
+    return commentRepliesData[parentRequestEventId];
   } else {
     return [];
   }
 };
 
-const initialRepliesStatus = {
+// Initial value for a single item in `commentStatuses`
+const initialCommentStatus = {
   totalReplyCount: 0,
   loading: false,
   submitting: false,
@@ -54,24 +54,26 @@ const initialRepliesStatus = {
 };
 
 export const selectCommentRepliesStatus = (state, parentRequestEventId) => {
-  const { status } = state;
-  if (Object.prototype.hasOwnProperty.call(status, parentRequestEventId)) {
-    return { ...initialRepliesStatus, ...status[parentRequestEventId] };
+  const { commentStatuses } = state;
+  // Using `parentRequestEventId in status` is not advised, as the key could be in the prototype: https://stackoverflow.com/a/455366
+  // Using status.hasOwnProperty is not allowed by eslint: https://eslint.org/docs/latest/rules/no-prototype-builtins
+  if (Object.prototype.hasOwnProperty.call(commentStatuses, parentRequestEventId)) {
+    return { ...initialCommentStatus, ...commentStatuses[parentRequestEventId] };
   } else {
-    return initialRepliesStatus;
+    return initialCommentStatus;
   }
 };
 
-const newChildCommentsWithUpdate = (childComments, updatedComment) => {
+const newCommentRepliesWithUpdate = (childComments, updatedComment) => {
   const newChildComments = _cloneDeep(childComments);
   const index = newChildComments.findIndex((c) => c.id === updatedComment.id);
   newChildComments[index] = updatedComment;
   return newChildComments;
 };
 
-const newChildCommentsWithDelete = (childComments, deletedCommentId) => {
+const newCommentRepliesWithDelete = (childComments, deletedCommentId) => {
   const deletedComment = childComments.find((c) => c.id === deletedCommentId);
-  return newChildCommentsWithUpdate(childComments, {
+  return newCommentRepliesWithUpdate(childComments, {
     ...deletedComment,
     type: "L",
     payload: {
@@ -86,14 +88,53 @@ const newChildCommentsWithDelete = (childComments, deletedCommentId) => {
 const newStateWithUpdatedStatus = (state, parentRequestEventId, newStatus) => {
   return {
     ...state,
-    status: {
-      ...state.status,
+    commentStatuses: {
+      ...state.commentStatuses,
       [parentRequestEventId]: {
         ...selectCommentRepliesStatus(state, parentRequestEventId),
         ...newStatus,
       },
     },
   };
+};
+
+/**
+ * Returns an object to include in an item of `commentStatuses`.
+ * Either sets `totalReplyCount` if `totalCount` is defined, or increases if `increaseCountBy` is defined
+ */
+const newOrIncreasedReplyCount = (state, payload) => {
+  if (payload.totalCount) {
+    return { totalReplyCount: payload.totalCount };
+  } else if (payload.increaseCountBy) {
+    const status = selectCommentRepliesStatus(state, payload.parentRequestEventId);
+    return { totalReplyCount: status.totalReplyCount + payload.increaseCountBy };
+  }
+  return {};
+};
+
+/**
+ * Returns the new list of replies, with the new replies either prepended or
+ * appended depending on the value of `payload.position`
+ */
+const prependedOrAppendedCommentReplies = (state, payload) => {
+  const existingCommentReplies = selectCommentReplies(
+    state,
+    payload.parentRequestEventId
+  );
+
+  if (payload.position === "top") {
+    return [
+      // Prepend the new comments so they're shown at the top of the list.
+      ...payload.newChildComments,
+      ...existingCommentReplies,
+    ];
+  } else {
+    return [
+      ...existingCommentReplies,
+      // Append the new comments since they are newer
+      ...payload.newChildComments,
+    ];
+  }
 };
 
 export const timelineRepliesReducer = (state = initialState, action) => {
@@ -120,7 +161,7 @@ export const timelineRepliesReducer = (state = initialState, action) => {
       return newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
         isReplying: false,
       });
-    case HAS_DATA:
+    case HAS_NEW_DATA:
       return {
         ...newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
           loading: false,
@@ -129,32 +170,14 @@ export const timelineRepliesReducer = (state = initialState, action) => {
           page: action.payload.nextPage,
           // Don't set if not specified
           ...(action.payload.pageSize ? { pageSize: action.payload.pageSize } : {}),
-          // Either set if `totalCount` is defined, or increment if `newCount` is defined
-          ...(action.payload.totalCount
-            ? { totalReplyCount: action.payload.totalCount }
-            : action.payload.newCount
-            ? {
-                totalReplyCount:
-                  selectCommentRepliesStatus(state, action.payload.parentRequestEventId)
-                    .totalReplyCount + action.payload.newCount,
-              }
-            : {}),
+          ...newOrIncreasedReplyCount(state, action.payload),
         }),
-        childComments: {
-          ...state.childComments,
-          // Either prepend or append depending on the requested position
-          [action.payload.parentRequestEventId]:
-            action.payload.position === "top"
-              ? [
-                  // Prepend the new comments so they're shown at the top of the list.
-                  ...action.payload.newChildComments,
-                  ...selectCommentChildren(state, action.payload.parentRequestEventId),
-                ]
-              : [
-                  ...selectCommentChildren(state, action.payload.parentRequestEventId),
-                  // Append the new comments since they are newer
-                  ...action.payload.newChildComments,
-                ],
+        commentRepliesData: {
+          ...state.commentRepliesData,
+          [action.payload.parentRequestEventId]: prependedOrAppendedCommentReplies(
+            state,
+            action.payload
+          ),
         },
       };
     case HAS_ERROR:
@@ -198,10 +221,10 @@ export const timelineRepliesReducer = (state = initialState, action) => {
         ...newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
           submitting: false,
         }),
-        childComments: {
-          ...state.childComments,
-          [action.payload.parentRequestEventId]: newChildCommentsWithUpdate(
-            selectCommentChildren(state, action.payload.parentRequestEventId),
+        commentRepliesData: {
+          ...state.commentRepliesData,
+          [action.payload.parentRequestEventId]: newCommentRepliesWithUpdate(
+            selectCommentReplies(state, action.payload.parentRequestEventId),
             action.payload.updatedComment
           ),
         },
@@ -211,10 +234,10 @@ export const timelineRepliesReducer = (state = initialState, action) => {
         ...newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
           submitting: false,
         }),
-        childComments: {
-          ...state.childComments,
-          [action.payload.parentRequestEventId]: newChildCommentsWithDelete(
-            selectCommentChildren(state, action.payload.parentRequestEventId),
+        commentRepliesData: {
+          ...state.commentRepliesData,
+          [action.payload.parentRequestEventId]: newCommentRepliesWithDelete(
+            selectCommentReplies(state, action.payload.parentRequestEventId),
             action.payload.deletedCommentId
           ),
         },
