@@ -85,6 +85,22 @@ def test_simple_files_flow(app, client_logged_as, example_request, headers, loca
     }
     assert expected_json == response.json
 
+    # Submit comment.
+    response = client.post(f"/requests/{request_id}/comments", headers=headers, json=events_resource_data_with_files)
+    expected_data = [unique_key]
+    # assert_api_response(response, 200, expected_data)
+
+    # {
+    # "payload": {
+    #     "content": "<p>I've completed my review...</p><p><a href=\"...\">reviewed_manuscript.pdf</a></p><p>Additionally, Figure 3 has a rendering issue:</p><img src=\"...\" />",
+    #     "format": "html",
+    #     "files": [
+    #     {"file_id": "f1e2d3c4-e5f6-7890-abcd-ef1234567890"},
+    #     {"file_id": "a2b3c4d5-e6f7-8901-bcde-f234567890ab"}
+    #     ]
+    # }
+    # }
+
     # # List files.
     # response = client.get(
     #     f"/requests/{request_id}/files",
@@ -102,6 +118,8 @@ def test_simple_files_flow(app, client_logged_as, example_request, headers, loca
     )
     assert 200 == response.status_code
     assert data_content == response.data
+
+    #
 
     # TODO: Save a comment with file reference
     # TODO: Get the list of comments
