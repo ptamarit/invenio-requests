@@ -241,11 +241,6 @@ class RequestEventsService(RecordService):
         )
         event["payload"]["content"] = data["payload"]["content"]
         event["payload"]["format"] = data["payload"]["format"]
-        # Here we are either adding or removing files.
-        # Could it be that we do not send files in the payload? At least it's the case in our tests.
-        if "files" in data["payload"]:
-            event["payload"]["files"] = data["payload"]["files"]
-        # breakpoint()
 
         # Run components
         self.run_components(
@@ -312,7 +307,6 @@ class RequestEventsService(RecordService):
             data,
             context=dict(identity=identity, record=event, event_type=event.type),
         )
-        event["payload"] = data["payload"]
 
         # Run components
         self.run_components(
@@ -323,6 +317,10 @@ class RequestEventsService(RecordService):
             request=request,
             uow=uow,
         )
+
+        # Moving this assignment after run_components,
+        # so that the list of files to be deleted can be accessed by RequestCommentFileCleanupComponent.
+        event["payload"] = data["payload"]
 
         # Commit the updated comment
         uow.register(RecordCommitOp(event, indexer=self.indexer))

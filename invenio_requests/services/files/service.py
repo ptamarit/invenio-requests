@@ -9,6 +9,7 @@
 """Requests service."""
 
 from os.path import splitext
+from uuid import UUID
 
 from base32_lib import base32
 from invenio_db import db
@@ -166,9 +167,12 @@ class RequestFilesService(FileService):
         return list(request.files.keys())
 
     @unit_of_work()
-    def delete_file(self, identity, id_, file_key, uow=None):
+    def delete_file(self, identity, id_, file_key=None, file_id=None, uow=None):
         """Delete a specific file."""
         # Called explicitly via API or by frontend when file removed from comment
+
+        if file_key is None and file_id is None:
+            raise ValueError("Argument file_key or file_id required")
 
         # resolve and check permissions
         request = self.request_cls.get_record(id_)
@@ -182,7 +186,17 @@ class RequestFilesService(FileService):
         # )
 
         # TODO: Why not doing request.files.delete(file_key) ?
-        deleted_file = request.files.pop(file_key, None)
+        if file_key is not None:
+            deleted_file = request.files.pop(file_key, None)
+        else:
+            deleted_file = None
+            file_id_uuid = UUID(file_id)
+            for request_file_key in request.files:
+                request_file = request.files[request_file_key]
+                if request_file.file.id == file_id_uuid:
+                    deleted_file = request.files.pop(request_file_key, None)
+                    break
+
         if deleted_file is None:
             raise FileNotFoundError()
         request.commit()
