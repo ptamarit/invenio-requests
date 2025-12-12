@@ -27,6 +27,7 @@ const TimelineCommentEditor = ({
   saveButtonLabel,
   saveButtonIcon,
   onCancel,
+  disabled,
 }) => {
   useEffect(() => {
     restoreCommentContent();
@@ -78,7 +79,7 @@ const TimelineCommentEditor = ({
             }}
             onInit={onInit}
             minHeight={150}
-            disabled={!canCreateComment}
+            disabled={!canCreateComment || disabled}
           />
         </Container>
       </div>
@@ -119,6 +120,7 @@ TimelineCommentEditor.propTypes = {
   saveButtonLabel: PropTypes.string,
   saveButtonIcon: PropTypes.string,
   onCancel: PropTypes.func,
+  disabled: PropTypes.bool,
 };
 
 TimelineCommentEditor.defaultProps = {
@@ -133,6 +135,7 @@ TimelineCommentEditor.defaultProps = {
   saveButtonLabel: i18next.t("Comment"),
   saveButtonIcon: "send",
   onCancel: null,
+  disabled: false,
 };
 
 export default TimelineCommentEditor;

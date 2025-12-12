@@ -97,6 +97,7 @@ class TimelineFeed extends Component {
                     openConfirmModal={this.onOpenModal}
                     userAvatar={userAvatar}
                     allowQuote={false}
+                    allowReply={permissions.can_reply_comment}
                   />
                 ))}
               </RequestsFeed>

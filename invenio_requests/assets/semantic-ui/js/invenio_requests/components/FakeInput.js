@@ -10,7 +10,7 @@ import { Input } from "semantic-ui-react";
 import React from "react";
 import { RequestEventAvatarContainer } from "./RequestsFeed";
 
-const FakeInput = ({ placeholder, userAvatar, onActivate, className }) => {
+const FakeInput = ({ placeholder, userAvatar, onActivate, className, disabled }) => {
   return (
     <div className={`requests-comment-fake-reply ${className}`}>
       <div className="rel-mr-1 tablet computer only">
@@ -23,6 +23,7 @@ const FakeInput = ({ placeholder, userAvatar, onActivate, className }) => {
           onClick={() => onActivate()}
           onChange={(e) => onActivate(e.target.value)}
           size="small"
+          disabled={disabled}
         />
       </div>
     </div>
@@ -34,11 +35,13 @@ FakeInput.propTypes = {
   userAvatar: PropTypes.string,
   onActivate: PropTypes.func.isRequired,
   className: PropTypes.bool,
+  disabled: PropTypes.bool,
 };
 
 FakeInput.defaultProps = {
   userAvatar: "",
   className: "",
+  disabled: false,
 };
 
 export default Overridable.component("InvenioRequests.FakeInput", FakeInput);

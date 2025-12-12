@@ -99,6 +99,7 @@ class TimelineCommentEvent extends Component {
       isReply,
       allowQuoteReply,
       allowCopyLink,
+      allowReply,
     } = this.props;
     const { commentContent, isSelected } = this.state;
 
@@ -231,6 +232,7 @@ class TimelineCommentEvent extends Component {
                   <TimelineCommentReplies
                     parentRequestEvent={event}
                     userAvatar={currentUserAvatar}
+                    allowReply={allowReply}
                   />
                 </>
               )}
@@ -255,6 +257,7 @@ TimelineCommentEvent.propTypes = {
   isReply: PropTypes.bool,
   allowQuoteReply: PropTypes.bool,
   allowCopyLink: PropTypes.bool,
+  allowReply: PropTypes.bool,
 };
 
 TimelineCommentEvent.defaultProps = {
@@ -265,6 +268,7 @@ TimelineCommentEvent.defaultProps = {
   isReply: false,
   allowQuoteReply: true,
   allowCopyLink: true,
+  allowReply: true,
 };
 
 export default Overridable.component("TimelineEvent", TimelineCommentEvent);

@@ -98,6 +98,7 @@ class TimelineCommentReplies extends Component {
       loading,
       isReplying,
       pageSize,
+      allowReply,
     } = this.props;
     const { isExpanded, deleteModalAction } = this.state;
     const hasReplies = totalReplyCount > 0;
@@ -166,6 +167,7 @@ class TimelineCommentReplies extends Component {
             userAvatar={userAvatar}
             onActivate={this.onFakeInputActivate}
             className={!hasReplies || !isExpanded ? "mt-10" : undefined}
+            disabled={!allowReply}
           />
         ) : (
           <TimelineCommentEditor
@@ -182,6 +184,7 @@ class TimelineCommentReplies extends Component {
             saveButtonLabel={i18next.t("Reply")}
             saveButtonIcon="reply"
             onCancel={this.onCancelClick}
+            disabled={!allowReply}
             // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus
           />
@@ -215,6 +218,7 @@ TimelineCommentReplies.propTypes = {
   isReplying: PropTypes.bool.isRequired,
   setIsReplying: PropTypes.func.isRequired,
   pageSize: PropTypes.number.isRequired,
+  allowReply: PropTypes.bool.isRequired,
 };
 
 TimelineCommentReplies.defaultProps = {
