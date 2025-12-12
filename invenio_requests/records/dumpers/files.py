@@ -52,8 +52,6 @@ class FilesDumperExt(SearchDumperExt):
             request_file.file.file_id: request_file for request_file in request_files
         }
 
-        # raise ValueError("Boom")
-
         for payload_file in payload_files:
             payload_file_uuid = UUID(payload_file["file_id"])
             file_details = request_files_by_file_id.get(payload_file_uuid)

@@ -11,7 +11,7 @@ import inspect
 
 import marshmallow as ma
 from flask import current_app
-from marshmallow import RAISE, fields, validate
+from marshmallow import RAISE, Schema, fields, validate
 from marshmallow.validate import OneOf
 from marshmallow_utils import fields as utils_fields
 
@@ -188,6 +188,16 @@ class ReviewersUpdatedType(EventType):
         )
 
 
+class FileDetailsSchema(Schema):
+    # TODO: Use UUID and fix SQLAlchemy not serializable.
+    file_id = fields.String()
+    key = fields.String()
+    original_filename = fields.String()
+    size = fields.Integer()
+    mimetype = fields.String()
+    created = fields.DateTime()
+
+
 class CommentEventType(EventType):
     """Comment event type."""
 
@@ -210,24 +220,25 @@ class CommentEventType(EventType):
                 load_default=RequestEventFormat.HTML.value,
             ),
             files=fields.List(
+                fields.Nested(FileDetailsSchema)
                 # TODO: Expand information here or not?
-                fields.Dict(
-                    keys=fields.String(
-                        validate=OneOf(
-                            (
-                                "file_id",
-                                "key",
-                                "original_filename",
-                                "size",
-                                "mimetype",
-                                "created",
-                            )
-                        )
-                    ),
-                    # TODO: Fix Object of type UUID is not JSON serializable
-                    # values=fields.UUID(required=True),
-                    values=fields.String(required=True),
-                )
+                # fields.Dict(
+                #     keys=fields.String(
+                #         validate=OneOf(
+                #             (
+                #                 "file_id",
+                #                 "key",
+                #                 "original_filename",
+                #                 "size",
+                #                 "mimetype",
+                #                 "created",
+                #             )
+                #         )
+                #     ),
+                #     # TODO: Fix Object of type UUID is not JSON serializable
+                #     # values=fields.UUID(required=True),
+                #     values=fields.String(required=True),
+                # )
             ),
         )
 

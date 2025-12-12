@@ -4,8 +4,8 @@
 // Invenio RDM Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
-import React, { useEffect, useState, useRef } from "react";
 import { RichEditorWithFiles } from "react-invenio-forms";
+import React, { useEffect, useRef } from "react";
 import { SaveButton } from "../components/Buttons";
 import { Container, Message, Icon } from "semantic-ui-react";
 import PropTypes from "prop-types";
@@ -68,9 +68,7 @@ const TimelineCommentEditor = ({
           disabled={!canCreateComment}
         />
         <Container fluid className="ml-0-mobile mr-0-mobile fluid-mobile">
-          {/* TODO: This is the comment at the bottom of the timeline. */}
           {/* TODO: Inject the request ID here for file uploading? */}
-          <small>TimelineCommentEditor.js</small>
           <RichEditorWithFiles
             inputValue={commentContent}
             // initialValue is not allowed to change, so we use `storedCommentContent` which is set at most once
@@ -111,6 +109,8 @@ const TimelineCommentEditor = ({
 TimelineCommentEditor.propTypes = {
   commentContent: PropTypes.string,
   files: PropTypes.array,
+  restoreCommentFiles: PropTypes.func.isRequired,
+  setCommentFiles: PropTypes.func.isRequired,
   storedCommentContent: PropTypes.string,
   appendedCommentContent: PropTypes.string,
   isLoading: PropTypes.bool,

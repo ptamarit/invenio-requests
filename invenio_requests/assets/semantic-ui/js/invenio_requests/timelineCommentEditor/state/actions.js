@@ -134,8 +134,6 @@ export const submitComment = (content, format, files) => {
   return async (dispatch, getState, config) => {
     const { timeline: timelineState, request } = getState();
 
-    console.log("actions.submitComment");
-
     dispatch(clearTimelineInterval());
 
     dispatch({

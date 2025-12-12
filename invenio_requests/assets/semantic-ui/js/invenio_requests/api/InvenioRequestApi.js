@@ -120,7 +120,6 @@ export class InvenioRequestsAPI {
   };
 
   submitComment = async (payload) => {
-    console.log("InvenioRequestApi.submitComment");
     return await http.post(this.#urls.comments, payload, {
       params: { expand: 1 },
     });
@@ -141,7 +140,7 @@ export class InvenioRequestsAPI {
         payload: {
           content: commentContent,
           format: "html",
-          files: files
+          files: files,
         },
       };
     }

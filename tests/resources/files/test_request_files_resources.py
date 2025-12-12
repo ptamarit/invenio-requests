@@ -8,10 +8,14 @@
 
 """Request Files resource tests."""
 
+import copy
+import hashlib
 import re
 from io import BytesIO
 
 import pytest
+
+from invenio_requests.customizations.event_types import CommentEventType
 
 # TODO: This is duplicated code.
 # def assert_api_response_json(expected_json, received_json):
@@ -34,7 +38,30 @@ import pytest
 # tests/resources/events/test_request_events_resources.py::test_empty_comment
 
 
-def test_simple_files_flow(app, client_logged_as, example_request, headers, location):
+def assert_api_response_json(expected_json, received_json):
+    """Assert the REST API response's json."""
+    # We don't compare dynamic times at this point
+    received_json.pop("created")
+    received_json.pop("updated")
+    for file in received_json.get("payload", {}).get("files", []):
+        file.pop("created")
+    assert expected_json == received_json
+
+
+def assert_api_response(response, code, json):
+    """Assert the REST API response."""
+    assert code == response.status_code
+    assert_api_response_json(json, response.json)
+
+
+def test_simple_files_flow(
+    app,
+    client_logged_as,
+    example_request,
+    headers,
+    location,
+    events_resource_data_with_empty_files,
+):
     # Passing the `location` fixture to make sure that a default bucket location is defined.
     assert location.default == True
 
@@ -44,6 +71,9 @@ def test_simple_files_flow(app, client_logged_as, example_request, headers, loca
     key = "screenshot.png"
     data_content = b"\x89PNG\r\n\x1a\n"
     data = BytesIO(data_content)
+    mimetype = "image/png"
+    size = len(data_content)
+    md5 = f"md5:{hashlib.md5(data_content).hexdigest()}"
 
     headers_binary = {
         "content-type": "application/octet-stream",
@@ -72,10 +102,10 @@ def test_simple_files_flow(app, client_logged_as, example_request, headers, loca
     expected_json = {
         "id": id_,
         "key": unique_key,
-        "metadata": {"original_filename": "screenshot.png"},
-        "checksum": "md5:e9dd2797018cad79186e03e8c5aec8dc",
-        "size": 8,
-        "mimetype": "image/png",
+        "metadata": {"original_filename": key},
+        "checksum": md5,
+        "size": size,
+        "mimetype": mimetype,
         "links": {
             "self": f"/api/requests/{request_id}/files/{unique_key}",
             "content": f"/api/requests/{request_id}/files/{unique_key}/content",
@@ -85,14 +115,47 @@ def test_simple_files_flow(app, client_logged_as, example_request, headers, loca
     }
     assert expected_json == response.json
 
-    # Submit comment.
+    # Submit comment with reference to file.
+    events_resource_data_with_files = copy.deepcopy(
+        events_resource_data_with_empty_files
+    )
+    events_resource_data_with_files["payload"]["files"] = [{"file_id": id_}]
     response = client.post(
         f"/requests/{request_id}/comments",
         headers=headers,
         json=events_resource_data_with_files,
     )
-    expected_data = [unique_key]
-    # assert_api_response(response, 200, expected_data)
+
+    comment_id = response.json["id"]
+    expected_json = {
+        "payload": {
+            "content": events_resource_data_with_files["payload"]["content"],
+            "format": events_resource_data_with_files["payload"]["format"],
+            "files": [
+                {
+                    "file_id": id_,
+                    "key": unique_key,
+                    "original_filename": key,
+                    "size": size,
+                    "mimetype": mimetype,
+                    # "created" not compared
+                }
+            ],
+        },
+        "created_by": {"user": "1"},
+        "id": comment_id,
+        "links": {
+            "reply": f"https://127.0.0.1:5000/api/requests/{request_id}/comments/{comment_id}/reply",  # noqa
+            "replies": f"https://127.0.0.1:5000/api/requests/{request_id}/comments/{comment_id}/replies",  # noqa
+            "self": f"https://127.0.0.1:5000/api/requests/{request_id}/comments/{comment_id}",  # noqa
+            "self_html": f"https://127.0.0.1:5000/requests/{request_id}#commentevent-{comment_id}",
+        },
+        "parent_id": None,
+        "permissions": {"can_update_comment": True, "can_delete_comment": True},
+        "revision_id": 1,
+        "type": CommentEventType.type_id,
+    }
+    assert_api_response(response, 201, expected_json)
 
     # {
     # "payload": {

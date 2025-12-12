@@ -157,23 +157,21 @@ class TimelineCommentEvent extends Component {
                 <Feed.Extra text={!isEditing}>
                   {error && <Error error={error} />}
 
-                  {/* TODO: These are existing comments in the timeline. */}
                   {/* TODO: Inject the request ID here for file uploading? */}
                   {isEditing ? (
                     <>
-                    <small>TimelineCommentEvent.js</small>
-                    <RichEditorWithFiles
-                      initialValue={event?.payload?.content}
-                      inputValue={commentContent}
-                      onEditorChange={(event, editor) => {
-                        this.setState({ commentContent: editor.getContent() });
-                      }}
-                      files={files}
-                      setFiles={(files) => {
-                        this.setState({ files: files })
-                      }}
-                      minHeight={150}
-                    />
+                      <RichEditorWithFiles
+                        initialValue={event?.payload?.content}
+                        inputValue={commentContent}
+                        onEditorChange={(event, editor) => {
+                          this.setState({ commentContent: editor.getContent() });
+                        }}
+                        files={files}
+                        setFiles={(files) => {
+                          this.setState({ files: files });
+                        }}
+                        minHeight={150}
+                      />
                     </>
                   ) : (
                     <TimelineEventBody

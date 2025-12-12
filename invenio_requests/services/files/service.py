@@ -66,7 +66,6 @@ class RequestFilesService(FileService):
             # ],
             # db.session.add(bucket)
             # db.session.commit()
-            # raise ValueError("boom")
 
         # TODO: Is some validation needed on the filename to avoid weird characters?
         unique_id = base32.generate(length=10, split_every=5, checksum=True)

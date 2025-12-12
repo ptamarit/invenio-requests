@@ -72,7 +72,6 @@ class TimelineCommentEventControlled extends Component {
     const { event } = this.props;
     const { isLoading, isEditing, error } = this.state;
 
-    // TODO: Here maybe?
     return (
       <Overridable id="TimelineCommentEventControlled.layout">
         <TimelineEvent

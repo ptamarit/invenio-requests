@@ -7,3 +7,19 @@
 # details.
 
 """Request Files Resource conftest."""
+
+import pytest
+
+from invenio_requests.records.api import RequestEventFormat
+
+
+@pytest.fixture()
+def events_resource_data_with_empty_files():
+    """Input data for the Request Events Resource (REST body)."""
+    return {
+        "payload": {
+            "content": "This is a comment.",
+            "format": RequestEventFormat.HTML.value,
+            "files": [],
+        }
+    }

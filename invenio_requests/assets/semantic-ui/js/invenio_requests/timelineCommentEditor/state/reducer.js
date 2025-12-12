@@ -28,7 +28,6 @@ const initialState = {
 };
 
 export const commentEditorReducer = (state = initialState, action) => {
-  console.log(`commentEditorReducer ${action.type}`);
   switch (action.type) {
     case SETTING_CONTENT:
       return { ...state, commentContent: action.payload };

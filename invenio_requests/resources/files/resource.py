@@ -47,7 +47,6 @@ class RequestFilesResource(RecordResource):
         # Config class
         # routes = self.config.routes
         routes = self.config.routes
-        # raise ValueError("/api" + self.config.url_prefix + routes["create"])
         return [
             # Are we sure that we want PUT and not POST?
             route("PUT", self.config.url_prefix + routes["create"], self.create),
