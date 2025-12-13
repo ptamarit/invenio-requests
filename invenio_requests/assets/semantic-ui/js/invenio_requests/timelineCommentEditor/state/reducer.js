@@ -11,7 +11,6 @@ import {
   SUCCESS,
   PARENT_RESTORE_DRAFT_CONTENT,
   PARENT_SET_DRAFT_CONTENT,
-  PARENT_APPEND_DRAFT_CONTENT,
 } from "./actions";
 
 const initialState = {
@@ -23,14 +22,6 @@ const initialState = {
 
 export const commentEditorReducer = (state = initialState, action) => {
   switch (action.type) {
-    case PARENT_APPEND_DRAFT_CONTENT:
-      return {
-        ...state,
-        commentContent: state.commentContent + action.payload.content,
-        // We keep track of appended content separately to trigger the focus event only when
-        // text is appended (not when the user is typing).
-        appendedCommentContent: state.appendedCommentContent + action.payload.content,
-      };
     case PARENT_SET_DRAFT_CONTENT:
       return { ...state, commentContent: action.payload.content };
     case IS_LOADING:
