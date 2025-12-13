@@ -9,6 +9,14 @@
 Changes
 =======
 
+Version v11.1.0 (released 2025-12-13)
+
+- fix(reducer): remove unused PARENT_APPEND_DRAFT_CONTENT action
+- feat(comment-replies): disable input box if user cannot reply
+- fix(comment-replies): minor fixes and refactoring of frontend
+- feat(comment-replies): implement frontend for threaded replies
+- fix(errors): Pass default description message
+
 Version v11.0.0 (released 2025-12-11)
 
 - feat(comments): add backend support for single-threaded comment replies
