@@ -25,6 +25,7 @@ def events_service_data():
             "payload": {
                 "content": "This is a comment.",
                 "format": RequestEventFormat.HTML.value,
+                # "files": [{"file_id": "b503c859-c6d8-4fdd-8885-c84fd0367615"}],
             },
         },
         log={

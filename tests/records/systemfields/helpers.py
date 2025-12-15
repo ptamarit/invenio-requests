@@ -34,6 +34,7 @@ def create_request(
     return request
 
 
+# TODO: This helper is only used in tests.
 def add_comment(request, identity, content):
     """Helper to add a comment to a request."""
     event = events_service.create(

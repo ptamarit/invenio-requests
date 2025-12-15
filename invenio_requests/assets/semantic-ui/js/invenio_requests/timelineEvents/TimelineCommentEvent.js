@@ -12,7 +12,7 @@ import Overridable from "react-overridable";
 import { Divider, Container, Dropdown, Feed, Icon } from "semantic-ui-react";
 import { CancelButton, SaveButton } from "../components/Buttons";
 import Error from "../components/Error";
-import { RichEditor } from "react-invenio-forms";
+import { RichEditorWithFiles } from "react-invenio-forms";
 import RequestsFeed from "../components/RequestsFeed";
 import { TimelineEventBody } from "../components/TimelineEventBody";
 import { toRelativeTime } from "react-invenio-forms";
@@ -28,6 +28,7 @@ class TimelineCommentEvent extends Component {
 
     this.state = {
       commentContent: event?.payload?.content,
+      files: event?.payload?.files,
       isSelected: false,
     };
     this.ref = createRef(null);
@@ -101,7 +102,7 @@ class TimelineCommentEvent extends Component {
       allowCopyLink,
       allowReply,
     } = this.props;
-    const { commentContent, isSelected } = this.state;
+    const { commentContent, files, isSelected } = this.state;
 
     const commentHasBeenDeleted = event?.payload?.event === "comment_deleted";
 
@@ -197,17 +198,25 @@ class TimelineCommentEvent extends Component {
                 <Feed.Extra text={!isEditing}>
                   {error && <Error error={error} />}
 
+                  {/* TODO: Inject the request ID here for file uploading? */}
                   {isEditing ? (
-                    <RichEditor
-                      initialValue={event?.payload?.content}
-                      inputValue={commentContent}
-                      onEditorChange={(event, editor) => {
-                        this.setState({ commentContent: editor.getContent() });
-                      }}
-                      minHeight={150}
-                    />
+                    <>
+                      <RichEditorWithFiles
+                        initialValue={event?.payload?.content}
+                        inputValue={commentContent}
+                        onEditorChange={(event, editor) => {
+                          this.setState({ commentContent: editor.getContent() });
+                        }}
+                        files={files}
+                        setFiles={(files) => {
+                          this.setState({ files: files });
+                        }}
+                        minHeight={150}
+                      />
+                    </>
                   ) : (
                     <TimelineEventBody
+                    // files={event?.payload?.files}
                       payload={event?.payload}
                       quoteReply={this.quoteReply}
                     />
@@ -217,7 +226,7 @@ class TimelineCommentEvent extends Component {
                     <Container fluid className="mt-15" textAlign="right">
                       <CancelButton onClick={() => toggleEditMode()} />
                       <SaveButton
-                        onClick={() => updateComment(commentContent, "html")}
+                        onClick={() => updateComment(commentContent, "html", files)}
                         loading={isLoading}
                       />
                     </Container>

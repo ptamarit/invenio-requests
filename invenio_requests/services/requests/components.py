@@ -21,7 +21,7 @@ from invenio_requests.customizations.event_types import (
     LogEventType,
     ReviewersUpdatedType,
 )
-from invenio_requests.proxies import current_events_service
+from invenio_requests.proxies import current_events_service, current_files_service
 
 
 class RequestNumberComponent(ServiceComponent):
@@ -199,3 +199,69 @@ class RequestLockComponent(ServiceComponent):
         event = LogEventType(payload=dict(event="unlocked"))
         _data = dict(payload=event.payload)
         current_events_service.create(identity, record.id, _data, event, uow=uow)
+
+
+# Atomic operation - FileCleanupComponent ensures all-or-nothing
+
+# Auto-delete on removal: When file removed from comment’s files array (via update), automatically deleted from storage
+
+#     Backend handles deletion via FileCleanupComponent in same transaction
+#     Compares old vs new files arrays during comment update
+#     Atomic operation - all-or-nothing guarantee
+#     Prevents orphaned files when user explicitly removes attachment
+
+# FileCleanupComponent compares old vs new files arrays
+
+# Validation component should include file_id in error for identification
+
+# compares old vs new files arrays
+
+
+class RequestCommentFileCleanupComponent(ServiceComponent):
+    """Component for deleteing files which references were removed form a request comment."""
+
+    # """Component for automatic file cleanup on comment deletion."""
+
+    def update_comment(
+        self, identity, data=None, event=None, request=None, uow=None, **kwargs
+    ):
+        """Delete files not referenced anymore in a comment."""
+
+        # The existing (persisted) list of files associated to the comment.
+        file_ids_previous = [
+            file_previous["file_id"] for file_previous in event["payload"]["files"]
+        ]
+        # The new list of files received from the current service call.
+        file_ids_next = [file_next["file_id"] for file_next in data["payload"]["files"]]
+
+        for file_id_previous in file_ids_previous:
+            if file_id_previous not in file_ids_next:
+                current_files_service.delete_file(
+                    identity, event["request_id"], file_id=file_id_previous, uow=uow
+                )
+
+        # TODO: Is this the right place to do this update,
+        #       similar to what is done in RequestEventsService.update for the fields content and format?
+        event["payload"]["files"] = data["payload"]["files"]
+
+    def delete_comment(
+        self, identity, data=None, event=None, request=None, uow=None, **kwargs
+    ):
+        """Delete files not associated to a deleted comment."""
+
+        # The existing (persisted) list of files associated to the comment.
+        file_ids_previous = [
+            file_previous["file_id"] for file_previous in event["payload"]["files"]
+        ]
+
+        # Delete all the files.
+        for file_id_previous in file_ids_previous:
+            current_files_service.delete_file(
+                identity, event["request_id"], file_id=file_id_previous, uow=uow
+            )
+
+
+# TODO: On create_comment and update_comment, make sure that all file references are valid?
+#       Currently it is FilesDumperExt which raises an error when trying to expand in the response,
+#       but the data is probably already persisted by then.
+#       Name the component RequestCommentFileValidationComponent ?
