@@ -10,7 +10,7 @@
 
 """Requests service configuration."""
 
-from invenio_records_resources.services import RecordServiceConfig, SearchOptions
+from invenio_records_resources.services import Link, RecordServiceConfig, SearchOptions
 from invenio_records_resources.services.base.config import (
     ConfiguratorMixin,
     FromConfig,
@@ -18,6 +18,7 @@ from invenio_records_resources.services.base.config import (
     SearchOptionsMixin,
 )
 from invenio_records_resources.services.records.links import pagination_links
+from invenio_records_resources.services.records.results import RecordItem, RecordList
 
 from invenio_requests.services.requests import facets
 

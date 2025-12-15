@@ -12,6 +12,9 @@ from invenio_i18n import lazy_gettext as _
 from invenio_users_resources.entity_resolvers import GroupResolver, UserResolver
 
 from invenio_requests.services.requests import facets
+from invenio_requests.services.requests.components import (
+    RequestCommentFileCleanupComponent,
+)
 
 from .customizations import CommentEventType, LogEventType, ReviewersUpdatedType
 from .services.permissions import PermissionPolicy
@@ -142,3 +145,15 @@ REQUESTS_COMMENT_PREVIEW_LIMIT = 5
 This limits the size of indexed documents when comments have many replies.
 Additional replies can be loaded via pagination.
 """
+
+# TODO: This needs to be documented in docs-invenio-rdm.
+REQUESTS_COMMENTS_ALLOWED_EXTRA_HTML_TAGS = ["img"]
+"""Extend allowed HTML tags list for requests comments content."""
+
+# TODO: Keep `title` and `loading` for consistency with pages (even though we do not propose them in the editor)?
+REQUESTS_COMMENTS_ALLOWED_EXTRA_HTML_ATTRS = {
+    "img": ["src", "alt", "title", "width", "height", "loading"],
+}
+"""Extend allowed HTML attrs list for requests comments content."""
+
+REQUESTS_EVENTS_SERVICE_COMPONENTS = [RequestCommentFileCleanupComponent]

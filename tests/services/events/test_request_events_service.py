@@ -58,6 +58,7 @@ def test_simple_flow(
     assert comment["payload"] == {
         "content": item_dict["payload"]["content"],
         "format": item_dict["payload"]["format"],
+        # "files": item_dict["payload"]["files"],
     }
     id_ = item.id
 
@@ -100,20 +101,18 @@ def test_simple_flow(
     assert 1 == searched_items.total
 
 
-def test_delete_non_comment(
-    events_service_data, example_request, request_events_service
-):
+def test_delete_non_comment(example_request, request_events_service):
     # Deleting a regular comment empties content and changes type (tested above)
     # Deleting an accept/decline/cancel event removes them
     request_id = example_request.id
-    comment = events_service_data["comment"]
-    del comment["payload"]
+    # comment = events_service_data["comment"]
+    # del comment["payload"]
 
     non_comment_types = [
         t for t in current_event_type_registry if t != CommentEventType
     ]
     for typ in non_comment_types:
-        comment["type"] = typ.type_id
+        comment = {"type": typ.type_id}
         item = request_events_service.create(system_identity, request_id, comment, typ)
         event_id = item.id
 

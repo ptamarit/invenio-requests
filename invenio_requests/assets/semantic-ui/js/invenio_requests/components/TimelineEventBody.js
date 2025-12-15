@@ -8,10 +8,25 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import PropTypes from "prop-types";
 import { Button, Popup, ButtonGroup } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_requests/i18next";
+import { humanReadableBytes } from "react-invenio-forms";
+
+// TODO: Use nested_links_item
+function getRequestId() {
+  const prefix = "/requests/";
+  const url = window.location.href;
+  const index = url.indexOf(prefix);
+  const start = index + prefix.length;
+  const end = start + 36;
+  return url.substring(start, end);
+}
 
 export const TimelineEventBody = ({ payload, quoteReply }) => {
   const ref = useRef(null);
   const [selectionRange, setSelectionRange] = useState(null);
+
+  const copyLink = () => {
+    navigator.clipboard.writeText("TODO");
+  };
 
   useEffect(() => {
     if (ref.current === null) return;
@@ -66,7 +81,7 @@ export const TimelineEventBody = ({ payload, quoteReply }) => {
     window.invenio?.onSearchResultsRendered();
   }, []);
 
-  const { format, content, event } = payload;
+  const { format, content, files, event } = payload;
 
   if (!quoteReply) {
     return <span ref={ref}>{content}</span>;
@@ -82,7 +97,7 @@ export const TimelineEventBody = ({ payload, quoteReply }) => {
     );
   }
 
-  return (
+  const contentResult = (
     <Popup
       eventsEnabled={false}
       open={!!tooltipOffset}
@@ -108,6 +123,31 @@ export const TimelineEventBody = ({ payload, quoteReply }) => {
         />
       </ButtonGroup>
     </Popup>
+  );
+
+  const filesList = files?.map((file) => (
+    <ButtonGroup key={file.key} floated="left" className="mr-10 mt-10">
+      <Button
+        basic
+        color="grey"
+        icon="file"
+        content={`${file.original_filename} (${humanReadableBytes(
+          parseInt(file.size, 10),
+          true
+        )})`}
+        as="a"
+        href={`/api/requests/${getRequestId()}/files/${file.key}/content`}
+      />
+      <Button icon="linkify" title="Copy link" onClick={() => copyLink(file.key)} />
+    </ButtonGroup>
+  ));
+
+  return (
+    <>
+      {contentResult}
+      <small>Files:</small>
+      {filesList}
+    </>
   );
 };
 
