@@ -48,6 +48,16 @@ class TimelineCommentReplies extends Component {
     setCommentContent(content, parentRequestEvent.id);
   };
 
+  restoreCommentFiles = () => {
+    const { restoreCommentFiles, parentRequestEvent } = this.props;
+    restoreCommentFiles(parentRequestEvent.id);
+  };
+
+  setCommentFiles = (files) => {
+    const { setCommentFiles, parentRequestEvent } = this.props;
+    setCommentFiles(files, parentRequestEvent.id);
+  };
+
   appendCommentContent = (content) => {
     const { appendCommentContent, parentRequestEvent, setIsReplying } = this.props;
     setIsReplying(parentRequestEvent.id, true);
@@ -174,6 +184,8 @@ class TimelineCommentReplies extends Component {
             // We must declare these as static (non-inline) functions to avoid re-rendering
             restoreCommentContent={this.restoreCommentContent}
             setCommentContent={this.setCommentContent}
+            restoreCommentFiles={this.restoreCommentFiles}
+            setCommentFiles={this.setCommentFiles}
             submitComment={this.submitReply}
             commentContent={draftContent}
             storedCommentContent={storedDraftContent}
