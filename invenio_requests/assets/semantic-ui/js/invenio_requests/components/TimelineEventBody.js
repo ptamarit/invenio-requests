@@ -56,7 +56,7 @@ export const TimelineEventBody = ({ payload, quoteReply }) => {
   }, [selectionRange]);
 
   const onQuoteClick = useCallback(() => {
-    if (!selectionRange) return;
+    if (!selectionRange || !quoteReply) return;
     const selectionString = selectionRange.toString();
     quoteReply(selectionString);
     window.getSelection().removeAllRanges();
@@ -67,6 +67,10 @@ export const TimelineEventBody = ({ payload, quoteReply }) => {
   }, []);
 
   const { format, content, event } = payload;
+
+  if (!quoteReply) {
+    return <span ref={ref}>{content}</span>;
+  }
 
   if (event === "comment_deleted") {
     return (
@@ -109,9 +113,10 @@ export const TimelineEventBody = ({ payload, quoteReply }) => {
 
 TimelineEventBody.propTypes = {
   payload: PropTypes.object,
-  quoteReply: PropTypes.func.isRequired,
+  quoteReply: PropTypes.func,
 };
 
 TimelineEventBody.defaultProps = {
   payload: {},
+  quoteReply: null,
 };
