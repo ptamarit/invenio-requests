@@ -10,6 +10,7 @@
 
 """Requests service."""
 
+from invenio_db import db
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services import RecordService, ServiceSchemaWrapper
 from invenio_records_resources.services.base import LinksTemplate
@@ -48,6 +49,11 @@ class RequestsService(RecordService):
     def request_type_registry(self):
         """Request_type_registry."""
         return current_request_type_registry
+
+    @property
+    def files(self):
+        """Request files service."""
+        return self.config.files_service_config
 
     def _wrap_schema(self, schema):
         """Wrap schema."""
