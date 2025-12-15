@@ -10,6 +10,8 @@ import {
   REPLY_RESTORE_DRAFT_CONTENT,
   REPLY_SET_DRAFT_CONTENT,
   REPLY_UPDATE_COMMENT,
+  REPLY_SET_DRAFT_FILES,
+  REPLY_RESTORE_DRAFT_FILES,
   setInitialReplies,
   setIsReplying,
   submitReply,
@@ -17,6 +19,8 @@ import {
 import {
   restoreEventContent,
   setEventContent,
+  restoreEventFiles,
+  setEventFiles,
 } from "../timelineCommentEditor/state/actions.js";
 import {
   deleteComment,
@@ -47,6 +51,10 @@ const mapDispatchToProps = {
     setEventContent(content, parentRequestEventId, REPLY_SET_DRAFT_CONTENT),
   restoreCommentContent: (parentRequestEventId) =>
     restoreEventContent(parentRequestEventId, REPLY_RESTORE_DRAFT_CONTENT),
+  setCommentFiles: (files, parentRequestEventId) =>
+    setEventFiles(files, parentRequestEventId, REPLY_SET_DRAFT_FILES),
+  restoreCommentFiles: (parentRequestEventId) =>
+    restoreEventFiles(parentRequestEventId, REPLY_RESTORE_DRAFT_FILES),
   appendCommentContent: (content, parentRequestEventId) =>
     appendEventContent(parentRequestEventId, content),
   submitReply,
