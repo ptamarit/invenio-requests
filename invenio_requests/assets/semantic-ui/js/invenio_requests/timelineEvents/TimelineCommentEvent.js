@@ -211,6 +211,7 @@ class TimelineCommentEvent extends Component {
                         setFiles={(files) => {
                           this.setState({ files: files });
                         }}
+                        filesImmediateDeletion={false}
                         minHeight={150}
                       />
                     </>
