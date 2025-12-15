@@ -91,6 +91,7 @@ const TimelineCommentEditor = ({
             setFiles={(files) => {
               setCommentFiles(files);
             }}
+            filesImmediateDeletion={true}
             onEditorChange={(event, editor) => {
               // TODO: Store the list of files too, and not only on editor change, but also on files change.
               setCommentContent(editor.getContent());
