@@ -8,7 +8,7 @@ export const payloadSerializer = (content, format, files) => ({
     content,
     format,
     files: files.map((file) => ({
-      file_id: file.id,
+      file_id: file.file_id,
     })),
   },
 });

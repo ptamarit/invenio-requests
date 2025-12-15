@@ -195,7 +195,8 @@ class FileDetailsSchema(Schema):
     original_filename = fields.String()
     size = fields.Integer()
     mimetype = fields.String()
-    created = fields.DateTime()
+    # TODO: This fails to call .isoformat() on a String
+    created = fields.String()
 
 
 class CommentEventType(EventType):
