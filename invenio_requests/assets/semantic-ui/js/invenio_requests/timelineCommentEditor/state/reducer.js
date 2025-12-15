@@ -11,19 +11,41 @@ import {
   SUCCESS,
   PARENT_RESTORE_DRAFT_CONTENT,
   PARENT_SET_DRAFT_CONTENT,
+  SETTING_CONTENT,
+  RESTORE_CONTENT,
+  APPEND_CONTENT,
+  SETTING_FILES,
+  RESTORE_FILES,
 } from "./actions";
 
 const initialState = {
   error: null,
   isLoading: false,
   commentContent: "",
+  files: [],
+  // commentContent: {comment: "", files: []},
   storedCommentContent: null,
+  // TODO: appendedCommentContent not here anymore?
+  appendedCommentContent: "",
+  // filesList: ,
 };
 
 export const commentEditorReducer = (state = initialState, action) => {
   switch (action.type) {
     case PARENT_SET_DRAFT_CONTENT:
       return { ...state, commentContent: action.payload.content };
+    case SETTING_CONTENT:
+      return { ...state, commentContent: action.payload };
+    case SETTING_FILES:
+      return { ...state, files: action.payload };
+    case APPEND_CONTENT:
+      return {
+        ...state,
+        commentContent: state.commentContent + action.payload,
+        // We keep track of appended content separately to trigger the focus event only when
+        // text is appended (not when the user is typing).
+        appendedCommentContent: state.appendedCommentContent + action.payload,
+      };
     case IS_LOADING:
       return { ...state, isLoading: true };
     case HAS_ERROR:
@@ -34,6 +56,7 @@ export const commentEditorReducer = (state = initialState, action) => {
         isLoading: false,
         error: null,
         commentContent: "",
+        files: [],
       };
     case PARENT_RESTORE_DRAFT_CONTENT:
       return {
@@ -41,6 +64,11 @@ export const commentEditorReducer = (state = initialState, action) => {
         commentContent: action.payload.content,
         // We'll never change this later, so it can be used as an `initialValue`
         storedCommentContent: action.payload.content,
+      };
+    case RESTORE_FILES:
+      return {
+        ...state,
+        files: action.payload,
       };
     default:
       return state;

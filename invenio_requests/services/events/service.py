@@ -29,6 +29,7 @@ from invenio_search.engine import dsl
 from invenio_requests.customizations import CommentEventType
 from invenio_requests.customizations.event_types import LogEventType
 from invenio_requests.proxies import current_requests_service as requests_service
+from invenio_requests.records.dumpers.files import FilesDumperExt
 from invenio_requests.services.results import EntityResolverExpandableField
 
 from ...errors import (
@@ -111,6 +112,13 @@ class RequestEventsService(RecordService):
         # Validate data (if there are errors, .load() raises)
         schema = self._wrap_schema(event_type.marshmallow_schema())
 
+        # "files": [
+        #   {"file_id": "abc-1234-..."},
+        #   {"file_id": "def-5678-..."}
+        # ]
+        # breakpoint()
+        # TODO: Dump extra stuff in OpenSearch
+
         data, errors = schema.load(
             data,
             context={"identity": identity},
@@ -163,7 +171,10 @@ class RequestEventsService(RecordService):
 
             uow.register(NotificationOp(builder.build(request, event)))
 
-        return self.result_item(
+        # TODO: This is clearly not the correct way of expanding files information here.
+        FilesDumperExt().dump(event, data)
+
+        result_item = self.result_item(
             self,
             identity,
             event,
@@ -175,6 +186,8 @@ class RequestEventsService(RecordService):
             expand=expand,
             request=request,
         )
+
+        return result_item
 
     def read(self, identity, id_, expand=False):
         """Retrieve a record."""
@@ -249,6 +262,11 @@ class RequestEventsService(RecordService):
         # Reindex the request to update events-related computed fields
         uow.register(RecordIndexOp(request, indexer=requests_service.indexer))
 
+        # TODO: This is clearly not the correct way of expanding files information here.
+        FilesDumperExt().dump(event, data)
+
+        # breakpoint()
+
         return self.result_item(
             self,
             identity,
@@ -294,7 +312,6 @@ class RequestEventsService(RecordService):
             data,
             context=dict(identity=identity, record=event, event_type=event.type),
         )
-        event["payload"] = data["payload"]
 
         # Run components
         self.run_components(
@@ -305,6 +322,10 @@ class RequestEventsService(RecordService):
             request=request,
             uow=uow,
         )
+
+        # Moving this assignment after run_components,
+        # so that the list of files to be deleted can be accessed by RequestCommentFileCleanupComponent.
+        event["payload"] = data["payload"]
 
         # Commit the updated comment
         uow.register(RecordCommitOp(event, indexer=self.indexer))
@@ -368,7 +389,7 @@ class RequestEventsService(RecordService):
         # Execute search
         search_result = search.execute()
 
-        return self.result_list(
+        result = self.result_list(
             self,
             identity,
             search_result,
@@ -383,6 +404,8 @@ class RequestEventsService(RecordService):
             expand=expand,
             request=request,
         )
+        # breakpoint()
+        return result
 
     def focused_list(
         self,
