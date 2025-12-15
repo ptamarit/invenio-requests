@@ -23,6 +23,8 @@ export const CLEAR_DRAFT = "timelineReplies/CLEAR_DRAFT";
 export const REPLY_APPEND_DRAFT_CONTENT = "timelineReplies/APPEND_DRAFT_CONTENT";
 export const REPLY_SET_DRAFT_CONTENT = "timelineReplies/SET_DRAFT_CONTENT";
 export const REPLY_RESTORE_DRAFT_CONTENT = "timelineReplies/RESTORE_DRAFT_CONTENT";
+export const REPLY_SET_DRAFT_FILES = "timelineReplies/SET_DRAFT_FILES";
+export const REPLY_RESTORE_DRAFT_FILES = "timelineReplies/RESTORE_DRAFT_FILES";
 export const REPLY_UPDATE_COMMENT = "timelineReplies/UPDATE_COMMENT";
 export const REPLY_DELETE_COMMENT = "timelineReplies/DELETE_COMMENT";
 
