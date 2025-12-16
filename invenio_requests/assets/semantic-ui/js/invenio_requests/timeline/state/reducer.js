@@ -6,7 +6,6 @@
 
 import { i18next } from "@translations/invenio_requests/i18next";
 import {
-  CHANGE_PAGE,
   HAS_ERROR,
   IS_LOADING,
   IS_REFRESHING,
@@ -14,101 +13,159 @@ import {
   PARENT_DELETED_COMMENT,
   PARENT_UPDATED_COMMENT,
   SUCCESS,
+  APPEND_PAGE,
+  LOADING_AFTER_FIRST_PAGE,
+  LOADING_AFTER_FOCUSED_PAGE,
 } from "./actions";
 import _cloneDeep from "lodash/cloneDeep";
 
 export const initialState = {
-  loading: false,
-  refreshing: false,
-  data: {},
+  initialLoading: false,
+  lastPageRefreshing: false,
+  firstPageHits: [],
+  afterFirstPageHits: [],
+  focusedPageHits: [],
+  afterFocusedPageHits: [],
+  lastPageHits: [],
+  totalHits: 0,
   error: null,
   size: 15,
   page: 1,
+  focusedPage: null,
+  lastPage: null,
   warning: null,
+  loadingAfterFirstPage: false,
+  loadingAfterFocusedPage: false,
 };
 
-const newStateWithUpdate = (updatedRequestEvent, currentTimelineData) => {
-  // return timeline with the updated comment
-  const timelineState = _cloneDeep(currentTimelineData);
-  const currentHits = timelineState.hits.hits;
-  const currentCommentKey = currentHits.findIndex(
-    (comment) => comment.id === updatedRequestEvent.id
-  );
+const newStateWithUpdate = (updatedComment, timelineState) => {
+  const timelineClone = _cloneDeep(timelineState);
 
-  currentHits[currentCommentKey] = updatedRequestEvent;
+  const updateHits = (hitsArray) => {
+    if (!hitsArray) return;
+    const idx = hitsArray.findIndex((c) => c.id === updatedComment.id);
+    if (idx !== -1) hitsArray[idx] = updatedComment;
+  };
 
-  return timelineState;
+  // Update in firstPageData, afterFirstPageHits, focusedPageData, afterFocusedPageHits, lastPageData
+  updateHits(timelineClone.firstPageHits);
+  updateHits(timelineClone.afterFirstPageHits);
+  updateHits(timelineClone.focusedPageHits);
+  updateHits(timelineClone.afterFocusedPageHits);
+  updateHits(timelineClone.lastPageHits);
+
+  return timelineClone;
 };
 
-const newStateWithDelete = (requestEventId, currentTimelineData) => {
-  // return timeline with the deleted comment replaced by the deletion event
-  const timelineState = _cloneDeep(currentTimelineData);
-  const currentHits = timelineState.hits.hits;
-
-  const indexCommentToDelete = currentHits.findIndex(
-    (comment) => comment.id === requestEventId
-  );
-
-  const currentComment = currentHits[indexCommentToDelete];
-
+const newStateWithDelete = (requestEventId, timelineState) => {
+  const timelineClone = _cloneDeep(timelineState);
   const deletionPayload = {
     content: "comment was deleted",
-    format: "html",
     event: "comment_deleted",
+    format: "html",
   };
 
-  currentHits[indexCommentToDelete] = {
-    ...currentComment,
-    type: "L",
-    payload: deletionPayload,
+  const replaceInHits = (hitsArray) => {
+    if (!hitsArray) return;
+    const idx = hitsArray.findIndex((c) => c.id === requestEventId);
+    if (idx !== -1) {
+      hitsArray[idx] = {
+        ...hitsArray[idx],
+        type: "L",
+        payload: deletionPayload,
+      };
+    }
   };
 
-  return timelineState;
+  // Delete in firstPageData, afterFirstPageHits, focusedPageData, afterFocusedPageHits, lastPageData
+  replaceInHits(timelineClone.firstPageHits);
+  replaceInHits(timelineClone.afterFirstPageHits);
+  replaceInHits(timelineClone.focusedPageHits);
+  replaceInHits(timelineClone.afterFocusedPageHits);
+  replaceInHits(timelineClone.lastPageHits);
+
+  return timelineClone;
+};
+
+const newStateWithAppendedHits = (newHits, after, state) => {
+  if (after === "first") {
+    return {
+      ...state,
+      afterFirstPageHits: [...state.afterFirstPageHits, ...newHits],
+    };
+  } else if (after === "focused") {
+    return {
+      ...state,
+      afterFocusedPageHits: [...state.afterFocusedPageHits, ...newHits],
+    };
+  } else {
+    throw new Error("Invalid `after` value");
+  }
 };
 
 export const timelineReducer = (state = initialState, action) => {
   switch (action.type) {
     case IS_LOADING:
-      return { ...state, loading: true };
+      return { ...state, initialLoading: true };
     case IS_REFRESHING:
-      return { ...state, refreshing: true };
+      return { ...state, lastPageRefreshing: true };
     case SUCCESS:
       return {
         ...state,
-        refreshing: false,
-        loading: false,
-        data: action.payload,
+        lastPageRefreshing: false,
+        initialLoading: false,
+        firstPageHits: action.payload.firstPageHits ?? state.firstPageHits,
+        afterFirstPageHits:
+          action.payload.afterFirstPageHits ?? state.afterFirstPageHits,
+        focusedPageHits: action.payload.focusedPageHits ?? state.focusedPageHits,
+        afterFocusedPageHits:
+          action.payload.afterFocusedPageHits ?? state.afterFocusedPageHits,
+        lastPageHits: action.payload.lastPageHits ?? state.lastPageHits,
+        focusedPage: action.payload.focusedPage ?? state.focusedPage,
+        lastPage: action.payload.lastPage ?? state.lastPage,
+        totalHits: action.payload.totalHits ?? state.totalHits,
         error: null,
+      };
+    case APPEND_PAGE:
+      return {
+        ...newStateWithAppendedHits(
+          action.payload.newHits,
+          action.payload.after,
+          state
+        ),
+        page: action.payload.after === "first" ? action.payload.page : state.page,
+        focusedPage:
+          action.payload.after === "focusedPage" ? action.payload.page : state.page,
+        loadingAfterFirstPage:
+          action.payload.after === "first" ? false : state.loadingAfterFirstPage,
+        loadingAfterFocusedPage:
+          action.payload.after === "focused" ? false : state.loadingAfterFocusedPage,
       };
     case HAS_ERROR:
       return {
         ...state,
-        refreshing: false,
-        loading: false,
+        lastPageRefreshing: false,
+        initialLoading: false,
         error: action.payload,
-      };
-    case CHANGE_PAGE:
-      return {
-        ...state,
-        page: action.payload,
-        warning: null,
       };
     case MISSING_REQUESTED_EVENT:
       return {
         ...state,
-        warning: i18next.t(
-          "The requested comment was not found. The first page of comments is shown instead."
-        ),
+        warning: i18next.t("We couldn't find the comment you were looking for."),
       };
     case PARENT_UPDATED_COMMENT:
-      return {
-        ...state,
-        data: newStateWithUpdate(action.payload.updatedComment, state.data),
-      };
+      return newStateWithUpdate(action.payload.updatedComment, state);
     case PARENT_DELETED_COMMENT:
+      return newStateWithDelete(action.payload.deletedCommentId, state);
+    case LOADING_AFTER_FIRST_PAGE:
       return {
         ...state,
-        data: newStateWithDelete(action.payload.deletedCommentId, state.data),
+        loadingAfterFirstPage: true,
+      };
+    case LOADING_AFTER_FOCUSED_PAGE:
+      return {
+        ...state,
+        loadingAfterFocusedPage: true,
       };
 
     default:

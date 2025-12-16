@@ -12,18 +12,20 @@ import { Container, Feed, Icon } from "semantic-ui-react";
 
 // Wrapper component for the custom styles being used inside the request events timeline
 // Enables centralizing the styles and abstracts it away from the template
-export const RequestsFeed = ({ children }) => (
+export const RequestsFeed = ({ children, className }) => (
   <Container className="requests-feed-container rich-input-content ml-0-mobile mr-0-mobile">
-    <Feed>{children}</Feed>
+    <Feed className={className}>{children}</Feed>
   </Container>
 );
 
 RequestsFeed.propTypes = {
   children: PropTypes.node,
+  className: PropTypes.string,
 };
 
 RequestsFeed.defaultProps = {
   children: null,
+  className: null,
 };
 
 export const RequestEventItem = forwardRef(function RequestEventItem(

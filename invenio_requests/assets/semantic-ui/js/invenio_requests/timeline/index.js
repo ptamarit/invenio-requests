@@ -7,8 +7,10 @@
 import { connect } from "react-redux";
 import {
   getTimelineWithRefresh,
-  setPage,
   clearTimelineInterval,
+  appendPage,
+  setLoadingForLoadMore,
+  fetchNextTimelinePage,
 } from "./state/actions";
 import TimelineFeedComponent from "./TimelineFeed";
 
@@ -16,13 +18,15 @@ const mapDispatchToProps = (dispatch) => ({
   getTimelineWithRefresh: (includeEventId) =>
     dispatch(getTimelineWithRefresh(includeEventId)),
   timelineStopRefresh: () => dispatch(clearTimelineInterval()),
-  setPage: (page) => dispatch(setPage(page)),
+  fetchNextTimelinePage: (after) => dispatch(fetchNextTimelinePage(after)),
+  appendPage: (payload) => dispatch(appendPage(payload)),
+  setLoadingForLoadMore: (type) => dispatch(setLoadingForLoadMore(type)),
 });
 
 const mapStateToProps = (state) => ({
-  loading: state.timeline.loading,
-  refreshing: state.timeline.refreshing,
-  timeline: state.timeline.data,
+  initialLoading: state.timeline.initialLoading,
+  lastPageRefreshing: state.timeline.lastPageRefreshing,
+  timeline: state.timeline,
   error: state.timeline.error,
   isSubmitting: state.timelineCommentEditor.isLoading,
   size: state.timeline.size,

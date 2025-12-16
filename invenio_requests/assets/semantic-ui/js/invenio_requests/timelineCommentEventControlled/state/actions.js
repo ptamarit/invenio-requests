@@ -1,7 +1,7 @@
 // This file is part of InvenioRequests
 // Copyright (C) 2022 CERN.
 //
-// Invenio RDM Records is free software; you can redistribute it and/or modify it
+// Invenio Requests is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import { clearTimelineInterval } from "../../timeline/state/actions";
@@ -15,7 +15,7 @@ export const updateComment = ({
   successEvent,
   loadingEvent,
 }) => {
-  return async (dispatch, getState, config) => {
+  return async (dispatch, _, config) => {
     dispatch(clearTimelineInterval());
     const commentsApi = config.requestEventsApi(requestEventData.links);
 
@@ -48,7 +48,7 @@ export const deleteComment = ({
   loadingEvent,
   successEvent,
 }) => {
-  return async (dispatch, getState, config) => {
+  return async (dispatch, _, config) => {
     dispatch(clearTimelineInterval());
     const commentsApi = config.requestEventsApi(requestEventData.links);
 
