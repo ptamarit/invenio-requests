@@ -173,6 +173,7 @@ class RequestCommentsResource(RecordResource):
             request_id=resource_requestctx.view_args["request_id"],
             focus_event_id=resource_requestctx.args.get("focus_event_id"),
             page_size=resource_requestctx.args.get("size"),
+            expand=resource_requestctx.args.get("expand", False),
         )
         return hits.to_dict(), 200
 
