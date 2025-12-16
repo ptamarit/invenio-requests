@@ -17,11 +17,14 @@ export const HAS_ERROR = "eventEditor/HAS_ERROR";
 export const SUCCESS = "eventEditor/SUCCESS";
 export const PARENT_SET_DRAFT_CONTENT = "eventEditor/SETTING_CONTENT";
 export const PARENT_RESTORE_DRAFT_CONTENT = "eventEditor/RESTORE_CONTENT";
-export const SETTING_CONTENT = "eventEditor/SETTING_CONTENT";
-export const RESTORE_CONTENT = "eventEditor/RESTORE_CONTENT";
+export const PARENT_SET_DRAFT_FILES = "eventEditor/SETTING_FILES";
+export const PARENT_RESTORE_DRAFT_FILES = "eventEditor/RESTORE_FILES";
+export const SETTING_CONTENT = "eventEditor/SETTING_CONTENT"; // TODO: Duplicate?
+export const RESTORE_CONTENT = "eventEditor/RESTORE_CONTENT"; // TODO: Duplicate?
 export const APPEND_CONTENT = "eventEditor/APPENDING_CONTENT";
-export const SETTING_FILES = "eventEditor/SETTING_FILES";
-export const RESTORE_FILES = "eventEditor/RESTORE_FILES";
+export const SETTING_FILES = "eventEditor/SETTING_FILES"; // TODO: Duplicate?
+export const RESTORE_FILES = "eventEditor/RESTORE_FILES"; // TODO: Duplicate?
+
 
 const draftCommentKey = (requestId, parentRequestEventId) =>
   `draft-comment-${requestId}${parentRequestEventId ? "-" + parentRequestEventId : ""}`;
@@ -35,16 +38,17 @@ export const deleteDraftComment = (requestId, parentRequestEventId) => {
   localStorage.removeItem(draftCommentKey(requestId, parentRequestEventId));
 };
 
-const draftFilesKey = (requestId) => `draft-files-${requestId}`;
+const draftFilesKey = (requestId, parentRequestEventId) =>
+  `draft-files-${requestId}${parentRequestEventId ? "-" + parentRequestEventId : ""}`;
 // TODO: Is it safe to JSON stringify/parse with localStorage?
-const setDraftFiles = (requestId, files) => {
-  localStorage.setItem(draftFilesKey(requestId), JSON.stringify(files));
+export const setDraftFiles = (requestId, parentRequestEventId, files) => {
+  localStorage.setItem(draftFilesKey(requestId, parentRequestEventId), JSON.stringify(files));
 };
-const getDraftFiles = (requestId) => {
-  return JSON.parse(localStorage.getItem(draftFilesKey(requestId)));
+export const getDraftFiles = (requestId, parentRequestEventId) => {
+  return JSON.parse(localStorage.getItem(draftFilesKey(requestId, parentRequestEventId)));
 };
-const deleteDraftFiles = (requestId) => {
-  localStorage.removeItem(draftFilesKey(requestId));
+export const deleteDraftFiles = (requestId, parentRequestEventId) => {
+  localStorage.removeItem(draftFilesKey(requestId, parentRequestEventId));
 };
 
 export const setEventContent = (content, parentRequestEventId, event) => {
@@ -69,16 +73,21 @@ export const setEventContent = (content, parentRequestEventId, event) => {
   };
 };
 
-export const setEventFiles = (files) => {
+export const setEventFiles = (files, parentRequestEventId, event) => {
   return async (dispatch, getState, config) => {
     dispatch({
-      type: SETTING_FILES,
-      payload: files,
+      type: event,
+      // payload: files,
+      // TODO: Or this?
+      payload: {
+        parentRequestEventId,
+        files,
+      },
     });
     const { request } = getState();
 
     try {
-      setDraftFiles(request.data.id, files);
+      setDraftFiles(request.data.id, parentRequestEventId, files);
     } catch (e) {
       // This should not be a fatal error. The comment editor is still usable if
       // draft saving isn't working (e.g. on very old browsers or ultra-restricted
@@ -110,20 +119,27 @@ export const restoreEventContent = (parentRequestEventId, event) => {
   };
 };
 
-export const restoreEventFiles = () => {
+export const restoreEventFiles = (parentRequestEventId, event) => {
   return (dispatch, getState, config) => {
     const { request } = getState();
-    let savedDraft = null;
+    let savedDraftFiles = null;
     try {
-      savedDraft = getDraftFiles(request.data.id);
+      savedDraftFiles = getDraftFiles(request.data.id, parentRequestEventId);
+      console.log({savedDraftFiles});
     } catch (e) {
       console.warn("Failed to get saved files:", e);
     }
 
-    if (savedDraft) {
+    if (savedDraftFiles) {
+      console.log({event});
       dispatch({
-        type: RESTORE_FILES,
-        payload: savedDraft,
+        type: event,
+        // payload: savedDraftFiles,
+        // TODO: Or this?
+        payload: {
+          parentRequestEventId,
+          files: savedDraftFiles,
+        },
       });
     }
   };

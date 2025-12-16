@@ -11,6 +11,8 @@ import {
   SUCCESS,
   PARENT_RESTORE_DRAFT_CONTENT,
   PARENT_SET_DRAFT_CONTENT,
+  PARENT_RESTORE_DRAFT_FILES,
+  PARENT_SET_DRAFT_FILES,
   SETTING_CONTENT,
   RESTORE_CONTENT,
   APPEND_CONTENT,
@@ -33,10 +35,19 @@ const initialState = {
 export const commentEditorReducer = (state = initialState, action) => {
   switch (action.type) {
     case PARENT_SET_DRAFT_CONTENT:
+      console.log("PARENT_SET_DRAFT_CONTENT")
       return { ...state, commentContent: action.payload.content };
     case SETTING_CONTENT:
+      console.log("SETTING_CONTENT")
       return { ...state, commentContent: action.payload };
+    case PARENT_SET_DRAFT_FILES:
+      console.log("PARENT_SET_DRAFT_FILES")
+      // TODO: Or this?
+      // return { ...state, files: action.payload };
+      return { ...state, files: action.payload.files };
     case SETTING_FILES:
+      // TODO: Needed? Used?
+      console.log("SETTING_FILES")
       return { ...state, files: action.payload };
     case APPEND_CONTENT:
       return {
@@ -59,13 +70,26 @@ export const commentEditorReducer = (state = initialState, action) => {
         files: [],
       };
     case PARENT_RESTORE_DRAFT_CONTENT:
+      console.log("PARENT_RESTORE_DRAFT_CONTENT");
       return {
         ...state,
         commentContent: action.payload.content,
         // We'll never change this later, so it can be used as an `initialValue`
         storedCommentContent: action.payload.content,
       };
+    case PARENT_RESTORE_DRAFT_FILES:
+      console.log("PARENT_RESTORE_DRAFT_FILES");
+      console.log({state});
+      console.log(action.payload);
+      return {
+        ...state,
+        files: action.payload.files,
+        // TODO: Or this?
+        // files: action.payload,
+      };
     case RESTORE_FILES:
+      console.log("RESTORE_FILES");
+      // TODO: Needed? Used?
       return {
         ...state,
         files: action.payload,
