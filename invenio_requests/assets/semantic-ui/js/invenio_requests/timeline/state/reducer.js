@@ -135,7 +135,7 @@ export const timelineReducer = (state = initialState, action) => {
         ),
         page: action.payload.after === "first" ? action.payload.page : state.page,
         focusedPage:
-          action.payload.after === "focusedPage" ? action.payload.page : state.page,
+          action.payload.after === "focused" ? action.payload.page : state.focusedPage,
         loadingAfterFirstPage:
           action.payload.after === "first" ? false : state.loadingAfterFirstPage,
         loadingAfterFocusedPage:
