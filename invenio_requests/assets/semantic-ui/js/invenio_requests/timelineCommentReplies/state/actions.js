@@ -8,6 +8,9 @@ import { errorSerializer, payloadSerializer } from "../../api/serializers";
 import {
   deleteDraftComment,
   setDraftComment,
+  deleteDraftFiles,
+  // TODO: Unused import
+  setDraftFiles,
 } from "../../timelineCommentEditor/state/actions";
 import { selectCommentReplies, selectCommentRepliesStatus } from "./reducer";
 
@@ -41,6 +44,7 @@ export const appendEventContent = (parentRequestEventId, content) => {
     const { request } = getState();
     try {
       setDraftComment(request.data.id, parentRequestEventId, content);
+      // TODO: Something about files here?
     } catch (e) {
       console.warn("Failed to save comment:", e);
     }
@@ -129,7 +133,7 @@ export const loadOlderReplies = (parentRequestEvent) => {
   };
 };
 
-export const submitReply = (parentRequestEvent, content, format) => {
+export const submitReply = (parentRequestEvent, content, format, files) => {
   return async (dispatch, getState, config) => {
     const { request } = getState();
 
@@ -140,7 +144,7 @@ export const submitReply = (parentRequestEvent, content, format) => {
       },
     });
 
-    const payload = payloadSerializer(content, format || "html");
+    const payload = payloadSerializer(content, format || "html", files);
 
     try {
       const response = await config
@@ -149,6 +153,7 @@ export const submitReply = (parentRequestEvent, content, format) => {
 
       try {
         deleteDraftComment(request.data.id, parentRequestEvent.id);
+        deleteDraftFiles(request.data.id, parentRequestEvent.id);
       } catch (e) {
         console.warn("Failed to delete saved comment:", e);
       }
@@ -187,6 +192,7 @@ export const clearDraft = (parentRequestEvent) => {
   return (dispatch, getState) => {
     const { request } = getState();
     deleteDraftComment(request.data.id, parentRequestEvent.id);
+    deleteDraftFiles(request.data.id, parentRequestEvent.id);
     dispatch({
       type: CLEAR_DRAFT,
       payload: {

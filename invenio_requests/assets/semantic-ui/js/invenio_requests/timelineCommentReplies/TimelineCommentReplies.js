@@ -64,9 +64,9 @@ class TimelineCommentReplies extends Component {
     appendCommentContent(content, parentRequestEvent.id);
   };
 
-  submitReply = (content, format) => {
+  submitReply = (content, format, files) => {
     const { submitReply, parentRequestEvent } = this.props;
-    submitReply(parentRequestEvent, content, format);
+    submitReply(parentRequestEvent, content, format, files);
   };
 
   onLoadMoreClick = () => {
@@ -100,6 +100,7 @@ class TimelineCommentReplies extends Component {
       userAvatar,
       draftContent,
       storedDraftContent,
+      draftFiles,
       appendedDraftContent,
       totalReplyCount,
       submitting,
@@ -189,6 +190,7 @@ class TimelineCommentReplies extends Component {
             submitComment={this.submitReply}
             commentContent={draftContent}
             storedCommentContent={storedDraftContent}
+            files={draftFiles}
             appendedCommentContent={appendedDraftContent}
             userAvatar={userAvatar}
             isLoading={submitting}
@@ -218,6 +220,8 @@ TimelineCommentReplies.propTypes = {
   error: PropTypes.string,
   draftContent: PropTypes.string.isRequired,
   storedDraftContent: PropTypes.string.isRequired,
+  draftFiles: PropTypes.array.isRequired,
+  // files: PropTypes.array.isRequired,
   appendedDraftContent: PropTypes.string.isRequired,
   submitReply: PropTypes.func.isRequired,
   setInitialReplies: PropTypes.func.isRequired,
