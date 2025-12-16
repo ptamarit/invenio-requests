@@ -126,7 +126,7 @@ export const TimelineEventBody = ({ payload, quoteReply }) => {
   );
 
   const filesList = files?.map((file) => (
-    <ButtonGroup key={file.key} floated="left" className="mr-10 mt-10">
+    <ButtonGroup key={file.key} className="mr-10 mt-10">
       <Button
         basic
         color="grey"
@@ -145,7 +145,6 @@ export const TimelineEventBody = ({ payload, quoteReply }) => {
   return (
     <>
       {contentResult}
-      <small>Files:</small>
       {filesList}
     </>
   );
