@@ -9,6 +9,11 @@
 Changes
 =======
 
+Version v11.2.0 (released 2025-12-16)
+
+- feat(comments): replace pagination with "collapsed" section design
+- fix(timeline): pass correct props to TimelineEventBody
+
 Version v11.1.0 (released 2025-12-13)
 
 - fix(reducer): remove unused PARENT_APPEND_DRAFT_CONTENT action
