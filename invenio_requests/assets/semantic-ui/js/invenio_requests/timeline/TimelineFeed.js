@@ -203,7 +203,10 @@ class TimelineFeed extends Component {
                 </RequestsFeed>
               )}
 
-              <TimelineCommentEditor userAvatar={userAvatar} />
+              <TimelineCommentEditor
+                userAvatar={userAvatar}
+                canCreateComment={permissions.can_create_comment}
+              />
               <DeleteConfirmationModal
                 open={modalOpen}
                 action={modalAction}
