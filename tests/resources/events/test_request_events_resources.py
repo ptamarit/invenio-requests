@@ -59,7 +59,11 @@ def test_simple_comment_flow(
             "self_html": f"https://127.0.0.1:5000/requests/{request_id}#commentevent-{comment_id}",
         },
         "parent_id": None,
-        "permissions": {"can_update_comment": True, "can_delete_comment": True},
+        "permissions": {
+            "can_update_comment": True,
+            "can_delete_comment": True,
+            "can_reply_comment": True,
+        },
         "revision_id": 1,
         "type": CommentEventType.type_id,
     }
@@ -105,7 +109,11 @@ def test_simple_comment_flow(
             "self_html": f"https://127.0.0.1:5000/requests/{request_id}#commentevent-{comment_id}",
         },
         "parent_id": None,
-        "permissions": {"can_update_comment": True, "can_delete_comment": True},
+        "permissions": {
+            "can_update_comment": True,
+            "can_delete_comment": True,
+            "can_reply_comment": True,
+        },
         "revision_id": 2,
         "type": CommentEventType.type_id,
     }
@@ -135,6 +143,7 @@ def test_simple_comment_flow(
         "permissions": {
             "can_update_comment": False,
             "can_delete_comment": False,
+            "can_reply_comment": True,
         },
     }
     assert_api_response_json(

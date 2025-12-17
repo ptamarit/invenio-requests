@@ -18,7 +18,6 @@ from invenio_records_resources.services import (
 from invenio_records_resources.services.base.config import ConfiguratorMixin, FromConfig
 from invenio_records_resources.services.records.links import pagination_links
 from invenio_records_resources.services.records.results import (
-    FieldsResolver,
     RecordItem,
     RecordList,
 )
@@ -35,10 +34,44 @@ from ..schemas import RequestEventSchema
 class RequestEventItem(RecordItem):
     """RequestEvent result item."""
 
+    def __init__(self, *args, **kwargs):
+        """Constructor."""
+        request = kwargs.pop("request", None)
+        super().__init__(*args, **kwargs)
+        self._request = request
+
     @property
     def id(self):
         """Id property."""
         return self._record.id
+
+    @property
+    def data(self):
+        """Property to get the record projection with request in context."""
+        if self._data:
+            return self._data
+
+        self._data = self._schema.dump(
+            self._obj,
+            context=dict(
+                identity=self._identity,
+                record=self._record,
+                request=self._request,  # Need to pass the request to the schema to get the permissions to check if locked
+            ),
+        )
+        if self._links_tpl:
+            self._data["links"] = self.links
+
+        if self._nested_links_item:
+            for link in self._nested_links_item:
+                link.expand(self._identity, self._record, self._data)
+
+        if self._expand and self._fields_resolver:
+            self._fields_resolver.resolve(self._identity, [self._data])
+            fields = self._fields_resolver.expand(self._identity, self._data)
+            self._data["expanded"] = fields
+
+        return self._data
 
 
 class RequestEventList(RecordList):
@@ -133,6 +166,8 @@ class RequestEventList(RecordList):
                         context=dict(
                             identity=self._identity,
                             record=child_record,
+                            request=self._request,  # Need to pass the request to the schema to get the permissions to check if locked
+                            meta=hit.meta,
                         ),
                     )
 

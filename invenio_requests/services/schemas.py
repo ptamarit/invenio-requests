@@ -47,20 +47,31 @@ class RequestEventSchema(BaseRecordSchema):
         is_comment = obj.type == CommentEventType
         if is_comment:
             service = current_requests.request_events_service
-            return {
+            request = self.context.get("request", None)
+            permissions = {
                 "can_update_comment": service.check_permission(
                     self.context["identity"],
                     "update_comment",
                     event=obj,
-                    request=self.context.get("request", None),
+                    request=request,
                 ),
                 "can_delete_comment": service.check_permission(
                     self.context["identity"],
                     "delete_comment",
                     event=obj,
-                    request=self.context.get("request", None),
+                    request=request,
                 ),
             }
+
+            if request is not None:
+                permissions["can_reply_comment"] = service.check_permission(
+                    self.context["identity"],
+                    "reply_comment",
+                    event=obj,
+                    request=request,
+                )
+
+            return permissions
         else:
             return {}
 

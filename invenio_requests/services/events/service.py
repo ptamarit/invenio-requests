@@ -173,6 +173,7 @@ class RequestEventsService(RecordService):
             ),
             expandable_fields=self.expandable_fields,
             expand=expand,
+            request=request,
         )
 
     def read(self, identity, id_, expand=False):
@@ -192,6 +193,7 @@ class RequestEventsService(RecordService):
             ),
             expandable_fields=self.expandable_fields,
             expand=expand,
+            request=request,
         )
 
     @unit_of_work()
@@ -224,7 +226,9 @@ class RequestEventsService(RecordService):
         schema = self._wrap_schema(event.type.marshmallow_schema())
         data, errors = schema.load(
             data,
-            context=dict(identity=identity, record=event, event_type=event.type),
+            context=dict(
+                identity=identity, record=event, request=request, event_type=event.type
+            ),
         )
         event["payload"]["content"] = data["payload"]["content"]
         event["payload"]["format"] = data["payload"]["format"]
@@ -255,6 +259,7 @@ class RequestEventsService(RecordService):
             ),
             expandable_fields=self.expandable_fields,
             expand=expand,
+            request=request,
         )
 
     @unit_of_work()
