@@ -108,6 +108,7 @@ export const fetchTimeline = (focusEventId = undefined) => {
           lastPageHits: lastPageResponse?.data.hits.hits,
           totalHits: totalHits,
           focusedPage: focusedPage,
+          pageAfterFocused: focusedPage,
           lastPage: lastPageNumber,
         },
       });
@@ -122,7 +123,7 @@ export const fetchTimeline = (focusEventId = undefined) => {
 
 export const fetchNextTimelinePage = (after) => {
   return async (dispatch, getState, config) => {
-    const { size, page, focusedPage } = getState().timeline;
+    const { size, page, pageAfterFocused } = getState().timeline;
 
     let loadingEvent;
     let pageToLoad;
@@ -131,7 +132,7 @@ export const fetchNextTimelinePage = (after) => {
       pageToLoad = page + 1;
     } else if (after === "focused") {
       loadingEvent = LOADING_AFTER_FOCUSED_PAGE;
-      pageToLoad = focusedPage + 1;
+      pageToLoad = pageAfterFocused + 1;
     } else {
       throw new Error("Invalid `after` value");
     }

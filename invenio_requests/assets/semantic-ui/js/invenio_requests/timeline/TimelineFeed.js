@@ -105,6 +105,7 @@ class TimelineFeed extends Component {
       afterFirstPageHits,
       afterFocusedPageHits,
       focusedPage,
+      pageAfterFocused,
       lastPage,
       totalHits,
       loadingAfterFirstPage,
@@ -117,7 +118,8 @@ class TimelineFeed extends Component {
     if (focusedPage && focusedPage !== lastPage) {
       remainingBeforeFocused =
         (focusedPage - 1) * size - (firstPageHits.length + afterFirstPageHits.length);
-      remainingAfterFocused = totalHits - (focusedPage * size + lastPageHits.length);
+      remainingAfterFocused =
+        totalHits - (pageAfterFocused * size + lastPageHits.length);
     } else {
       remainingBeforeFocused =
         totalHits -

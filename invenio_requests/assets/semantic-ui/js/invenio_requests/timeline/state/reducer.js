@@ -30,8 +30,12 @@ export const initialState = {
   totalHits: 0,
   error: null,
   size: 15,
+  // The last loaded page after the first page but before the focused page (if any)
   page: 1,
+  // The page number that the focused event belongs to.
   focusedPage: null,
+  // The last loaded page after the focused page but before the last page.
+  pageAfterFocused: null,
   lastPage: null,
   warning: null,
   loadingAfterFirstPage: false,
@@ -122,6 +126,7 @@ export const timelineReducer = (state = initialState, action) => {
           action.payload.afterFocusedPageHits ?? state.afterFocusedPageHits,
         lastPageHits: action.payload.lastPageHits ?? state.lastPageHits,
         focusedPage: action.payload.focusedPage ?? state.focusedPage,
+        pageAfterFocused: action.payload.pageAfterFocused ?? state.pageAfterFocused,
         lastPage: action.payload.lastPage ?? state.lastPage,
         totalHits: action.payload.totalHits ?? state.totalHits,
         error: null,
@@ -134,8 +139,10 @@ export const timelineReducer = (state = initialState, action) => {
           state
         ),
         page: action.payload.after === "first" ? action.payload.page : state.page,
-        focusedPage:
-          action.payload.after === "focused" ? action.payload.page : state.focusedPage,
+        pageAfterFocused:
+          action.payload.after === "focused"
+            ? action.payload.page
+            : state.pageAfterFocused,
         loadingAfterFirstPage:
           action.payload.after === "first" ? false : state.loadingAfterFirstPage,
         loadingAfterFocusedPage:
