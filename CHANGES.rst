@@ -9,6 +9,14 @@
 Changes
 =======
 
+Version v11.2.1 (released 2025-12-18)
+
+- fix(comment-editor): ensure disabled when can_create_comment is false
+- fix(comment-editor): ensure disabled when can_create_comment is false
+- fix(timeline): incorrect pagination for deep-linked comments
+- fix(timeline): missing `expand` parameter to timeline_focused service handler
+- fix(timeline): small typo in state reducer
+
 Version v11.2.0 (released 2025-12-16)
 
 - feat(comments): replace pagination with "collapsed" section design
