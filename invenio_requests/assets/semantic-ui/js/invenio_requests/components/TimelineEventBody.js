@@ -10,16 +10,6 @@ import { Button, Popup, ButtonGroup, Label } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_requests/i18next";
 import { FilesList } from "react-invenio-forms";
 
-// TODO: Use nested_links_item
-function getRequestId() {
-  const prefix = "/requests/";
-  const url = window.location.href;
-  const index = url.indexOf(prefix);
-  const start = index + prefix.length;
-  const end = start + 36;
-  return url.substring(start, end);
-}
-
 export const TimelineEventBody = ({ payload, quoteReply }) => {
   const ref = useRef(null);
   const [selectionRange, setSelectionRange] = useState(null);
