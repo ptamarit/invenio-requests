@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2021-2025 CERN.
 # Copyright (C) 2021 - 2022 TU Wien.
+# Copyright (C) 2025 KTH Royal Institute of Technology.
 #
 # Invenio-Requests is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -33,7 +34,7 @@ REQUESTS_ENTITY_RESOLVERS = [UserResolver(), GroupResolver()]
 """Registered resolvers for resolving/creating references in request metadata."""
 
 REQUESTS_ROUTES = {
-    "details": "/requests/<pid_value>",
+    "details": "/requests/<uuid:pid_value>",
 }
 """Invenio requests ui endpoints."""
 

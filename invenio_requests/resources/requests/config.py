@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2021 CERN.
 # Copyright (C) 2021 TU Wien.
-# Copyright (C) 2022 KTH Royal Institute of Technology
+# Copyright (C) 2022-2025 KTH Royal Institute of Technology
 #
 # Invenio-Requests is free software; you can redistribute it and/or
 # modify it under the terms of the MIT License; see LICENSE file for more
@@ -70,10 +70,10 @@ class RequestsResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     routes = {
         "list": "/",
         "user-prefix": "/user",
-        "item": "/<id>",
-        "action": "/<id>/actions/<action>",
-        "lock": "/<id>/lock",
-        "unlock": "/<id>/unlock",
+        "item": "/<uuid:id>",
+        "action": "/<uuid:id>/actions/<action>",
+        "lock": "/<uuid:id>/lock",
+        "unlock": "/<uuid:id>/unlock",
     }
 
     request_view_args = {
