@@ -12,13 +12,14 @@ import Overridable from "react-overridable";
 import { Divider, Container, Dropdown, Feed, Icon } from "semantic-ui-react";
 import { CancelButton, SaveButton } from "../components/Buttons";
 import Error from "../components/Error";
-import { RichEditorWithFiles } from "react-invenio-forms";
+import { RichEditor } from "react-invenio-forms";
 import RequestsFeed from "../components/RequestsFeed";
 import { TimelineEventBody } from "../components/TimelineEventBody";
 import { toRelativeTime } from "react-invenio-forms";
 import { isEventSelected } from "./utils";
 import { RequestEventsLinksExtractor } from "../api/InvenioRequestEventsApi.js";
 import { TimelineCommentReplies } from "../timelineCommentReplies/index.js";
+import { InvenioRequestFilesApi } from "../api/InvenioRequestFilesApi.js";
 
 class TimelineCommentEvent extends Component {
   constructor(props) {
@@ -86,6 +87,16 @@ class TimelineCommentEvent extends Component {
     const { appendCommentContent } = this.props;
     appendCommentContent(`<blockquote>${text}</blockquote><br />`);
   };
+
+  /*
+  onFileDelete = async (file) => {
+    const client = new InvenioRequestFilesApi();
+    const requestId = getRequestId();
+    // TODO: This is an existing comment, so we should not delete the file via the API!!!
+    // For new comments, we do an immediate file deletion.
+    await client.deleteFile(requestId, file.key);
+  }
+  */
 
   render() {
     const {
@@ -201,23 +212,24 @@ class TimelineCommentEvent extends Component {
                   {/* TODO: Inject the request ID here for file uploading? */}
                   {isEditing ? (
                     <>
-                      <RichEditorWithFiles
+                      <RichEditor
                         initialValue={event?.payload?.content}
                         inputValue={commentContent}
                         onEditorChange={(event, editor) => {
                           this.setState({ commentContent: editor.getContent() });
                         }}
                         files={files}
-                        setFiles={(files) => {
+                        onFilesChange={(files) => {
                           this.setState({ files: files });
                         }}
-                        filesImmediateDeletion={false}
+                        // onFileDelete={this.onFileDelete}
+                        // filesImmediateDeletion={false}
                         minHeight={150}
                       />
                     </>
                   ) : (
                     <TimelineEventBody
-                    // files={event?.payload?.files}
+                      // files={event?.payload?.files}
                       payload={event?.payload}
                       quoteReply={this.quoteReply}
                     />

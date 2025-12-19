@@ -25,7 +25,6 @@ export const APPEND_CONTENT = "eventEditor/APPENDING_CONTENT";
 export const SETTING_FILES = "eventEditor/SETTING_FILES"; // TODO: Duplicate?
 export const RESTORE_FILES = "eventEditor/RESTORE_FILES"; // TODO: Duplicate?
 
-
 const draftCommentKey = (requestId, parentRequestEventId) =>
   `draft-comment-${requestId}${parentRequestEventId ? "-" + parentRequestEventId : ""}`;
 export const setDraftComment = (requestId, parentRequestEventId, content) => {
@@ -42,10 +41,15 @@ const draftFilesKey = (requestId, parentRequestEventId) =>
   `draft-files-${requestId}${parentRequestEventId ? "-" + parentRequestEventId : ""}`;
 // TODO: Is it safe to JSON stringify/parse with localStorage?
 export const setDraftFiles = (requestId, parentRequestEventId, files) => {
-  localStorage.setItem(draftFilesKey(requestId, parentRequestEventId), JSON.stringify(files));
+  localStorage.setItem(
+    draftFilesKey(requestId, parentRequestEventId),
+    JSON.stringify(files)
+  );
 };
 export const getDraftFiles = (requestId, parentRequestEventId) => {
-  return JSON.parse(localStorage.getItem(draftFilesKey(requestId, parentRequestEventId)));
+  return JSON.parse(
+    localStorage.getItem(draftFilesKey(requestId, parentRequestEventId))
+  );
 };
 export const deleteDraftFiles = (requestId, parentRequestEventId) => {
   localStorage.removeItem(draftFilesKey(requestId, parentRequestEventId));
@@ -125,13 +129,13 @@ export const restoreEventFiles = (parentRequestEventId, event) => {
     let savedDraftFiles = null;
     try {
       savedDraftFiles = getDraftFiles(request.data.id, parentRequestEventId);
-      console.log({savedDraftFiles});
+      console.log({ savedDraftFiles });
     } catch (e) {
       console.warn("Failed to get saved files:", e);
     }
 
     if (savedDraftFiles) {
-      console.log({event});
+      console.log({ event });
       dispatch({
         type: event,
         // payload: savedDraftFiles,
