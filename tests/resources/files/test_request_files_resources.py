@@ -112,6 +112,8 @@ def upload_file(
             "original_filename": key,
             "size": size,
             "mimetype": mimetype,
+            # TODO: Switch to download_html once the non-API URL works.
+            "content": f"/api/requests/{request_id}/files/{unique_key}/content",
         }
 
 

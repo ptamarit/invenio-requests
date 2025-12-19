@@ -70,12 +70,12 @@ const TimelineCommentEditor = ({
     [autoFocus]
   );
 
-  const onFileUpload = async (filename, payload) => {
+  const onFileUpload = async (filename, payload, options) => {
     const client = new InvenioRequestFilesApi();
     const requestId = getRequestId();
     // TODO: This is an existing comment, so we should not delete the file via the API!!!
     // For new comments, we do an immediate file deletion.
-    return await client.uploadFile(requestId, filename, payload);
+    return await client.uploadFile(requestId, filename, payload, options);
   };
 
   const onFileDelete = async (file) => {
