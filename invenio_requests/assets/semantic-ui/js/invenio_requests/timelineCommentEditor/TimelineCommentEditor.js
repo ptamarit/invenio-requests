@@ -14,6 +14,7 @@ import { RequestEventAvatarContainer } from "../components/RequestsFeed";
 import { InvenioRequestFilesApi } from "../api/InvenioRequestFilesApi";
 
 // TODO: Use nested_links_item
+// TODO: In the case of this widget, it probably makes more sense for this information to be passed down as a prop.
 function getRequestId() {
   const prefix = "/requests/";
   const url = window.location.href;
