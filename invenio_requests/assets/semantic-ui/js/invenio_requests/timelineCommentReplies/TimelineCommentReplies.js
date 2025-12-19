@@ -110,6 +110,7 @@ class TimelineCommentReplies extends Component {
       isReplying,
       pageSize,
       allowReply,
+      parentRequestEvent,
     } = this.props;
     const { isExpanded, deleteModalAction } = this.state;
     const hasReplies = totalReplyCount > 0;
@@ -191,6 +192,8 @@ class TimelineCommentReplies extends Component {
             commentContent={draftContent}
             storedCommentContent={storedDraftContent}
             files={draftFiles}
+            // TODO: One level higher maybe?
+            // requestId={parentRequestEvent.id}
             appendedCommentContent={appendedDraftContent}
             userAvatar={userAvatar}
             isLoading={submitting}

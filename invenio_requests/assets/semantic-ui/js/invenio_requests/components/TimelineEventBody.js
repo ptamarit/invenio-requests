@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import PropTypes from "prop-types";
 import { Button, Popup, ButtonGroup, Label } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_requests/i18next";
-import { humanReadableBytes } from "react-invenio-forms";
+import { FilesList } from "react-invenio-forms";
 
 // TODO: Use nested_links_item
 function getRequestId() {
@@ -82,6 +82,7 @@ export const TimelineEventBody = ({ payload, quoteReply }) => {
   }, []);
 
   const { format, content, files, event } = payload;
+  const filesEnabled = files !== undefined;
 
   if (!quoteReply) {
     return <span ref={ref}>{content}</span>;
@@ -125,41 +126,10 @@ export const TimelineEventBody = ({ payload, quoteReply }) => {
     </Popup>
   );
 
-  // const filesListOriginal = files?.map((file) => (
-  //   <ButtonGroup key={file.key} className="mr-10 mt-10">
-  //     <Button
-  //       basic
-  //       color="grey"
-  //       icon="file"
-  //       content={`${file.original_filename} (${humanReadableBytes(
-  //         parseInt(file.size, 10),
-  //         true
-  //       )})`}
-  //       as="a"
-  //       href={`/api/requests/${getRequestId()}/files/${file.key}/content`}
-  //     />
-  //     <Button icon="linkify" title="Copy link" onClick={() => copyLink(file.key)} />
-  //   </ButtonGroup>
-  // ));
-
-  const filesList = files?.map((file) => (
-    <Label
-      key={file.key}
-      className="no-text-decoration mr-5 mt-5"
-      icon="file"
-      content={`${file.original_filename} (${humanReadableBytes(
-        parseInt(file.size, 10),
-        true
-      )})`}
-      as="a"
-      href={`/api/requests/${getRequestId()}/files/${file.key}/content`}
-    />
-  ));
-
   return (
     <>
       {contentResult}
-      {filesList}
+      {filesEnabled && <FilesList files={files} />}
     </>
   );
 };

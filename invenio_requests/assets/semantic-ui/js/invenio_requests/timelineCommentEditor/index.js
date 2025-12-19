@@ -25,14 +25,12 @@ const mapDispatchToProps = {
   setCommentContent: (content) =>
     setEventContent(content, null, PARENT_SET_DRAFT_CONTENT),
   restoreCommentContent: () => restoreEventContent(null, PARENT_RESTORE_DRAFT_CONTENT),
-  setCommentFiles: (files) =>
-    setEventFiles(files, null, PARENT_SET_DRAFT_FILES),
+  setCommentFiles: (files) => setEventFiles(files, null, PARENT_SET_DRAFT_FILES),
   restoreCommentFiles: () => restoreEventFiles(null, PARENT_RESTORE_DRAFT_FILES),
 };
 
 // export const SETTING_FILES = "eventEditor/SETTING_FILES";
 // export const RESTORE_FILES = "eventEditor/RESTORE_FILES";
-
 
 const mapStateToProps = (state) => ({
   isLoading: state.timelineCommentEditor.isLoading,

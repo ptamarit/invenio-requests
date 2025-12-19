@@ -4,13 +4,24 @@
 // Invenio RDM Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
-import { RichEditorWithFiles } from "react-invenio-forms";
+import { RichEditor } from "react-invenio-forms";
 import React, { useCallback, useEffect, useRef } from "react";
 import { CancelButton, SaveButton } from "../components/Buttons";
 import { Container, Message, Icon } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { i18next } from "@translations/invenio_requests/i18next";
 import { RequestEventAvatarContainer } from "../components/RequestsFeed";
+import { InvenioRequestFilesApi } from "../api/InvenioRequestFilesApi";
+
+// TODO: Use nested_links_item
+function getRequestId() {
+  const prefix = "/requests/";
+  const url = window.location.href;
+  const index = url.indexOf(prefix);
+  const start = index + prefix.length;
+  const end = start + 36;
+  return url.substring(start, end);
+}
 
 const TimelineCommentEditor = ({
   isLoading,
@@ -59,6 +70,22 @@ const TimelineCommentEditor = ({
     [autoFocus]
   );
 
+  const onFileUpload = async (filename, payload) => {
+    const client = new InvenioRequestFilesApi();
+    const requestId = getRequestId();
+    // TODO: This is an existing comment, so we should not delete the file via the API!!!
+    // For new comments, we do an immediate file deletion.
+    return await client.uploadFile(requestId, filename, payload);
+  };
+
+  const onFileDelete = async (file) => {
+    const client = new InvenioRequestFilesApi();
+    const requestId = getRequestId();
+    // TODO: This is an existing comment, so we should not delete the file via the API!!!
+    // For new comments, we do an immediate file deletion.
+    await client.deleteFile(requestId, file.key);
+  };
+
   // const [files, setFiles] = useState(initialFiles);
   // // TODO: Copy necessary?
   // const files = [...initialFiles];
@@ -83,15 +110,10 @@ const TimelineCommentEditor = ({
         />
         <Container fluid className="ml-0-mobile mr-0-mobile fluid-mobile">
           {/* TODO: Inject the request ID here for file uploading? */}
-          <RichEditorWithFiles
+          <RichEditor
             inputValue={commentContent}
             // initialValue is not allowed to change, so we use `storedCommentContent` which is set at most once
             initialValue={storedCommentContent}
-            files={files}
-            setFiles={(files) => {
-              setCommentFiles(files);
-            }}
-            filesImmediateDeletion={true}
             onEditorChange={(event, editor) => {
               // TODO: Store the list of files too, and not only on editor change, but also on files change.
               setCommentContent(editor.getContent());
@@ -105,6 +127,13 @@ const TimelineCommentEditor = ({
             minHeight={150}
             disabled={!canCreateComment || disabled}
             // editorConfig={{}}
+            files={files}
+            onFilesChange={(files) => {
+              setCommentFiles(files);
+            }}
+            onFileUpload={onFileUpload}
+            onFileDelete={onFileDelete}
+            // filesImmediateDeletion={true}
           />
         </Container>
       </div>

@@ -35,19 +35,19 @@ const initialState = {
 export const commentEditorReducer = (state = initialState, action) => {
   switch (action.type) {
     case PARENT_SET_DRAFT_CONTENT:
-      console.log("PARENT_SET_DRAFT_CONTENT")
+      console.log("PARENT_SET_DRAFT_CONTENT");
       return { ...state, commentContent: action.payload.content };
     case SETTING_CONTENT:
-      console.log("SETTING_CONTENT")
+      console.log("SETTING_CONTENT");
       return { ...state, commentContent: action.payload };
     case PARENT_SET_DRAFT_FILES:
-      console.log("PARENT_SET_DRAFT_FILES")
+      console.log("PARENT_SET_DRAFT_FILES");
       // TODO: Or this?
       // return { ...state, files: action.payload };
       return { ...state, files: action.payload.files };
     case SETTING_FILES:
       // TODO: Needed? Used?
-      console.log("SETTING_FILES")
+      console.log("SETTING_FILES");
       return { ...state, files: action.payload };
     case APPEND_CONTENT:
       return {
@@ -79,7 +79,7 @@ export const commentEditorReducer = (state = initialState, action) => {
       };
     case PARENT_RESTORE_DRAFT_FILES:
       console.log("PARENT_RESTORE_DRAFT_FILES");
-      console.log({state});
+      console.log({ state });
       console.log(action.payload);
       return {
         ...state,
