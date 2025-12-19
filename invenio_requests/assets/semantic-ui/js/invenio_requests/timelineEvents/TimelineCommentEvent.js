@@ -210,6 +210,7 @@ class TimelineCommentEvent extends Component {
                   {error && <Error error={error} />}
 
                   {/* TODO: Inject the request ID here for file uploading? */}
+                  {/* TODO: Missing props like onFileUpload here? */}
                   {isEditing ? (
                     <>
                       <RichEditor
