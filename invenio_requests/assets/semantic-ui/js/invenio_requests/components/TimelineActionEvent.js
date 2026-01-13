@@ -12,7 +12,7 @@ import Overridable from "react-overridable";
 import { Feed } from "semantic-ui-react";
 import { toRelativeTime } from "react-invenio-forms";
 import RequestsFeed from "./RequestsFeed";
-import { TimelineEventBody } from "./TimelineEventBody";
+import TimelineEventBody from "./TimelineEventBody";
 
 class TimelineActionEvent extends Component {
   render() {

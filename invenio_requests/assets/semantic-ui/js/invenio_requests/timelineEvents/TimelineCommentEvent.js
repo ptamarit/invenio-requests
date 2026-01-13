@@ -14,7 +14,7 @@ import { CancelButton, SaveButton } from "../components/Buttons";
 import Error from "../components/Error";
 import { RichEditor } from "react-invenio-forms";
 import RequestsFeed from "../components/RequestsFeed";
-import { TimelineEventBody } from "../components/TimelineEventBody";
+import TimelineEventBody from "../components/TimelineEventBody";
 import { toRelativeTime } from "react-invenio-forms";
 import { isEventSelected } from "./utils";
 import { RequestEventsLinksExtractor } from "../api/InvenioRequestEventsApi.js";

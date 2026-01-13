@@ -6,12 +6,104 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
+import Overridable from "react-overridable";
 import { Button, Popup, ButtonGroup } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_requests/i18next";
 
-export const TimelineEventBody = ({ payload, quoteReply }) => {
+const TimelineEventBody = ({ payload, quoteReply, collapsible, expandedByDefault }) => {
+  return (
+    <Overridable
+      id="InvenioRequests.TimelineEventBody.layout"
+      collapsible={collapsible}
+      expandedByDefault={expandedByDefault}
+    >
+      <TimelineEventBodyContainer
+        payload={payload}
+        quoteReply={quoteReply}
+        collapsible={collapsible}
+        expandedByDefault={expandedByDefault}
+      />
+    </Overridable>
+  );
+};
+
+TimelineEventBody.propTypes = {
+  payload: PropTypes.object,
+  quoteReply: PropTypes.func,
+  collapsible: PropTypes.bool,
+  expandedByDefault: PropTypes.bool,
+};
+
+TimelineEventBody.defaultProps = {
+  payload: {},
+  quoteReply: null,
+  collapsible: true,
+  expandedByDefault: false,
+};
+
+const TimelineEventBodyRender = ({
+  ref,
+  refInner,
+  isOverflowing,
+  expanded,
+  collapsible,
+  toggleCollapsed,
+  content,
+  format,
+}) => {
+  const getCollapsibleClass = () => {
+    if (!isOverflowing) return "";
+    return expanded || !collapsible ? "expanded" : "overflowing";
+  };
+
+  return (
+    <span ref={ref} className={`collapsible-comment ${getCollapsibleClass()}`}>
+      <span ref={refInner} className={collapsible ? "collapsible-comment-inner" : ""}>
+        {format === "html" ? (
+          <span dangerouslySetInnerHTML={{ __html: content }} />
+        ) : (
+          content
+        )}
+        {isOverflowing && collapsible && (
+          <button
+            type="button"
+            className="ui tiny button text-only show-more"
+            onClick={toggleCollapsed}
+          >
+            {expanded ? i18next.t("Show less") : i18next.t("Show more")}
+          </button>
+        )}
+      </span>
+    </span>
+  );
+};
+
+TimelineEventBodyRender.propTypes = {
+  ref: PropTypes.instanceOf(Element).isRequired,
+  refInner: PropTypes.instanceOf(Element).isRequired,
+  isOverflowing: PropTypes.bool.isRequired,
+  expanded: PropTypes.bool.isRequired,
+  collapsible: PropTypes.bool.isRequired,
+  toggleCollapsed: PropTypes.func.isRequired,
+  content: PropTypes.string.isRequired,
+  format: PropTypes.string,
+};
+
+TimelineEventBodyRender.defaultProps = {
+  format: null,
+};
+
+const TimelineEventBodyContainer = ({
+  payload,
+  quoteReply,
+  collapsible,
+  expandedByDefault,
+}) => {
   const ref = useRef(null);
+  const refInner = useRef(null);
   const [selectionRange, setSelectionRange] = useState(null);
+  const [expanded, setExpanded] = useState(collapsible ? expandedByDefault : true);
+  const [isOverflowing, setIsOverflowing] = useState(false);
 
   useEffect(() => {
     if (ref.current === null) return;
@@ -42,7 +134,21 @@ export const TimelineEventBody = ({ payload, quoteReply }) => {
 
     document.addEventListener("selectionchange", onSelectionChange);
     return () => document.removeEventListener("selectionchange", onSelectionChange);
-  }, [ref]);
+  }, []);
+
+  useEffect(() => {
+    if (!collapsible) return;
+
+    const el = refInner.current;
+    if (!el) return;
+
+    setIsOverflowing(el.scrollHeight > el.clientHeight);
+  }, [collapsible]);
+
+  const toggleCollapsed = () => {
+    if (!collapsible) return;
+    setExpanded((prev) => !prev);
+  };
 
   const tooltipOffset = useMemo(() => {
     if (!selectionRange) return null;
@@ -69,7 +175,17 @@ export const TimelineEventBody = ({ payload, quoteReply }) => {
   const { format, content, event } = payload;
 
   if (!quoteReply) {
-    return <span ref={ref}>{content}</span>;
+    return (
+      <TimelineEventBodyRender
+        ref={ref}
+        refInner={refInner}
+        isOverflowing={isOverflowing}
+        expanded={expanded}
+        collapsible={collapsible}
+        toggleCollapsed={toggleCollapsed}
+        content={content}
+      />
+    );
   }
 
   if (event === "comment_deleted") {
@@ -90,13 +206,16 @@ export const TimelineEventBody = ({ payload, quoteReply }) => {
       position="top left"
       className="requests-event-body-popup"
       trigger={
-        <span ref={ref}>
-          {format === "html" ? (
-            <span dangerouslySetInnerHTML={{ __html: content }} />
-          ) : (
-            content
-          )}
-        </span>
+        <TimelineEventBodyRender
+          ref={ref}
+          refInner={refInner}
+          isOverflowing={isOverflowing}
+          expanded={expanded}
+          collapsible={collapsible}
+          toggleCollapsed={toggleCollapsed}
+          content={content}
+          format={format}
+        />
       }
       basic
     >
@@ -111,12 +230,21 @@ export const TimelineEventBody = ({ payload, quoteReply }) => {
   );
 };
 
-TimelineEventBody.propTypes = {
+TimelineEventBodyContainer.propTypes = {
   payload: PropTypes.object,
   quoteReply: PropTypes.func,
+  collapsible: PropTypes.bool,
+  expandedByDefault: PropTypes.bool,
 };
 
-TimelineEventBody.defaultProps = {
+TimelineEventBodyContainer.defaultProps = {
   payload: {},
   quoteReply: null,
+  collapsible: true,
+  expandedByDefault: false,
 };
+
+export default Overridable.component(
+  "InvenioRequests.TimelineEventBody",
+  TimelineEventBody
+);
