@@ -234,15 +234,17 @@ class RequestMetadata extends Component {
             </>
           )}
 
-          {request.topic?.record && request.type !== "community-submission" && (
-            <>
-              <Divider />
-              <Header as="h3" size="tiny">
-                {i18next.t("Record")}
-              </Header>
-              <a href={`/records/${request.topic.record}`}>{request.title}</a>
-            </>
-          )}
+          {request.topic?.record &&
+            (request.type !== "community-submission" ||
+              request.status === "accepted") && (
+              <>
+                <Divider />
+                <Header as="h3" size="tiny">
+                  {i18next.t("Record")}
+                </Header>
+                <a href={`/records/${request.topic.record}`}>{request.title}</a>
+              </>
+            )}
           {permissions.can_lock_request && <LockRequest request={request} />}
         </>
       </Overridable>
