@@ -24,4 +24,5 @@ def get_file_content(pid_value, file_key):
     )
 
     # TODO: Is there a way to send the file with the `original_filename` instead of with the `key`?
+    # This would require modifying ObjectVersion.basename to use original_filename instead of key.
     return file.send_file(as_attachment=True)

@@ -188,6 +188,12 @@ class ReviewersUpdatedType(EventType):
         )
 
 
+class FileDetailsLinksSchema(Schema):
+    self = fields.Url(relative=True, absolute=False)
+    content = fields.Url(relative=True, absolute=False)
+    download_html = fields.Url(relative=True, absolute=False)
+
+
 class FileDetailsSchema(Schema):
     # TODO: Use UUID and fix SQLAlchemy not serializable.
     file_id = fields.String()
@@ -197,6 +203,7 @@ class FileDetailsSchema(Schema):
     mimetype = fields.String()
     # TODO: This fails to call .isoformat() on a String
     created = fields.String()
+    links = fields.Nested(FileDetailsLinksSchema)
 
 
 class CommentEventType(EventType):

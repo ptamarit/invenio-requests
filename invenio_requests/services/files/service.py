@@ -113,7 +113,7 @@ class RequestFilesService(FileService):
         result["links"] = {
             "self": f"/api/requests/{id_}/files/{unique_key}",
             "content": f"/api/requests/{id_}/files/{unique_key}/content",
-            "commit": f"/api/requests/{id_}/files/{unique_key}/commit",
+            # "commit": f"/api/requests/{id_}/files/{unique_key}/commit",
             "download_html": f"/requests/{id_}/files/{unique_key}",
         }
 
