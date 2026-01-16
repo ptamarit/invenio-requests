@@ -315,7 +315,13 @@ class RequestEventsService(RecordService):
         return True
 
     def search(
-        self, identity, request_id, params=None, search_preference=None, **kwargs
+        self,
+        identity,
+        request_id,
+        params=None,
+        search_preference=None,
+        preview_size=None,
+        **kwargs
     ):
         """Search for events (timeline) for a given request.
 
@@ -327,10 +333,6 @@ class RequestEventsService(RecordService):
         params = params or {}
         params.setdefault("sort", "oldest")
         expand = kwargs.pop("expand", False)
-        preview_size = kwargs.pop(
-            "preview_size",
-            current_app.config["REQUESTS_COMMENT_PREVIEW_LIMIT"],
-        )
 
         # Permissions - guarded by the request's can_read.
         request = self._get_request(request_id)
@@ -359,19 +361,7 @@ class RequestEventsService(RecordService):
             must_not=[
                 dsl.Q("exists", field="parent_id"),  # Exclude replies
             ],
-            should=[
-                dsl.Q(
-                    "has_child",
-                    type="child",
-                    query=dsl.Q("match_all"),
-                    score_mode="none",
-                    inner_hits={
-                        "name": "replies_preview",
-                        "size": preview_size,
-                        "sort": [{"created": "desc"}],
-                    },
-                ),
-            ],
+            should=[self._timeline_query_child_preview(preview_size)],
             minimum_should_match=0,  # Make should clause optional to return parents without children
         )
 
@@ -402,6 +392,7 @@ class RequestEventsService(RecordService):
         page_size,
         expand=False,
         search_preference=None,
+        preview_size=None,
     ):
         """Return a page of results focused on a given event, or the first page if the event is not found.
 
@@ -424,12 +415,17 @@ class RequestEventsService(RecordService):
             pass
 
         params = {"sort": "oldest", "size": page_size}
+
+        # TODO: this needs to be adpated to focus on links to child comments
+        # See https://github.com/inveniosoftware/invenio-requests/issues/542
+
         # Build filter to only include parent comments (exclude child comments)
-        # NOTE: this needs to be adpated to focus on links to child comments
         parent_filter = dsl.Q(
             "bool",
             must=[dsl.Q("term", request_id=str(request.id))],
             must_not=[dsl.Q("exists", field="parent_id")],  # Exclude replies
+            should=[self._timeline_query_child_preview(preview_size)],
+            minimum_should_match=0,
         )
         search = self._search(
             "search",
@@ -603,3 +599,19 @@ class RequestEventsService(RecordService):
             else ResolverRegistry.reference_identity(identity)
         )
         return referenced_creator
+
+    def _timeline_query_child_preview(self, preview_size):
+        """Return an OpenSearch query to include a size-limited preview of replies to a parent comment."""
+        if preview_size is None:
+            preview_size = current_app.config["REQUESTS_COMMENT_PREVIEW_LIMIT"]
+        return dsl.Q(
+            "has_child",
+            type="child",
+            query=dsl.Q("match_all"),
+            score_mode="none",
+            inner_hits={
+                "name": "replies_preview",
+                "size": preview_size,
+                "sort": [{"created": "desc"}],
+            },
+        )
