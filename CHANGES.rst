@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v11.2.3 (released 2065-01-16)
+
+- fix(timeline): support showing replies preview for timeline_focused endpoint
+
 Version v11.2.2 (released 2065-01-16)
 
 - fix(request-metadata): missing record link
