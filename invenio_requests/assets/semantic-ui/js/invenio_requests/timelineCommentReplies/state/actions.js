@@ -9,8 +9,6 @@ import {
   deleteDraftComment,
   setDraftComment,
   deleteDraftFiles,
-  // TODO: Unused import
-  setDraftFiles,
 } from "../../timelineCommentEditor/state/actions";
 import { selectCommentReplies, selectCommentRepliesStatus } from "./reducer";
 

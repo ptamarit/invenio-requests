@@ -6,17 +6,13 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { Button, Popup, ButtonGroup, Label } from "semantic-ui-react";
+import { Button, Popup, ButtonGroup } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_requests/i18next";
 import { FilesList } from "react-invenio-forms";
 
 export const TimelineEventBody = ({ payload, quoteReply }) => {
   const ref = useRef(null);
   const [selectionRange, setSelectionRange] = useState(null);
-
-  const copyLink = () => {
-    navigator.clipboard.writeText("TODO");
-  };
 
   useEffect(() => {
     if (ref.current === null) return;

@@ -68,7 +68,7 @@ class TimelineFeed extends Component {
   };
 
   renderHitList = (hits) => {
-    const { userAvatar, permissions } = this.props;
+    const { userAvatar, permissions, request } = this.props;
 
     return (
       <>
@@ -80,6 +80,7 @@ class TimelineFeed extends Component {
             userAvatar={userAvatar}
             allowQuote={false}
             allowReply={permissions.can_reply_comment}
+            request={request}
           />
         ))}
       </>
@@ -206,6 +207,7 @@ class TimelineFeed extends Component {
               <TimelineCommentEditor
                 userAvatar={userAvatar}
                 canCreateComment={permissions.can_create_comment}
+                request={request}
               />
               <DeleteConfirmationModal
                 open={modalOpen}

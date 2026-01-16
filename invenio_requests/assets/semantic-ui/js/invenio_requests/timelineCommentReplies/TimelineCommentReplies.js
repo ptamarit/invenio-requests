@@ -110,7 +110,8 @@ class TimelineCommentReplies extends Component {
       isReplying,
       pageSize,
       allowReply,
-      parentRequestEvent,
+      // parentRequestEvent,
+      request,
     } = this.props;
     const { isExpanded, deleteModalAction } = this.state;
     const hasReplies = totalReplyCount > 0;
@@ -158,6 +159,7 @@ class TimelineCommentReplies extends Component {
                     deleteComment={this.deleteComment}
                     appendCommentContent={this.appendCommentContent}
                     allowCopyLink={false}
+                    request={request}
                   />
                 ))}
                 <Divider />
@@ -192,8 +194,6 @@ class TimelineCommentReplies extends Component {
             commentContent={draftContent}
             storedCommentContent={storedDraftContent}
             files={draftFiles}
-            // TODO: One level higher maybe?
-            // requestId={parentRequestEvent.id}
             appendedCommentContent={appendedDraftContent}
             userAvatar={userAvatar}
             isLoading={submitting}
@@ -202,6 +202,7 @@ class TimelineCommentReplies extends Component {
             saveButtonIcon="reply"
             onCancel={this.onCancelClick}
             disabled={!allowReply}
+            request={request}
             // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus
           />
@@ -238,6 +239,9 @@ TimelineCommentReplies.propTypes = {
   setIsReplying: PropTypes.func.isRequired,
   pageSize: PropTypes.number.isRequired,
   allowReply: PropTypes.bool.isRequired,
+  request: PropTypes.object.isRequired,
+  restoreCommentFiles: PropTypes.func.isRequired,
+  setCommentFiles: PropTypes.func.isRequired,
 };
 
 TimelineCommentReplies.defaultProps = {
