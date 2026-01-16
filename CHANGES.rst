@@ -9,6 +9,11 @@
 Changes
 =======
 
+Version v11.2.2 (released 2065-01-16)
+
+- fix(request-metadata): missing record link
+- fix(routes): use UUID type for request identifiers
+
 Version v11.2.1 (released 2025-12-18)
 
 - fix(comment-editor): ensure disabled when can_create_comment is false
