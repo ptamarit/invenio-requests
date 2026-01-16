@@ -75,7 +75,11 @@ class RequestFilesService(FileService):
         request.files[unique_key] = stream
         # Store the original filename in RequestFileMetadata.json (field from RecordMetadataBase)
         request.files[unique_key].model.data = {"original_filename": key}
+
+        # TODO: If files are uploaded/deleted in parallel, this raises:
+        # sqlalchemy.orm.exc.StaleDataError: UPDATE statement on table 'request_metadata' expected to update 1 row(s); 0 were matched.
         request.commit()
+
         db.session.commit()
         # // TODO: Check files in records.
         # When indexing, dumper dumps more information in OpenSearch.
@@ -199,7 +203,11 @@ class RequestFilesService(FileService):
 
         if deleted_file is None:
             raise FileNotFoundError()
+
+        # TODO: If files are uploaded/deleted in parallel, this raises:
+        # sqlalchemy.orm.exc.StaleDataError: UPDATE statement on table 'request_metadata' expected to update 1 row(s); 0 were matched.
         request.commit()
+
         db.session.commit()
 
         # TODO: Return a proper result_item.

@@ -139,7 +139,6 @@ def access_file_content(client, request_id, key, data_content, headers):
     response = client.get(
         f"/requests/{request_id}/files/{key}/content",
         headers=headers,
-        # data=data,
     )
     assert 200 == response.status_code
     assert data_content == response.data
@@ -766,5 +765,28 @@ def test_scenario_comment_with_invalid_files(
     raise ValueError("Get timeline and make sure that the comment is not persisted")
 
 
-def test_scenario_image_url_no_api():
-    raise ValueError("Not implemented yet")
+def access_file(client, request_id, key, data_content, headers):
+    # Access the file.
+    response = client.get(
+        f"/requests/{request_id}/files/{key}",
+        headers=headers,
+    )
+    assert 200 == response.status_code
+    assert data_content == response.data
+
+
+# This works too, but maybe it should not since the UI should not be initialized here?
+def test_scenario_image_ui_url_bis(app, client_logged_as, headers, example_request):
+
+    client = client_logged_as("user1@example.org")
+
+    request_id = example_request.id
+    response = client.get(
+        f"/requests/{request_id}/files/abc.txt",
+    )
+    assert 200 == response.status_code
+
+    # request_id = 1
+    key = "abc.txt"
+    data_content = "abc"
+    access_file(client, request_id, key, data_content, headers)

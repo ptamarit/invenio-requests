@@ -37,7 +37,7 @@ REQUESTS_ENTITY_RESOLVERS = [UserResolver(), GroupResolver()]
 """Registered resolvers for resolving/creating references in request metadata."""
 
 REQUESTS_ROUTES = {
-    "details": "/requests/<uuid:pid_value>",
+    "file_content": "/requests/<uuid:pid_value>/files/<path:file_key>",
 }
 """Invenio requests ui endpoints."""
 
@@ -158,3 +158,14 @@ REQUESTS_COMMENTS_ALLOWED_EXTRA_HTML_ATTRS = {
 """Extend allowed HTML attrs list for requests comments content."""
 
 REQUESTS_EVENTS_SERVICE_COMPONENTS = [RequestCommentFileCleanupComponent]
+
+# # Doesn't work.
+# RECORDS_UI_ENDPOINTS = dict(
+#     testrecid=dict(
+#         pid_type="recid",
+#         route="/test123",
+#         view_imp="invenio_previewer.views.preview",
+#         record_class="invenio_records_files.api:Record",
+#     ),
+# )
+# """Records UI for ..."""
