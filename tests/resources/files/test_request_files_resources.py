@@ -101,7 +101,7 @@ def upload_file(
             "links": {
                 "self": f"/api/requests/{request_id}/files/{unique_key}",
                 "content": f"/api/requests/{request_id}/files/{unique_key}/content",
-                "commit": f"/api/requests/{request_id}/files/{unique_key}/commit",
+                # "commit": f"/api/requests/{request_id}/files/{unique_key}/commit",
                 "download_html": f"/requests/{request_id}/files/{unique_key}",
             },
         }

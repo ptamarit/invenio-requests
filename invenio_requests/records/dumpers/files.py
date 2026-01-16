@@ -72,6 +72,11 @@ class FilesDumperExt(SearchDumperExt):
             # request_files_list.append(request_file.file.file_id)
             # if request_file.file.file_id in request_event_payload_file_ids:
             # results.append(request_file)
+            payload_file["links"] = {
+                "self": f"/api/requests/{request_id}/files/{file_details.file.key}",
+                "content": f"/api/requests/{request_id}/files/{file_details.file.key}/content",
+                "download_html": f"/requests/{request_id}/files/{file_details.file.key}",
+            }
 
         # for result in results:
         #     data["payload"]["files"]
