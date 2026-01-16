@@ -88,15 +88,11 @@ class TimelineCommentEvent extends Component {
     appendCommentContent(`<blockquote>${text}</blockquote><br />`);
   };
 
-  /*
-  onFileDelete = async (file) => {
+  onFileUpload = async (filename, payload, options) => {
     const client = new InvenioRequestFilesApi();
-    const requestId = getRequestId();
-    // TODO: This is an existing comment, so we should not delete the file via the API!!!
-    // For new comments, we do an immediate file deletion.
-    await client.deleteFile(requestId, file.key);
-  }
-  */
+    const { request } = this.props;
+    return await client.uploadFile(request.id, filename, payload, options);
+  };
 
   render() {
     const {
@@ -112,6 +108,7 @@ class TimelineCommentEvent extends Component {
       allowQuoteReply,
       allowCopyLink,
       allowReply,
+      request,
     } = this.props;
     const { commentContent, files, isSelected } = this.state;
 
@@ -212,22 +209,20 @@ class TimelineCommentEvent extends Component {
                   {/* TODO: Inject the request ID here for file uploading? */}
                   {/* TODO: Missing props like onFileUpload here? */}
                   {isEditing ? (
-                    <>
-                      <RichEditor
-                        initialValue={event?.payload?.content}
-                        inputValue={commentContent}
-                        onEditorChange={(event, editor) => {
-                          this.setState({ commentContent: editor.getContent() });
-                        }}
-                        files={files}
-                        onFilesChange={(files) => {
-                          this.setState({ files: files });
-                        }}
-                        // onFileDelete={this.onFileDelete}
-                        // filesImmediateDeletion={false}
-                        minHeight={150}
-                      />
-                    </>
+                    <RichEditor
+                      initialValue={event?.payload?.content}
+                      inputValue={commentContent}
+                      onEditorChange={(event, editor) => {
+                        this.setState({ commentContent: editor.getContent() });
+                      }}
+                      files={files}
+                      onFilesChange={(files) => {
+                        this.setState({ files: files });
+                      }}
+                      // This is an existing comment, so we do not delete the file via the API.
+                      onFileUpload={this.onFileUpload}
+                      minHeight={150}
+                    />
                   ) : (
                     <TimelineEventBody
                       // files={event?.payload?.files}
@@ -256,6 +251,7 @@ class TimelineCommentEvent extends Component {
                     parentRequestEvent={event}
                     userAvatar={currentUserAvatar}
                     allowReply={allowReply}
+                    request={request}
                   />
                 </>
               )}
@@ -281,6 +277,7 @@ TimelineCommentEvent.propTypes = {
   allowQuoteReply: PropTypes.bool,
   allowCopyLink: PropTypes.bool,
   allowReply: PropTypes.bool,
+  request: PropTypes.object.isRequired,
 };
 
 TimelineCommentEvent.defaultProps = {

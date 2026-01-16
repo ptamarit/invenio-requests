@@ -67,6 +67,7 @@ class TimelineCommentEventControlled extends Component {
       allowQuoteReply,
       allowCopyLink,
       allowReply,
+      request,
     } = this.props;
     const { isLoading, isEditing, error } = this.state;
 
@@ -87,6 +88,7 @@ class TimelineCommentEventControlled extends Component {
           allowQuoteReply={allowQuoteReply}
           allowCopyLink={allowCopyLink}
           allowReply={allowReply}
+          request={request}
         />
       </Overridable>
     );
@@ -104,6 +106,7 @@ TimelineCommentEventControlled.propTypes = {
   allowQuoteReply: PropTypes.bool,
   allowCopyLink: PropTypes.bool,
   allowReply: PropTypes.bool,
+  request: PropTypes.object.isRequired,
 };
 
 TimelineCommentEventControlled.defaultProps = {

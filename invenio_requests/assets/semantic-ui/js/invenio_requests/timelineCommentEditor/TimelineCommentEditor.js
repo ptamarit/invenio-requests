@@ -13,17 +13,6 @@ import { i18next } from "@translations/invenio_requests/i18next";
 import { RequestEventAvatarContainer } from "../components/RequestsFeed";
 import { InvenioRequestFilesApi } from "../api/InvenioRequestFilesApi";
 
-// TODO: Use nested_links_item
-// TODO: In the case of this widget, it probably makes more sense for this information to be passed down as a prop.
-function getRequestId() {
-  const prefix = "/requests/";
-  const url = window.location.href;
-  const index = url.indexOf(prefix);
-  const start = index + prefix.length;
-  const end = start + 36;
-  return url.substring(start, end);
-}
-
 const TimelineCommentEditor = ({
   isLoading,
   commentContent,
@@ -43,6 +32,7 @@ const TimelineCommentEditor = ({
   saveButtonIcon,
   onCancel,
   disabled,
+  request,
 }) => {
   useEffect(() => {
     restoreCommentContent();
@@ -73,18 +63,12 @@ const TimelineCommentEditor = ({
 
   const onFileUpload = async (filename, payload, options) => {
     const client = new InvenioRequestFilesApi();
-    const requestId = getRequestId();
-    // TODO: This is an existing comment, so we should not delete the file via the API!!!
-    // For new comments, we do an immediate file deletion.
-    return await client.uploadFile(requestId, filename, payload, options);
+    return await client.uploadFile(request.id, filename, payload, options);
   };
 
   const onFileDelete = async (file) => {
     const client = new InvenioRequestFilesApi();
-    const requestId = getRequestId();
-    // TODO: This is an existing comment, so we should not delete the file via the API!!!
-    // For new comments, we do an immediate file deletion.
-    await client.deleteFile(requestId, file.key);
+    await client.deleteFile(request.id, file.key);
   };
 
   // const [files, setFiles] = useState(initialFiles);
@@ -110,7 +94,6 @@ const TimelineCommentEditor = ({
           disabled={!canCreateComment}
         />
         <Container fluid className="ml-0-mobile mr-0-mobile fluid-mobile">
-          {/* TODO: Inject the request ID here for file uploading? */}
           <RichEditor
             inputValue={commentContent}
             // initialValue is not allowed to change, so we use `storedCommentContent` which is set at most once
@@ -179,6 +162,7 @@ TimelineCommentEditor.propTypes = {
   saveButtonIcon: PropTypes.string,
   onCancel: PropTypes.func,
   disabled: PropTypes.bool,
+  request: PropTypes.object.isRequired,
 };
 
 TimelineCommentEditor.defaultProps = {
