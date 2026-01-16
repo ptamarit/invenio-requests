@@ -60,6 +60,8 @@ class InvenioRequests:
     def init_config(self, app):
         """Initialize configuration."""
         for k in dir(config):
+            # Doesn't work.
+            # if k.startswith("REQUESTS_") or k.startswith("RECORDS_UI_ENDPOINTS"):
             if k.startswith("REQUESTS_"):
                 app.config.setdefault(k, getattr(config, k))
 

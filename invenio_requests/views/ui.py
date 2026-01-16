@@ -13,6 +13,8 @@ from flask_login import current_user
 from invenio_pidstore.errors import PIDDeletedError, PIDDoesNotExistError
 from invenio_records_resources.services.errors import PermissionDeniedError
 
+from invenio_requests.views.requests import get_file_content
+
 #
 # Error handlers
 #
@@ -47,6 +49,25 @@ def create_ui_blueprint(app):
         static_folder="../static",
     )
 
+    blueprint.add_url_rule(
+        routes["file_content"],
+        view_func=get_file_content,
+    )
+
+    # route='/records/<pid_value>/files/<filename>',
+    # view_imp='invenio_records_files.utils:file_download_ui',
+    # record_class='invenio_records_files.api:Record',
+
+    # In: invenio_requests/views/requests.py
+    # def requests_detail(request=None, pid_value=None):
+    #     """Community detail page."""
+    #     return render_template(
+    #         "invenio_requests/details/index.html",
+    #         request=request.to_dict(),  # TODO: use serializer
+    #         # Pass permissions so we can disable partially UI components
+    #         permissions=request.has_permissions_to(['update', 'read']),
+    #     )
+
     # Register error handlers
     blueprint.register_error_handler(
         PermissionDeniedError,
@@ -59,3 +80,20 @@ def create_ui_blueprint(app):
     blueprint.register_error_handler(PIDDoesNotExistError, not_found_error)
 
     return blueprint
+
+
+# def create_ui_files_blueprint(app):
+#     """Register blueprint file routes on app."""
+#     pass
+#     # routes = app.config.get("REQUESTS_ROUTES")
+
+#     # blueprint = Blueprint(
+#     #     "invenio_requests",
+#     #     __name__,
+#     #     template_folder="../templates",
+#     #     static_folder="../static",
+#     # )
+
+#     # # Should the non-API file endpoint be here?
+
+#     # return blueprint
