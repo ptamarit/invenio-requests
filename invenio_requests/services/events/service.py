@@ -389,7 +389,7 @@ class RequestEventsService(RecordService):
         # Execute search
         search_result = search.execute()
 
-        result = self.result_list(
+        return self.result_list(
             self,
             identity,
             search_result,
@@ -404,8 +404,6 @@ class RequestEventsService(RecordService):
             expand=expand,
             request=request,
         )
-        # breakpoint()
-        return result
 
     def focused_list(
         self,
