@@ -9,6 +9,7 @@ import {
   deleteDraftComment,
   setDraftComment,
   deleteDraftFiles,
+  // setDraftFiles,
 } from "../../timelineCommentEditor/state/actions";
 import { selectCommentReplies, selectCommentRepliesStatus } from "./reducer";
 
@@ -42,7 +43,9 @@ export const appendEventContent = (parentRequestEventId, content) => {
     const { request } = getState();
     try {
       setDraftComment(request.data.id, parentRequestEventId, content);
-      // TODO: Something about files here?
+      // TODO: Something about files here? Probably.
+      console.log("appendEventContent: TODO: call setDraftFiles?")
+      // setDraftFiles(request.data.id, parentRequestEventId, files);
     } catch (e) {
       console.warn("Failed to save comment:", e);
     }

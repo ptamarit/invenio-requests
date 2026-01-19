@@ -223,7 +223,6 @@ class TimelineCommentEvent extends Component {
                     />
                   ) : (
                     <TimelineEventBody
-                      // files={event?.payload?.files}
                       payload={event?.payload}
                       quoteReply={this.quoteReply}
                     />

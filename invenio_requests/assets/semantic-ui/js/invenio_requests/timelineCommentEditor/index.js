@@ -15,8 +15,6 @@ import {
   PARENT_RESTORE_DRAFT_CONTENT,
   PARENT_SET_DRAFT_FILES,
   PARENT_RESTORE_DRAFT_FILES,
-  // SETTING_FILES,
-  // RESTORE_FILES,
 } from "./state/actions";
 import TimelineCommentEditorComponent from "./TimelineCommentEditor";
 
@@ -28,9 +26,6 @@ const mapDispatchToProps = {
   setCommentFiles: (files) => setEventFiles(files, null, PARENT_SET_DRAFT_FILES),
   restoreCommentFiles: () => restoreEventFiles(null, PARENT_RESTORE_DRAFT_FILES),
 };
-
-// export const SETTING_FILES = "eventEditor/SETTING_FILES";
-// export const RESTORE_FILES = "eventEditor/RESTORE_FILES";
 
 const mapStateToProps = (state) => ({
   isLoading: state.timelineCommentEditor.isLoading,

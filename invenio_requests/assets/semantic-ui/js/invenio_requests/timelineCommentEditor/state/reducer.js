@@ -13,11 +13,8 @@ import {
   PARENT_SET_DRAFT_CONTENT,
   PARENT_RESTORE_DRAFT_FILES,
   PARENT_SET_DRAFT_FILES,
-  SETTING_CONTENT,
-  // RESTORE_CONTENT,
-  APPEND_CONTENT,
-  SETTING_FILES,
-  RESTORE_FILES,
+  SETTING_FILES, // TODO: Remove.
+  RESTORE_FILES, // TODO: Remove.
 } from "./actions";
 
 const initialState = {
@@ -25,38 +22,24 @@ const initialState = {
   isLoading: false,
   commentContent: "",
   files: [],
-  // commentContent: {comment: "", files: []},
   storedCommentContent: null,
-  // TODO: appendedCommentContent not here anymore?
-  appendedCommentContent: "",
-  // filesList: ,
+  // TODO: appendedCommentContent not here anymore? Indeed.
+  // appendedCommentContent: "",
 };
 
 export const commentEditorReducer = (state = initialState, action) => {
   switch (action.type) {
     case PARENT_SET_DRAFT_CONTENT:
-      console.log("PARENT_SET_DRAFT_CONTENT");
+      console.log("PARENT_SET_DRAFT_CONTENT"); // TODO: Remove.
       return { ...state, commentContent: action.payload.content };
-    case SETTING_CONTENT:
-      console.log("SETTING_CONTENT");
-      return { ...state, commentContent: action.payload };
     case PARENT_SET_DRAFT_FILES:
-      console.log("PARENT_SET_DRAFT_FILES");
-      // TODO: Or this?
-      // return { ...state, files: action.payload };
+      console.log("PARENT_SET_DRAFT_FILES"); // TODO: Remove.
       return { ...state, files: action.payload.files };
-    case SETTING_FILES:
+    case SETTING_FILES: // TODO: Remove.
       // TODO: Needed? Used?
-      console.log("SETTING_FILES");
-      return { ...state, files: action.payload };
-    case APPEND_CONTENT:
-      return {
-        ...state,
-        commentContent: state.commentContent + action.payload,
-        // We keep track of appended content separately to trigger the focus event only when
-        // text is appended (not when the user is typing).
-        appendedCommentContent: state.appendedCommentContent + action.payload,
-      };
+      console.error("SETTING_FILES dead code");
+      throw new Error("SETTING_FILES dead code")
+      // return { ...state, files: action.payload };
     case IS_LOADING:
       return { ...state, isLoading: true };
     case HAS_ERROR:
@@ -70,7 +53,7 @@ export const commentEditorReducer = (state = initialState, action) => {
         files: [],
       };
     case PARENT_RESTORE_DRAFT_CONTENT:
-      console.log("PARENT_RESTORE_DRAFT_CONTENT");
+      console.log("PARENT_RESTORE_DRAFT_CONTENT"); // TODO: Remove.
       return {
         ...state,
         commentContent: action.payload.content,
@@ -78,22 +61,21 @@ export const commentEditorReducer = (state = initialState, action) => {
         storedCommentContent: action.payload.content,
       };
     case PARENT_RESTORE_DRAFT_FILES:
-      console.log("PARENT_RESTORE_DRAFT_FILES");
-      console.log({ state });
-      console.log(action.payload);
+      console.log("PARENT_RESTORE_DRAFT_FILES"); // TODO: Remove.
       return {
         ...state,
         files: action.payload.files,
         // TODO: Or this?
         // files: action.payload,
       };
-    case RESTORE_FILES:
-      console.log("RESTORE_FILES");
+    case RESTORE_FILES: // TODO: Remove.
+      console.error("RESTORE_FILES dead code");
+      throw new Error("RESTORE_FILES dead code")
       // TODO: Needed? Used?
-      return {
-        ...state,
-        files: action.payload,
-      };
+      // return {
+      //   ...state,
+      //   files: action.payload,
+      // };
     default:
       return state;
   }

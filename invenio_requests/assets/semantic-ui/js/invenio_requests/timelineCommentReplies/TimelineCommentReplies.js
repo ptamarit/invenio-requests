@@ -110,7 +110,6 @@ class TimelineCommentReplies extends Component {
       isReplying,
       pageSize,
       allowReply,
-      // parentRequestEvent,
       request,
     } = this.props;
     const { isExpanded, deleteModalAction } = this.state;
@@ -225,7 +224,6 @@ TimelineCommentReplies.propTypes = {
   draftContent: PropTypes.string.isRequired,
   storedDraftContent: PropTypes.string.isRequired,
   draftFiles: PropTypes.array.isRequired,
-  // files: PropTypes.array.isRequired,
   appendedDraftContent: PropTypes.string.isRequired,
   submitReply: PropTypes.func.isRequired,
   setInitialReplies: PropTypes.func.isRequired,

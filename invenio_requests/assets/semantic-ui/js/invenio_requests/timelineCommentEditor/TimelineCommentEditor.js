@@ -71,11 +71,6 @@ const TimelineCommentEditor = ({
     await client.deleteFile(request.id, file.key);
   };
 
-  // const [files, setFiles] = useState(initialFiles);
-  // // TODO: Copy necessary?
-  // const files = [...initialFiles];
-  // // , setFiles] = useState(initialFiles);
-
   return (
     <div className="timeline-comment-editor-container">
       {error && <Message negative>{error}</Message>}
@@ -99,25 +94,17 @@ const TimelineCommentEditor = ({
             // initialValue is not allowed to change, so we use `storedCommentContent` which is set at most once
             initialValue={storedCommentContent}
             onEditorChange={(event, editor) => {
-              // TODO: Store the list of files too, and not only on editor change, but also on files change.
               setCommentContent(editor.getContent());
-              // setCommentContent({
-              //   content: editor.getContent(),
-              //   files: editor.getFiles(),
-              // })
             }}
             onInit={onInit}
-            // onInit={(_, editor) => (editorRef.current = editor)}
             minHeight={150}
             disabled={!canCreateComment || disabled}
-            // editorConfig={{}}
             files={files}
             onFilesChange={(files) => {
               setCommentFiles(files);
             }}
             onFileUpload={onFileUpload}
             onFileDelete={onFileDelete}
-            // filesImmediateDeletion={true}
           />
         </Container>
       </div>

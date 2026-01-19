@@ -57,7 +57,6 @@ const mapDispatchToProps = {
     restoreEventFiles(parentRequestEventId, REPLY_RESTORE_DRAFT_FILES),
   appendCommentContent: (content, parentRequestEventId) =>
     appendEventContent(parentRequestEventId, content),
-  // TODO: Something here?
   submitReply,
   updateComment: (payload, parentRequestEventId) =>
     updateComment({

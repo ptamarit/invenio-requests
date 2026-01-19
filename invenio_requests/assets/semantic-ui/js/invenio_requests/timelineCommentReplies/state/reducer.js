@@ -155,7 +155,6 @@ export const timelineRepliesReducer = (state = initialState, action) => {
       return newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
         submitting: false,
         draftContent: "",
-        // files: [],
         draftFiles: [],
       });
     case IS_REPLYING:
@@ -232,7 +231,6 @@ export const timelineRepliesReducer = (state = initialState, action) => {
       return newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
         draftContent: "",
         storedDraftContent: "",
-        // files: [],
         draftFiles: [],
       });
     case REPLY_UPDATE_COMMENT:
