@@ -52,11 +52,7 @@ class RequestFilesService(FileService):
         # resolve and check permissions
         request = self.request_cls.get_record(id_)
         # self.check_revision_id(request, revision_id)
-        self.require_permission(identity, "create_comment", request=request)
-        self.require_permission(identity, "update", record=request, request=request)
-        # self.require_permission(
-        #         identity, "update_comment", request=request, event=event
-        # )
+        self.require_permission(identity, "manage_files", request=request)
 
         # TODO: Is this atomic? unit_of_work does it?
         if request.files.bucket is None:
@@ -100,8 +96,6 @@ class RequestFilesService(FileService):
 
         file_object_model = request.files[unique_key].file.object_model
 
-        # breakpoint()
-
         # TODO: Return a proper result_item.
         result = request.files[unique_key].file.dumps()
 
@@ -135,21 +129,22 @@ class RequestFilesService(FileService):
         #     # ),
         # )
 
+    # TODO: Unused?
     def read_file_metadata(self, identity, id_, file_key):
         """Retrieve file metadata."""
         # resolve and check permissions
         request = self.request_cls.get_record(id_)
-        self.require_permission(identity, "read", request=request)
+        self.require_permission(identity, "read_files", request=request)
+
         # Return file metadata (key, size, mimetype, links, etc.)
 
-    def get_file(self, identity, id_, file_key):
+    def get_file_content(self, identity, id_, file_key):
         """Retrieve file content for download/display."""
         # resolve and check permissions
         request = self.request_cls.get_record(id_)
-        # self.require_permission(identity, 'read', record=record)
-        self.require_permission(identity, "read", request=request)
-        # Return file stream
+        self.require_permission(identity, "read_files", request=request)
 
+        # Return file stream
         request_file = request.files.get(file_key)
         if request_file is None:
             raise FileNotFoundError()
@@ -162,11 +157,13 @@ class RequestFilesService(FileService):
         # )
         return request_file.file
 
+    # TODO: Unused?
     def list_files(self, identity, id_):
         """List all files for a request."""
         # resolve and check permissions
         request = self.request_cls.get_record(id_)
-        self.require_permission(identity, "read", request=request)
+        self.require_permission(identity, "read_files", request=request)
+
         # Return list of all files in request bucket
         return list(request.files.keys())
 
@@ -180,14 +177,7 @@ class RequestFilesService(FileService):
 
         # resolve and check permissions
         request = self.request_cls.get_record(id_)
-        # self.require_permission(identity, "action_delete", request=request)
-        self.require_permission(identity, "update", record=request, request=request)
-        # self.require_permission(
-        #     identity, "delete_comment", request=request, event=event
-        # )
-        # self.require_permission(
-        #     identity, "update_comment", request=request, event=event
-        # )
+        self.require_permission(identity, "manage_files", request=request)
 
         # TODO: Why not doing request.files.delete(file_key) ?
         if file_key is not None:

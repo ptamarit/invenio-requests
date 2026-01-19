@@ -131,4 +131,8 @@ class PermissionPolicy(RecordPermissionPolicy):
     # by request's can_read, thus we use a dummy permission for the search.
     can_unused = [AnyUser()]
 
-    # TODO: Create new permissions here.
+    # Manage (Upload/Delete) files: Same as creating comments on the request.
+    can_manage_files = can_create_comment
+
+    # Read (View/Download) files: Same permission as viewing the request and its timeline.
+    can_read_files = can_read

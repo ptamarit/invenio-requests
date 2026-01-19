@@ -143,7 +143,7 @@ class RequestFilesResource(RecordResource):
     @request_view_args
     def get_content(self):
         """Get the file content."""
-        file = self.service.get_file(
+        file = self.service.get_file_content(
             identity=g.identity,
             id_=resource_requestctx.view_args["id"],
             file_key=resource_requestctx.view_args["key"],
