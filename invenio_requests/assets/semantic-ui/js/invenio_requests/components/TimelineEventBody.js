@@ -84,37 +84,33 @@ export const TimelineEventBody = ({ payload, quoteReply }) => {
     );
   }
 
-  const contentResult = (
-    <Popup
-      eventsEnabled={false}
-      open={!!tooltipOffset}
-      offset={tooltipOffset}
-      position="top left"
-      className="requests-event-body-popup"
-      trigger={
-        <span ref={ref}>
-          {format === "html" ? (
-            <span dangerouslySetInnerHTML={{ __html: content }} />
-          ) : (
-            content
-          )}
-        </span>
-      }
-      basic
-    >
-      <ButtonGroup basic size="small">
-        <Button
-          onClick={onQuoteClick}
-          icon="reply"
-          content={i18next.t("Quote reply")}
-        />
-      </ButtonGroup>
-    </Popup>
-  );
-
   return (
     <>
-      {contentResult}
+      <Popup
+        eventsEnabled={false}
+        open={!!tooltipOffset}
+        offset={tooltipOffset}
+        position="top left"
+        className="requests-event-body-popup"
+        trigger={
+          <span ref={ref}>
+            {format === "html" ? (
+              <span dangerouslySetInnerHTML={{ __html: content }} />
+            ) : (
+              content
+            )}
+          </span>
+        }
+        basic
+      >
+        <ButtonGroup basic size="small">
+          <Button
+            onClick={onQuoteClick}
+            icon="reply"
+            content={i18next.t("Quote reply")}
+          />
+        </ButtonGroup>
+      </Popup>
       {filesEnabled && <FilesList files={files} />}
     </>
   );
