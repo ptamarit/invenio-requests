@@ -114,6 +114,12 @@ class RequestType:
     topic_can_be_none = True
     """Determines if the ``topic`` reference accepts ``None``."""
 
+    # This is to expand, not sure if used. Maybe doesn't make sense for files.
+    # Other things are references.
+    # TODO: Not sure if it's really never None.
+    # files_can_be_none = False
+    """Determines if the ``files`` reference accepts ``None``."""
+
     allowed_creator_ref_types = ["user"]
     """A list of allowed TYPE keys for ``created_by`` reference dicts."""
 
@@ -142,6 +148,10 @@ class RequestType:
 
     resolve_topic_needs = False
     """Whether to resolve needs for the topic entity."""
+
+    # TODO: Zach don't think we need this.
+    # allowed_files_ref_types = ["enabled"]
+    """A list of allowed TYPE keys for ``files`` reference dicts."""
 
     payload_schema = None
     payload_schema_cls = None
@@ -205,6 +215,15 @@ class RequestType:
                 RefBaseSchema.create_from_dict(cls.allowed_topic_ref_types),
                 allow_none=cls.topic_can_be_none,
             ),
+            # TODO: To be reviewed.
+            # This is needed to fix the tests test_only_creator_can_update_draft_request and test_creator_and_receiver_can_update_open_request.
+            # "files": ma.fields.Nested(
+            #     RefBaseSchema.create_from_dict(
+            #         cls.allowed_files_ref_types,
+            #         special_fields={"enabled": ma.fields.Boolean()},
+            #     ),
+            #     allow_none=cls.files_can_be_none,
+            # ),
         }
 
         if cls.reviewers_can_be_none():

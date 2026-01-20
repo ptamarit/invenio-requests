@@ -8,9 +8,13 @@ import { connect } from "react-redux";
 import {
   submitComment,
   setEventContent,
+  setEventFiles,
   restoreEventContent,
+  restoreEventFiles,
   PARENT_SET_DRAFT_CONTENT,
   PARENT_RESTORE_DRAFT_CONTENT,
+  PARENT_SET_DRAFT_FILES,
+  PARENT_RESTORE_DRAFT_FILES,
 } from "./state/actions";
 import TimelineCommentEditorComponent from "./TimelineCommentEditor";
 
@@ -19,6 +23,8 @@ const mapDispatchToProps = {
   setCommentContent: (content) =>
     setEventContent(content, null, PARENT_SET_DRAFT_CONTENT),
   restoreCommentContent: () => restoreEventContent(null, PARENT_RESTORE_DRAFT_CONTENT),
+  setCommentFiles: (files) => setEventFiles(files, null, PARENT_SET_DRAFT_FILES),
+  restoreCommentFiles: () => restoreEventFiles(null, PARENT_RESTORE_DRAFT_FILES),
 };
 
 const mapStateToProps = (state) => ({
@@ -27,6 +33,7 @@ const mapStateToProps = (state) => ({
   commentContent: state.timelineCommentEditor.commentContent,
   storedCommentContent: state.timelineCommentEditor.storedCommentContent,
   appendedCommentContent: state.timelineCommentEditor.appendedCommentContent,
+  files: state.timelineCommentEditor.files,
 });
 
 export const TimelineCommentEditor = connect(

@@ -26,7 +26,7 @@ class TimelineCommentEventControlled extends Component {
     this.setState({ isEditing: !isEditing, error: null });
   };
 
-  updateComment = async (content, format) => {
+  updateComment = async (content, format, files) => {
     const { updateComment, event } = this.props;
 
     if (!content) return;
@@ -36,7 +36,7 @@ class TimelineCommentEventControlled extends Component {
     });
 
     try {
-      await updateComment({ content, format, requestEventData: event });
+      await updateComment({ content, format, files, requestEventData: event });
 
       this.setState({
         isLoading: false,
@@ -67,6 +67,7 @@ class TimelineCommentEventControlled extends Component {
       allowQuoteReply,
       allowCopyLink,
       allowReply,
+      request,
     } = this.props;
     const { isLoading, isEditing, error } = this.state;
 
@@ -87,6 +88,7 @@ class TimelineCommentEventControlled extends Component {
           allowQuoteReply={allowQuoteReply}
           allowCopyLink={allowCopyLink}
           allowReply={allowReply}
+          request={request}
         />
       </Overridable>
     );
@@ -104,6 +106,7 @@ TimelineCommentEventControlled.propTypes = {
   allowQuoteReply: PropTypes.bool,
   allowCopyLink: PropTypes.bool,
   allowReply: PropTypes.bool,
+  request: PropTypes.object.isRequired,
 };
 
 TimelineCommentEventControlled.defaultProps = {

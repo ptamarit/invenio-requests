@@ -8,13 +8,48 @@
 """Base class for creating custom event types of requests."""
 
 import inspect
+from uuid import UUID
 
 import marshmallow as ma
-from marshmallow import RAISE, fields, validate
+from flask import current_app
+from invenio_i18n import lazy_gettext as _
+from marshmallow import RAISE, Schema, ValidationError, fields, validate
 from marshmallow.validate import OneOf
 from marshmallow_utils import fields as utils_fields
 
 from ..proxies import current_requests
+
+
+def is_uuid(value):
+    """Make sure value is a UUID."""
+    try:
+        UUID(value)
+    except (ValueError, TypeError):
+        raise ValidationError(
+            _("The ID must not be an Universally Unique IDentifier (UUID).")
+        )
+
+
+# TODO: Ideally it should go to records-resources, with extra arg telling which config prefix to use.
+class RequestsCommentsSanitizedHTML(utils_fields.SanitizedHTML):
+    """A subclass of SanitizedHTML that dynamically configures allowed HTML tags and attributes based on application settings."""
+
+    def __init__(self, *args, **kwargs):
+        """Initializes RequestsCommentsSanitizedHTML with dynamic tag and attribute settings."""
+        super().__init__(tags=None, attrs=None, *args, **kwargs)
+
+    def _deserialize(self, value, attr, data, **kwargs):
+        """Deserialize value with dynamic HTML tags and attributes based on Flask app context or defaults."""
+        self.tags = (
+            current_app.config.get("ALLOWED_HTML_TAGS", [])
+            + current_app.config["REQUESTS_COMMENTS_ALLOWED_EXTRA_HTML_TAGS"]
+        )
+        self.attrs = self.attrs = dict(
+            **current_app.config.get("ALLOWED_HTML_ATTRS", {}),
+            **current_app.config["REQUESTS_COMMENTS_ALLOWED_EXTRA_HTML_ATTRS"],
+        )
+
+        return super()._deserialize(value, attr, data, **kwargs)
 
 
 class EventType:
@@ -164,6 +199,26 @@ class ReviewersUpdatedType(EventType):
         )
 
 
+class FileDetailsLinksSchema(Schema):
+    """File details links schema."""
+
+    self = fields.Url(relative=True, absolute=False, dump_only=True)
+    content = fields.Url(relative=True, absolute=False, dump_only=True)
+    download_html = fields.Url(relative=True, absolute=False, dump_only=True)
+
+
+class FileDetailsSchema(Schema):
+    """File details schema."""
+
+    file_id = fields.String(validate=is_uuid)
+    key = fields.String(dump_only=True)
+    original_filename = fields.String(dump_only=True)
+    size = fields.Integer(dump_only=True)
+    mimetype = fields.String(dump_only=True)
+    created = fields.DateTime(dump_only=True)
+    links = fields.Nested(FileDetailsLinksSchema, dump_only=True)
+
+
 class CommentEventType(EventType):
     """Comment event type."""
 
@@ -178,13 +233,14 @@ class CommentEventType(EventType):
         from invenio_requests.records.api import RequestEventFormat
 
         return dict(
-            content=utils_fields.SanitizedHTML(
+            content=RequestsCommentsSanitizedHTML(
                 required=True, validate=validate.Length(min=1)
             ),
             format=fields.Str(
                 validate=validate.OneOf(choices=[e.value for e in RequestEventFormat]),
                 load_default=RequestEventFormat.HTML.value,
             ),
+            files=fields.List(fields.Nested(FileDetailsSchema)),
         )
 
     payload_required = True

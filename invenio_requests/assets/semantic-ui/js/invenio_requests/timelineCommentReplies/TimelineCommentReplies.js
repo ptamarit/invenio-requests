@@ -48,15 +48,25 @@ class TimelineCommentReplies extends Component {
     setCommentContent(content, parentRequestEvent.id);
   };
 
+  restoreCommentFiles = () => {
+    const { restoreCommentFiles, parentRequestEvent } = this.props;
+    restoreCommentFiles(parentRequestEvent.id);
+  };
+
+  setCommentFiles = (files) => {
+    const { setCommentFiles, parentRequestEvent } = this.props;
+    setCommentFiles(files, parentRequestEvent.id);
+  };
+
   appendCommentContent = (content) => {
     const { appendCommentContent, parentRequestEvent, setIsReplying } = this.props;
     setIsReplying(parentRequestEvent.id, true);
     appendCommentContent(content, parentRequestEvent.id);
   };
 
-  submitReply = (content, format) => {
+  submitReply = (content, format, files) => {
     const { submitReply, parentRequestEvent } = this.props;
-    submitReply(parentRequestEvent, content, format);
+    submitReply(parentRequestEvent, content, format, files);
   };
 
   onLoadMoreClick = () => {
@@ -90,6 +100,7 @@ class TimelineCommentReplies extends Component {
       userAvatar,
       draftContent,
       storedDraftContent,
+      draftFiles,
       appendedDraftContent,
       totalReplyCount,
       submitting,
@@ -99,6 +110,7 @@ class TimelineCommentReplies extends Component {
       isReplying,
       pageSize,
       allowReply,
+      request,
     } = this.props;
     const { isExpanded, deleteModalAction } = this.state;
     const hasReplies = totalReplyCount > 0;
@@ -146,6 +158,7 @@ class TimelineCommentReplies extends Component {
                     deleteComment={this.deleteComment}
                     appendCommentContent={this.appendCommentContent}
                     allowCopyLink={false}
+                    request={request}
                   />
                 ))}
                 <Divider />
@@ -174,9 +187,12 @@ class TimelineCommentReplies extends Component {
             // We must declare these as static (non-inline) functions to avoid re-rendering
             restoreCommentContent={this.restoreCommentContent}
             setCommentContent={this.setCommentContent}
+            restoreCommentFiles={this.restoreCommentFiles}
+            setCommentFiles={this.setCommentFiles}
             submitComment={this.submitReply}
             commentContent={draftContent}
             storedCommentContent={storedDraftContent}
+            files={draftFiles}
             appendedCommentContent={appendedDraftContent}
             userAvatar={userAvatar}
             isLoading={submitting}
@@ -185,6 +201,7 @@ class TimelineCommentReplies extends Component {
             saveButtonIcon="reply"
             onCancel={this.onCancelClick}
             disabled={!allowReply}
+            request={request}
             // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus
           />
@@ -206,6 +223,7 @@ TimelineCommentReplies.propTypes = {
   error: PropTypes.string,
   draftContent: PropTypes.string.isRequired,
   storedDraftContent: PropTypes.string.isRequired,
+  draftFiles: PropTypes.array.isRequired,
   appendedDraftContent: PropTypes.string.isRequired,
   submitReply: PropTypes.func.isRequired,
   setInitialReplies: PropTypes.func.isRequired,
@@ -219,6 +237,9 @@ TimelineCommentReplies.propTypes = {
   setIsReplying: PropTypes.func.isRequired,
   pageSize: PropTypes.number.isRequired,
   allowReply: PropTypes.bool.isRequired,
+  request: PropTypes.object.isRequired,
+  restoreCommentFiles: PropTypes.func.isRequired,
+  setCommentFiles: PropTypes.func.isRequired,
 };
 
 TimelineCommentReplies.defaultProps = {

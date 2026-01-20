@@ -13,6 +13,8 @@ from flask_login import current_user
 from invenio_pidstore.errors import PIDDeletedError, PIDDoesNotExistError
 from invenio_records_resources.services.errors import PermissionDeniedError
 
+from invenio_requests.views.requests import get_file_content
+
 #
 # Error handlers
 #
@@ -45,6 +47,11 @@ def create_ui_blueprint(app):
         __name__,
         template_folder="../templates",
         static_folder="../static",
+    )
+
+    blueprint.add_url_rule(
+        routes["file_content"],
+        view_func=get_file_content,
     )
 
     # Register error handlers

@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import PropTypes from "prop-types";
 import { Button, Popup, ButtonGroup } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_requests/i18next";
+import { FilesList } from "react-invenio-forms";
 
 export const TimelineEventBody = ({ payload, quoteReply }) => {
   const ref = useRef(null);
@@ -66,7 +67,8 @@ export const TimelineEventBody = ({ payload, quoteReply }) => {
     window.invenio?.onSearchResultsRendered();
   }, []);
 
-  const { format, content, event } = payload;
+  const { format, content, files, event } = payload;
+  const filesEnabled = files !== undefined;
 
   if (!quoteReply) {
     return <span ref={ref}>{content}</span>;
@@ -83,31 +85,34 @@ export const TimelineEventBody = ({ payload, quoteReply }) => {
   }
 
   return (
-    <Popup
-      eventsEnabled={false}
-      open={!!tooltipOffset}
-      offset={tooltipOffset}
-      position="top left"
-      className="requests-event-body-popup"
-      trigger={
-        <span ref={ref}>
-          {format === "html" ? (
-            <span dangerouslySetInnerHTML={{ __html: content }} />
-          ) : (
-            content
-          )}
-        </span>
-      }
-      basic
-    >
-      <ButtonGroup basic size="small">
-        <Button
-          onClick={onQuoteClick}
-          icon="reply"
-          content={i18next.t("Quote reply")}
-        />
-      </ButtonGroup>
-    </Popup>
+    <>
+      <Popup
+        eventsEnabled={false}
+        open={!!tooltipOffset}
+        offset={tooltipOffset}
+        position="top left"
+        className="requests-event-body-popup"
+        trigger={
+          <span ref={ref}>
+            {format === "html" ? (
+              <span dangerouslySetInnerHTML={{ __html: content }} />
+            ) : (
+              content
+            )}
+          </span>
+        }
+        basic
+      >
+        <ButtonGroup basic size="small">
+          <Button
+            onClick={onQuoteClick}
+            icon="reply"
+            content={i18next.t("Quote reply")}
+          />
+        </ButtonGroup>
+      </Popup>
+      {filesEnabled && <FilesList files={files} />}
+    </>
   );
 };
 
