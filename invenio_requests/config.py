@@ -143,3 +143,6 @@ REQUESTS_COMMENT_PREVIEW_LIMIT = 5
 This limits the size of indexed documents when comments have many replies.
 Additional replies can be loaded via pagination.
 """
+
+REQUESTS_FILES_DEFAULT_QUOTA_SIZE = 100 * 10**6  # 100MB
+REQUESTS_FILES_DEFAULT_MAX_FILE_SIZE = 10 * 10**6  # 10MB

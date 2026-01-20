@@ -45,6 +45,17 @@
       "items": {
         "$ref": "local://definitions-v1.0.0.json#/entity_reference"
       }
+    },
+    "files": {
+      "type": "object",
+      "description": "Files associated with the request",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Set to false for metadata only requests."
+        }
+      }
     }
   }
 }

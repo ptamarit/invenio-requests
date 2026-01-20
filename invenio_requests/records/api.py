@@ -11,11 +11,11 @@
 from enum import Enum
 from functools import partial
 
+from flask import current_app
 from invenio_records.dumpers import SearchDumper
 from invenio_records.systemfields import ConstantField, DictField, ModelField
-from invenio_records_resources.records.api import Record
-from invenio_records_resources.records.systemfields import IndexField
-from werkzeug.utils import cached_property
+from invenio_records_resources.records.api import FileRecord, Record
+from invenio_records_resources.records.systemfields import FilesField, IndexField
 
 from ..customizations import RequestState as State
 from .dumpers import (
@@ -23,7 +23,7 @@ from .dumpers import (
     GrantTokensDumperExt,
     ParentChildDumperExt,
 )
-from .models import RequestEventModel, RequestMetadata
+from .models import RequestEventModel, RequestFileMetadata, RequestMetadata
 from .systemfields import (
     EntityReferenceField,
     EventTypeField,
@@ -109,6 +109,22 @@ class RequestEvent(Record):
         super().pre_commit()
 
 
+def get_files_quota(record=None):
+    """Get bucket quota configuration for request files."""
+    # Returns quota_size and max_file_size from Flask config
+    # with defaults (100MB total quota, 10MB max file size)
+    return dict(
+        quota_size=current_app.config["REQUESTS_FILES_DEFAULT_QUOTA_SIZE"],
+        max_file_size=current_app.config["REQUESTS_FILES_DEFAULT_MAX_FILE_SIZE"],
+    )
+
+
+class RequestFile(FileRecord):
+    """Request file API."""
+
+    model_cls = RequestFileMetadata
+
+
 class Request(Record):
     """A generic request record."""
 
@@ -183,3 +199,16 @@ class Request(Record):
 
     is_locked = DictField("is_locked")
     """Whether or not the request is locked."""
+
+    bucket_id = ModelField(dump=False)
+    bucket = ModelField(dump=False)
+
+    # Files NOT dumped or stored in JSON - internal only
+    files = FilesField(
+        store=False,  # Don't serialize to request JSON
+        dump=False,  # Don't include in dumps()
+        file_cls=RequestFile,
+        delete=False,  # Manual management via service
+        create=False,  # Lazy initialization
+        bucket_args=get_files_quota,  # Quota config
+    )
