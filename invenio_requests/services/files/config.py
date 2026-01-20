@@ -16,6 +16,8 @@ from invenio_records_resources.services.base.config import ConfiguratorMixin, Fr
 from invenio_records_resources.services.files.links import FileEndpointLink
 from invenio_records_resources.services.records.results import RecordItem
 
+from invenio_requests.proxies import current_request_type_registry
+
 from ...records.api import Request, RequestFile
 from ..permissions import PermissionPolicy
 from ..schemas import RequestFileSchema
