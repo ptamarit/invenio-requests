@@ -226,7 +226,6 @@ class RequestCommentFileCleanupComponent(ServiceComponent):
         self, identity, data=None, event=None, request=None, uow=None, **kwargs
     ):
         """Delete files not referenced anymore in a comment."""
-
         # The existing (persisted) list of files associated to the comment.
         file_ids_previous = [
             file_previous["file_id"] for file_previous in event["payload"]["files"]
@@ -248,7 +247,6 @@ class RequestCommentFileCleanupComponent(ServiceComponent):
         self, identity, data=None, event=None, request=None, uow=None, **kwargs
     ):
         """Delete files not associated to a deleted comment."""
-
         # The existing (persisted) list of files associated to the comment.
         file_ids_previous = [
             file_previous["file_id"] for file_previous in event["payload"]["files"]

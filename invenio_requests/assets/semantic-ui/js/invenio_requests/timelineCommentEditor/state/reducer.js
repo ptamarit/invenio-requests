@@ -38,8 +38,8 @@ export const commentEditorReducer = (state = initialState, action) => {
     case SETTING_FILES: // TODO: Remove.
       // TODO: Needed? Used?
       console.error("SETTING_FILES dead code");
-      throw new Error("SETTING_FILES dead code")
       // return { ...state, files: action.payload };
+      throw new Error("SETTING_FILES dead code");
     case IS_LOADING:
       return { ...state, isLoading: true };
     case HAS_ERROR:
@@ -70,12 +70,12 @@ export const commentEditorReducer = (state = initialState, action) => {
       };
     case RESTORE_FILES: // TODO: Remove.
       console.error("RESTORE_FILES dead code");
-      throw new Error("RESTORE_FILES dead code")
       // TODO: Needed? Used?
       // return {
       //   ...state,
       //   files: action.payload,
       // };
+      throw new Error("RESTORE_FILES dead code");
     default:
       return state;
   }

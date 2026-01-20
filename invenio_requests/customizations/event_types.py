@@ -189,12 +189,16 @@ class ReviewersUpdatedType(EventType):
 
 
 class FileDetailsLinksSchema(Schema):
+    """File details links schema."""
+
     self = fields.Url(relative=True, absolute=False)
     content = fields.Url(relative=True, absolute=False)
     download_html = fields.Url(relative=True, absolute=False)
 
 
 class FileDetailsSchema(Schema):
+    """File details schema."""
+
     # TODO: Use UUID and fix SQLAlchemy not serializable.
     file_id = fields.String()
     key = fields.String()

@@ -44,7 +44,7 @@ export const appendEventContent = (parentRequestEventId, content) => {
     try {
       setDraftComment(request.data.id, parentRequestEventId, content);
       // TODO: Something about files here? Probably.
-      console.log("appendEventContent: TODO: call setDraftFiles?")
+      console.log("appendEventContent: TODO: call setDraftFiles?");
       // setDraftFiles(request.data.id, parentRequestEventId, files);
     } catch (e) {
       console.warn("Failed to save comment:", e);

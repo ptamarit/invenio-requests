@@ -23,7 +23,6 @@ export const APPEND_CONTENT = "eventEditor/APPENDING_CONTENT";
 export const SETTING_FILES = "eventEditor/SETTING_FILES"; // TODO: Dead code?
 export const RESTORE_FILES = "eventEditor/RESTORE_FILES"; // TODO: Dead code?
 
-
 const draftCommentKey = (requestId, parentRequestEventId) =>
   `draft-comment-${requestId}${parentRequestEventId ? "-" + parentRequestEventId : ""}`;
 export const setDraftComment = (requestId, parentRequestEventId, content) => {

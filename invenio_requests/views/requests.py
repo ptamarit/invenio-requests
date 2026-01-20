@@ -16,7 +16,6 @@ from invenio_requests.proxies import current_files_service
 
 def get_file_content(pid_value, file_key):
     """Get the file content."""
-
     file = current_files_service.get_file_content(
         identity=g.identity,
         id_=pid_value,
