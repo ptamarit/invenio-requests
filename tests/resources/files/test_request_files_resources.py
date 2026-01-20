@@ -112,8 +112,12 @@ def upload_file(
             "original_filename": key,
             "size": size,
             "mimetype": mimetype,
-            # TODO: Switch to download_html once the non-API URL works.
-            "content": f"/api/requests/{request_id}/files/{unique_key}/content",
+            "links": {
+                "self": f"/api/requests/{request_id}/files/{unique_key}",
+                "content": f"/api/requests/{request_id}/files/{unique_key}/content",
+                # "commit": f"/api/requests/{request_id}/files/{unique_key}/commit",
+                "download_html": f"/requests/{request_id}/files/{unique_key}",
+            },
         }
 
 
@@ -180,7 +184,11 @@ def assert_comment_response(
             "self_html": f"https://127.0.0.1:5000/requests/{request_id}#commentevent-{comment_id}",
         },
         "parent_id": None,
-        "permissions": {"can_update_comment": True, "can_delete_comment": True},
+        "permissions": {
+            "can_update_comment": True,
+            "can_delete_comment": True,
+            "can_reply_comment": True,
+        },
         "revision_id": expected_revision_id,
         "type": CommentEventType.type_id,
     }
