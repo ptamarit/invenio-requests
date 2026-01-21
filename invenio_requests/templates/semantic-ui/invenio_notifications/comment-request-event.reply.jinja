@@ -7,15 +7,15 @@
 {% set request_event_content = invenio_request_event.payload.content | safe %}
 {% set request_event_content = invenio_request_event.payload.content | safe %}
 {% set request_title = invenio_request.title | safe %}
-{% set parent_comment_id = invenio_request_event.parent_id %}
+{% set reply_id = invenio_request_event.id %}
 
 {# TODO: use request.links.self_html when issue issue is resolved: https://github.com/inveniosoftware/invenio-rdm-records/issues/1327 #}
 {% set request_link = "{ui}/me/requests/{id}".format(
     ui=config.SITE_UI_URL, id=request_id
     )
 %}
-{% set parent_comment_link = "{ui}/me/requests/{id}#comment-{parent_id}".format(
-    ui=config.SITE_UI_URL, id=request_id, parent_id=parent_comment_id
+{% set reply_link = "{ui}/me/requests/{id}#replyevent-{reply_id}".format(
+    ui=config.SITE_UI_URL, id=request_id, reply_id=reply_id
     )
 %}
 {% set account_settings_link = "{ui}/account/settings/notifications".format(
@@ -30,7 +30,7 @@
 {%- block html_body -%}
 <table style="font-family:'Lato',Helvetica,Arial,sans-serif;border-spacing:15px">
     <tr>
-        <td>{{ _("'@{user_name}' replied on <a href='{parent_link}'>comment</a>:").format(user_name=event_creator_name, parent_link=parent_comment_link) | safe }}</td>
+        <td>{{ _("'@{user_name}' replied on <a href='{reply_link}'>comment</a>:").format(user_name=event_creator_name, reply_link=reply_link) | safe }}</td>
     </tr>
     <tr>
         <td><em>{{ request_event_content }}</em></td>
@@ -52,14 +52,14 @@
 
 {{ request_event_content }}
 
-{{ _("View comment: {parent_comment_link}").format(parent_comment_link=parent_comment_link) }}
+{{ _("View reply: {reply_link}").format(reply_link=reply_link) }}
 {{ _("Check out the request: {request_link}").format(request_link=request_link) }}
 
 {%- endblock plain_body %}
 
 {# Markdown for Slack/Mattermost/chat #}
 {%- block md_body -%}
-{{ _("*@{user_name}* replied on [comment]({parent_link})").format(user_name=event_creator_name, parent_link=parent_comment_link) }}.
+{{ _("*@{user_name}* replied on [comment]({reply_link})").format(user_name=event_creator_name, reply_link=reply_link) }}.
 
 {{ request_event_content }}
 

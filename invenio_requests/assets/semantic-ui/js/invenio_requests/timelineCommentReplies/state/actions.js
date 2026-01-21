@@ -68,6 +68,8 @@ export const setInitialReplies = (parentRequestEvent) => {
     const { defaultReplyQueryParams } = config ?? {};
     const pageSize = defaultReplyQueryParams.size ?? 5;
 
+    const nextPage = Math.ceil(children.length / pageSize) + 1;
+
     dispatch({
       type: HAS_NEW_DATA,
       payload: {
@@ -76,7 +78,7 @@ export const setInitialReplies = (parentRequestEvent) => {
         newChildComments: children,
         hasMore: hasMore,
         totalCount: childrenCount,
-        nextPage: 2,
+        nextPage,
         pageSize,
       },
     });

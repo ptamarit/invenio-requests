@@ -13,6 +13,7 @@ import { i18next } from "@translations/invenio_requests/i18next";
 import TimelineCommentEditor from "../timelineCommentEditor/TimelineCommentEditor";
 import TimelineCommentEventControlled from "../timelineCommentEventControlled/TimelineCommentEventControlled.js";
 import { DeleteConfirmationModal } from "../components/modals/DeleteConfirmationModal";
+import { getEventIdFromUrl, isReplyEventInUrl } from "../timelineEvents/utils";
 
 class TimelineCommentReplies extends Component {
   constructor() {
@@ -26,14 +27,82 @@ class TimelineCommentReplies extends Component {
   componentDidMount() {
     const { setInitialReplies, parentRequestEvent } = this.props;
     setInitialReplies(parentRequestEvent);
+
+    this.checkAndLoadLinkedReply();
+    window.addEventListener("hashchange", this.checkAndLoadLinkedReply);
   }
+
+  componentDidUpdate(prevProps) {
+    const { commentReplies, loading, hasMore } = this.props;
+
+    if (
+      (prevProps.loading && !loading) ||
+      prevProps.commentReplies.length !== commentReplies.length ||
+      prevProps.hasMore !== hasMore
+    ) {
+      this.checkAndLoadLinkedReply();
+    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("hashchange", this.checkAndLoadLinkedReply);
+  }
+
+  checkAndLoadLinkedReply = () => {
+    const {
+      loadOlderReplies,
+      parentRequestEvent,
+      hasMore,
+      commentReplies,
+      loading,
+      focusedReplyParentId,
+    } = this.props;
+
+    if (loading) {
+      return;
+    }
+
+    if (!isReplyEventInUrl()) {
+      return;
+    }
+
+    const linkedEventId = getEventIdFromUrl();
+    if (!linkedEventId) {
+      return;
+    }
+
+    const replyIsInThread = commentReplies.some((reply) => reply.id === linkedEventId);
+
+    if (replyIsInThread) {
+      this.setState({ isExpanded: true });
+      return;
+    }
+
+    const replyInPreview = parentRequestEvent.children?.some(
+      (child) => child.id === linkedEventId
+    );
+
+    if (replyInPreview) {
+      if (hasMore) {
+        loadOlderReplies(parentRequestEvent);
+      }
+      this.setState({ isExpanded: true });
+      return;
+    }
+
+    const isTheFocusedParent = focusedReplyParentId === parentRequestEvent.id;
+    if (isTheFocusedParent && hasMore) {
+      loadOlderReplies(parentRequestEvent);
+      this.setState({ isExpanded: true });
+    }
+  };
 
   onRepliesClick = () => {
     const { isExpanded } = this.state;
     this.setState({ isExpanded: !isExpanded });
   };
 
-  onFakeInputActivate = (value) => {
+  onFakeInputActivate = () => {
     const { setIsReplying, parentRequestEvent } = this.props;
     setIsReplying(parentRequestEvent.id, true);
   };
@@ -145,7 +214,7 @@ class TimelineCommentReplies extends Component {
                     updateComment={this.updateComment}
                     deleteComment={this.deleteComment}
                     appendCommentContent={this.appendCommentContent}
-                    allowCopyLink={false}
+                    allowCopyLink
                   />
                 ))}
                 <Divider />
@@ -219,11 +288,13 @@ TimelineCommentReplies.propTypes = {
   setIsReplying: PropTypes.func.isRequired,
   pageSize: PropTypes.number.isRequired,
   allowReply: PropTypes.bool.isRequired,
+  focusedReplyParentId: PropTypes.string,
 };
 
 TimelineCommentReplies.defaultProps = {
   userAvatar: "",
   error: null,
+  focusedReplyParentId: null,
 };
 
 export default Overridable.component(

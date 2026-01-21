@@ -167,15 +167,22 @@ class RequestCommentsResource(RecordResource):
     @search_args_parser
     @response_handler(many=True)
     def focused_list(self):
-        """List the page containing the event with ID focus_event_id, or the first page of results if this is not found."""
-        hits = self.service.focused_list(
+        """List the page containing the event with ID focus_event_id, or the first page of results if this is not found.
+
+        If the focused event is a reply, the response includes `focused_reply_parent_id`
+        to indicate which parent comment contains the reply.
+        """
+        hits, focused_reply_parent_id = self.service.focused_list(
             identity=g.identity,
             request_id=resource_requestctx.view_args["request_id"],
             focus_event_id=resource_requestctx.args.get("focus_event_id"),
             page_size=resource_requestctx.args.get("size"),
             expand=resource_requestctx.args.get("expand", False),
         )
-        return hits.to_dict(), 200
+        result = hits.to_dict()
+        if focused_reply_parent_id:
+            result["focused_reply_parent_id"] = focused_reply_parent_id
+        return result, 200
 
     @item_view_args_parser
     @request_extra_args
