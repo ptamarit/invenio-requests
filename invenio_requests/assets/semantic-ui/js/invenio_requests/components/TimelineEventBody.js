@@ -6,13 +6,20 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
+import Overridable from "react-overridable";
 import { Button, Popup, ButtonGroup } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_requests/i18next";
 
-export const TimelineEventBody = ({ payload, quoteReply, collapsedHeight = 200 }) => {
+export const TimelineEventBody = ({
+  payload,
+  quoteReply,
+  collapsible,
+  collapsedHeight,
+}) => {
   const ref = useRef(null);
+  const refInner = useRef(null);
   const [selectionRange, setSelectionRange] = useState(null);
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(collapsible ? false : true);
   const [maxHeight, setMaxHeight] = useState(collapsedHeight);
   const [isOverflowing, setIsOverflowing] = useState(false);
 
@@ -48,7 +55,9 @@ export const TimelineEventBody = ({ payload, quoteReply, collapsedHeight = 200 }
   }, [ref]);
 
   useEffect(() => {
-    const el = ref.current;
+    if (!collapsible) return;
+
+    const el = refInner.current;
     if (!el) return;
 
     const fullHeight = el.scrollHeight;
@@ -56,10 +65,12 @@ export const TimelineEventBody = ({ payload, quoteReply, collapsedHeight = 200 }
 
     setIsOverflowing(overflowing);
     setMaxHeight(expanded || !overflowing ? fullHeight : collapsedHeight);
-  }, [ref, expanded, collapsedHeight]);
+  }, [refInner, expanded, collapsible, collapsedHeight]);
 
   const toggleCollapsed = () => {
-    const el = ref.current;
+    if (!collapsible) return;
+
+    const el = refInner.current;
     if (!el) return;
 
     setMaxHeight(expanded ? collapsedHeight : el.scrollHeight);
@@ -92,20 +103,27 @@ export const TimelineEventBody = ({ payload, quoteReply, collapsedHeight = 200 }
 
   if (!quoteReply) {
     return (
-      <span
-        ref={ref}
-        className={`collapsible-comment ${
-          isOverflowing && !expanded ? "overflowing" : ""
-        }`}
-        style={{ maxHeight }}
-      >
-        {content}
-        {isOverflowing && !expanded && (
-          <button type="button" className="show-more" onClick={toggleCollapsed}>
-            Show more
-          </button>
-        )}
-      </span>
+      <Overridable id="InvenioRequests.TimelineEventBody.layout">
+        <span
+          ref={ref}
+          className={`collapsible-comment ${
+            isOverflowing && !expanded ? "overflowing" : ""
+          }`}
+        >
+          <span
+            ref={refInner}
+            className={`${collapsible && "collapsible-comment-inner"}`}
+            style={{ maxHeight: collapsible ? maxHeight : "none" }}
+          >
+            {content}
+            {isOverflowing && collapsible && (
+              <button type="button" className="show-more" onClick={toggleCollapsed}>
+                {expanded ? i18next.t("Show less") : i18next.t("Show more")}
+              </button>
+            )}
+          </span>
+        </span>
+      </Overridable>
     );
   }
 
@@ -120,53 +138,67 @@ export const TimelineEventBody = ({ payload, quoteReply, collapsedHeight = 200 }
   }
 
   return (
-    <Popup
-      eventsEnabled={false}
-      open={!!tooltipOffset}
-      offset={tooltipOffset}
-      position="top left"
-      className="requests-event-body-popup"
-      trigger={
-        <span
-          ref={ref}
-          className={`collapsible-comment ${
-            isOverflowing && !expanded ? "overflowing" : ""
-          }`}
-          style={{ maxHeight }}
-        >
-          {format === "html" ? (
-            <span dangerouslySetInnerHTML={{ __html: content }} />
-          ) : (
-            content
-          )}
-          {isOverflowing && !expanded && (
-            <button type="button" className="show-more" onClick={toggleCollapsed}>
-              Show more
-            </button>
-          )}
-        </span>
-      }
-      basic
-    >
-      <ButtonGroup basic size="small">
-        <Button
-          onClick={onQuoteClick}
-          icon="reply"
-          content={i18next.t("Quote reply")}
-        />
-      </ButtonGroup>
-    </Popup>
+    <Overridable id="InvenioRequests.TimelineEventBody.layout">
+      <Popup
+        eventsEnabled={false}
+        open={!!tooltipOffset}
+        offset={tooltipOffset}
+        position="top left"
+        className="requests-event-body-popup"
+        trigger={
+          <span
+            ref={ref}
+            className={`collapsible-comment ${
+              isOverflowing && !expanded && collapsible ? "overflowing" : ""
+            }`}
+          >
+            <span
+              ref={refInner}
+              className={`${collapsible && "collapsible-comment-inner"}`}
+              style={{ maxHeight: collapsible ? maxHeight : "none" }}
+            >
+              {format === "html" ? (
+                <span dangerouslySetInnerHTML={{ __html: content }} />
+              ) : (
+                content
+              )}
+              {isOverflowing && collapsible && (
+                <button type="button" className="show-more" onClick={toggleCollapsed}>
+                  {expanded ? i18next.t("Show less") : i18next.t("Show more")}
+                </button>
+              )}
+            </span>
+          </span>
+        }
+        basic
+      >
+        <ButtonGroup basic size="small">
+          <Button
+            onClick={onQuoteClick}
+            icon="reply"
+            content={i18next.t("Quote reply")}
+          />
+        </ButtonGroup>
+      </Popup>
+    </Overridable>
   );
 };
 
 TimelineEventBody.propTypes = {
   payload: PropTypes.object,
   quoteReply: PropTypes.func,
+  collapsible: PropTypes.bool,
   collapsedHeight: PropTypes.number,
 };
 
 TimelineEventBody.defaultProps = {
   payload: {},
   quoteReply: null,
+  collapsible: true,
   collapsedHeight: 200,
 };
+
+export default Overridable.component(
+  "InvenioRequests.TimelineEventBody",
+  TimelineEventBody
+);
