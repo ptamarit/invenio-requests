@@ -7,7 +7,6 @@
 
 """Dumps entity grant tokens into the indexed request record."""
 
-
 from invenio_records.dumpers import SearchDumperExt
 from invenio_records_resources.references import EntityGrant
 

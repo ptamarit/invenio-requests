@@ -9,7 +9,6 @@
 
 """Requests resource."""
 
-
 from flask import g
 from flask_resources import resource_requestctx, response_handler, route
 from invenio_records_resources.resources import RecordResource

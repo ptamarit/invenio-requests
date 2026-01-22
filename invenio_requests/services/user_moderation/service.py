@@ -5,6 +5,7 @@
 # Invenio-Requests is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
 """User moderation service."""
+
 from flask import current_app
 from invenio_accounts.models import Role
 from invenio_i18n import gettext as _

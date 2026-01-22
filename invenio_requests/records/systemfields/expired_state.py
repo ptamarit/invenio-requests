@@ -7,7 +7,6 @@
 
 """Systemfield for calculating the ``is_expired`` property of a request."""
 
-
 from datetime import datetime
 
 import pytz

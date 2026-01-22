@@ -7,6 +7,7 @@
 # details.
 
 """Search parameter interpreters for requests."""
+
 from functools import partial
 
 from invenio_records_resources.references import EntityGrant

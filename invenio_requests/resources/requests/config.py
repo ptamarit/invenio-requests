@@ -10,7 +10,6 @@
 
 """Requests resource config."""
 
-
 import marshmallow as ma
 from flask_resources import HTTPJSONException, create_error_handler
 from invenio_records_resources.resources import (

@@ -7,7 +7,6 @@
 
 """Enum for the various open states a request can have."""
 
-
 from enum import Enum
 
 

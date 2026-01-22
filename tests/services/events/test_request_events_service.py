@@ -9,6 +9,7 @@
 # details.
 
 """Service tests."""
+
 import copy
 from unittest.mock import MagicMock
 
