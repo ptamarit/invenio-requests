@@ -73,15 +73,9 @@ def upgrade():
         ["object_version_id"],
         unique=False,
     )
-    # TODO: Is ix_request_files_record_id needed? (We do not have it in Zenodo prod for communities)
     op.create_index(
         op.f("ix_request_files_record_id"), "request_files", ["record_id"], unique=False
     )
-    # TODO: Create an index like this similarly to what is done for communities with uidx_communities_files_id_key?
-    # op.create_index(
-    #     "uidx_request_files_id_key", "request_files", ["id", "key"], unique=True
-    # )
-    # TODO: Is uidx_request_files_record_id_key needed? (We do not have it in Zenodo prod for communities, but instead have uidx_request_files_id_key)
     op.create_index(
         "uidx_request_files_record_id_key",
         "request_files",
@@ -118,7 +112,6 @@ def downgrade():
     )
     op.drop_column("request_metadata", "bucket_id")
     op.drop_index("uidx_request_files_record_id_key", table_name="request_files")
-    # op.drop_index(op.f("uidx_request_files_id_key"), table_name="request_files")
     op.drop_index(op.f("ix_request_files_record_id"), table_name="request_files")
     op.drop_index(
         op.f("ix_request_files_object_version_id"), table_name="request_files"

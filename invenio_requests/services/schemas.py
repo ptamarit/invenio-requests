@@ -76,6 +76,12 @@ class RequestEventSchema(BaseRecordSchema):
             return {}
 
 
+class RequestFileSchema(BaseRecordSchema):
+    """Schema for file requests."""
+
+    key = fields.String(dump_only=True)
+
+
 class RequestSchema(BaseRecordSchema):
     """Schema for requests.
 

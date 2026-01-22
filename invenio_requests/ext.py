@@ -19,12 +19,16 @@ from .registry import TypeRegistry
 from .resources import (
     RequestCommentsResource,
     RequestCommentsResourceConfig,
+    RequestFilesResource,
+    RequestFilesResourceConfig,
     RequestsResource,
     RequestsResourceConfig,
 )
 from .services import (
     RequestEventsService,
     RequestEventsServiceConfig,
+    RequestFilesService,
+    RequestFilesServiceConfig,
     RequestsService,
     RequestsServiceConfig,
     UserModerationRequestService,
@@ -38,7 +42,8 @@ class InvenioRequests:
         """Extension initialization."""
         self.requests_service = None
         self.requests_resource = None
-        self.request_comments_service = None
+        self.request_events_service = None
+        self.request_files_service = None
         self._schema_cache = {}
         self._events_schema_cache = {}
         if app:
@@ -64,6 +69,7 @@ class InvenioRequests:
         class ServiceConfigs:
             requests = RequestsServiceConfig.build(app)
             request_events = RequestEventsServiceConfig.build(app)
+            request_files = RequestFilesServiceConfig.build(app)
 
         return ServiceConfigs
 
@@ -76,6 +82,9 @@ class InvenioRequests:
         )
         self.request_events_service = RequestEventsService(
             config=service_configs.request_events,
+        )
+        self.request_files_service = RequestFilesService(
+            config=service_configs.request_files,
         )
         self.user_moderation_requests_service = UserModerationRequestService(
             requests_service=self.requests_service,
@@ -91,6 +100,11 @@ class InvenioRequests:
         self.request_events_resource = RequestCommentsResource(
             service=self.request_events_service,
             config=RequestCommentsResourceConfig,
+        )
+
+        self.request_files_resource = RequestFilesResource(
+            service=self.request_files_service,
+            config=RequestFilesResourceConfig,
         )
 
     def init_registry(self, app):
@@ -148,9 +162,11 @@ def init(app):
     requests_ext = app.extensions["invenio-requests"]
     requests_service = requests_ext.requests_service
     events_service = requests_ext.request_events_service
+    files_service = requests_ext.request_files_service
 
     svc_reg.register(requests_service)
     svc_reg.register(events_service)
+    svc_reg.register(files_service)
 
     idx_reg.register(requests_service.indexer, indexer_id="requests")
     idx_reg.register(events_service.indexer, indexer_id="events")
