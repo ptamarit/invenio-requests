@@ -397,18 +397,13 @@ class RequestEventsService(RecordService):
         """Return a page of results focused on a given event, or the first page if the event is not found.
 
         Only searches parent comments (excludes child comments/replies).
-        If the focused event is a reply (child comment), the page containing its parent will be returned,
-        and all replies for that parent will be included in the preview to ensure the focused reply is visible.
-
-        Returns a tuple of (result_list, focused_reply_parent_id) where focused_reply_parent_id is
-        the parent comment ID if focusing on a reply, or None otherwise.
+        If the focused event is a reply (child comment), the page containing its parent will be returned.
         """
         # Permissions - guarded by the request's can_read.
         request = self._get_request(request_id)
         self.require_permission(identity, "read", request=request)
 
         # If a specific event ID is requested, we need to work out the corresponding page number.
-        focused_reply_parent_id = None
         focus_event = None
         try:
             focus_event = self._get_event(focus_event_id)
@@ -417,10 +412,7 @@ class RequestEventsService(RecordService):
             if str(focus_event.request_id) != str(request_id):
                 raise PermissionDeniedError()
 
-            # If the focused event is a reply (has parent_id), we need to focus on its parent instead
-            # since the timeline only shows parent comments, not replies directly.
             if focus_event.parent_id is not None:
-                focused_reply_parent_id = str(focus_event.parent_id)
                 focus_event = self._get_event(focus_event.parent_id)
         except sqlalchemy.exc.NoResultFound:
             # Silently ignore
@@ -428,17 +420,12 @@ class RequestEventsService(RecordService):
 
         params = {"sort": "oldest", "size": page_size}
 
-        effective_preview_size = preview_size
-        if focused_reply_parent_id is not None:
-            # Use the maximum allowed inner result window size (OpenSearch default is 100)
-            effective_preview_size = 100
-
         # Build filter to only include parent comments (exclude child comments)
         parent_filter = dsl.Q(
             "bool",
             must=[dsl.Q("term", request_id=str(request.id))],
             must_not=[dsl.Q("exists", field="parent_id")],  # Exclude replies
-            should=[self._timeline_query_child_preview(effective_preview_size)],
+            should=[self._timeline_query_child_preview(preview_size)],
             minimum_should_match=0,
         )
         search = self._search(
@@ -464,7 +451,7 @@ class RequestEventsService(RecordService):
 
         # We deactivated versioning before (it doesn't apply for count queries) so we need to re-enable it.
         search_result = search.params(version=True).execute()
-        result = self.result_list(
+        return self.result_list(
             self,
             identity,
             search_result,
@@ -479,7 +466,6 @@ class RequestEventsService(RecordService):
             expand=expand,
             request=request,
         )
-        return result, focused_reply_parent_id
 
     def scan(
         self,

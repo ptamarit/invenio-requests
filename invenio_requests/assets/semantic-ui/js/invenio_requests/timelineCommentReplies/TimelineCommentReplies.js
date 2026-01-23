@@ -21,6 +21,7 @@ class TimelineCommentReplies extends Component {
     this.state = {
       isExpanded: true,
       deleteModalAction: undefined,
+      isLoadingLinkedReply: false,
     };
   }
 
@@ -49,14 +50,9 @@ class TimelineCommentReplies extends Component {
   }
 
   checkAndLoadLinkedReply = () => {
-    const {
-      loadOlderReplies,
-      parentRequestEvent,
-      hasMore,
-      commentReplies,
-      loading,
-      focusedReplyParentId,
-    } = this.props;
+    const { loadOlderReplies, parentRequestEvent, hasMore, commentReplies, loading } =
+      this.props;
+    const { isLoadingLinkedReply } = this.state;
 
     if (loading) {
       return;
@@ -74,7 +70,7 @@ class TimelineCommentReplies extends Component {
     const replyIsInThread = commentReplies.some((reply) => reply.id === linkedEventId);
 
     if (replyIsInThread) {
-      this.setState({ isExpanded: true });
+      this.setState({ isExpanded: true, isLoadingLinkedReply: false });
       return;
     }
 
@@ -86,14 +82,17 @@ class TimelineCommentReplies extends Component {
       if (hasMore) {
         loadOlderReplies(parentRequestEvent);
       }
-      this.setState({ isExpanded: true });
+      this.setState({ isExpanded: true, isLoadingLinkedReply: true });
       return;
     }
 
-    const isTheFocusedParent = focusedReplyParentId === parentRequestEvent.id;
-    if (isTheFocusedParent && hasMore) {
+    const previewSize = parentRequestEvent.children?.length || 0;
+    const hasLargePreview = previewSize >= 5;
+    const shouldKeepLoading = hasLargePreview || isLoadingLinkedReply;
+
+    if (shouldKeepLoading && hasMore) {
       loadOlderReplies(parentRequestEvent);
-      this.setState({ isExpanded: true });
+      this.setState({ isExpanded: true, isLoadingLinkedReply: true });
     }
   };
 
@@ -288,13 +287,11 @@ TimelineCommentReplies.propTypes = {
   setIsReplying: PropTypes.func.isRequired,
   pageSize: PropTypes.number.isRequired,
   allowReply: PropTypes.bool.isRequired,
-  focusedReplyParentId: PropTypes.string,
 };
 
 TimelineCommentReplies.defaultProps = {
   userAvatar: "",
   error: null,
-  focusedReplyParentId: null,
 };
 
 export default Overridable.component(

@@ -36,7 +36,6 @@ const mapStateToProps = (state, ownProps) => {
   return {
     commentReplies,
     ...status,
-    focusedReplyParentId: state.timeline.focusedReplyParentId,
   };
 };
 

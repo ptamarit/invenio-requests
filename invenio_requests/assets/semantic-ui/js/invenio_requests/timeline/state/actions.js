@@ -69,7 +69,6 @@ export const fetchTimeline = (focusEventId = undefined) => {
 
       let focusedPage = null;
       let focusedPageResponse = null;
-      let focusedReplyParentId = null;
 
       if (focusEventId) {
         // Check if focused event is on first or last page
@@ -94,7 +93,6 @@ export const fetchTimeline = (focusEventId = undefined) => {
             }
           );
           focusedPage = focusedPageResponse?.data?.page;
-          focusedReplyParentId = focusedPageResponse?.data?.focused_reply_parent_id;
 
           if (focusedPageResponse.data.hits.hits.length === 0) {
             dispatch({ type: MISSING_REQUESTED_EVENT });
@@ -112,7 +110,6 @@ export const fetchTimeline = (focusEventId = undefined) => {
           focusedPage: focusedPage,
           pageAfterFocused: focusedPage,
           lastPage: lastPageNumber,
-          focusedReplyParentId: focusedReplyParentId,
         },
       });
     } catch (error) {

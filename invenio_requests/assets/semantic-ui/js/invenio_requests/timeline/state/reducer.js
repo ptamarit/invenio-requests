@@ -40,7 +40,6 @@ export const initialState = {
   warning: null,
   loadingAfterFirstPage: false,
   loadingAfterFocusedPage: false,
-  focusedReplyParentId: null,
 };
 
 const newStateWithUpdate = (updatedComment, timelineState) => {
@@ -130,8 +129,6 @@ export const timelineReducer = (state = initialState, action) => {
         pageAfterFocused: action.payload.pageAfterFocused ?? state.pageAfterFocused,
         lastPage: action.payload.lastPage ?? state.lastPage,
         totalHits: action.payload.totalHits ?? state.totalHits,
-        focusedReplyParentId:
-          action.payload.focusedReplyParentId ?? state.focusedReplyParentId,
         error: null,
       };
     case APPEND_PAGE:
