@@ -34,7 +34,7 @@ REQUESTS_ENTITY_RESOLVERS = [UserResolver(), GroupResolver()]
 """Registered resolvers for resolving/creating references in request metadata."""
 
 REQUESTS_ROUTES = {
-    "details": "/requests/<uuid:pid_value>",
+    "download_file_html": "/requests/<uuid:pid_value>/files/<path:file_key>",
 }
 """Invenio requests ui endpoints."""
 

@@ -29,6 +29,11 @@ current_requests_service = LocalProxy(
 )
 """Proxy to the instantiated requests service."""
 
+current_request_files_service = LocalProxy(
+    lambda: current_app.extensions["invenio-requests"].request_files_service
+)
+"""Proxy to the instantiated request files service."""
+
 current_events_service = LocalProxy(
     lambda: current_app.extensions["invenio-requests"].request_events_service
 )

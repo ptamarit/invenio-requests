@@ -14,6 +14,7 @@ from .ext import InvenioRequests
 from .proxies import (
     current_event_type_registry,
     current_events_service,
+    current_request_files_service,
     current_request_type_registry,
     current_requests,
     current_requests_resource,
@@ -26,6 +27,7 @@ __all__ = (
     "__version__",
     "current_event_type_registry",
     "current_events_service",
+    "current_request_files_service",
     "current_request_type_registry",
     "current_requests_resource",
     "current_requests_service",

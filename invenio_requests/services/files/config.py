@@ -16,8 +16,6 @@ from invenio_records_resources.services.base.config import ConfiguratorMixin, Fr
 from invenio_records_resources.services.files.links import FileEndpointLink
 from invenio_records_resources.services.records.results import RecordItem
 
-from invenio_requests.proxies import current_request_type_registry
-
 from ...records.api import Request, RequestFile
 from ..permissions import PermissionPolicy
 from ..schemas import RequestFileSchema
@@ -38,9 +36,9 @@ class RequestFileLink(Link):
     @staticmethod
     def vars(obj, vars):
         """Variables for the URI template."""
-        request_type = current_request_type_registry.lookup(vars["request_type"])
         vars.update({"request_id": obj.model.record_id, "key": obj.key})
-        vars.update(request_type._update_link_config(**vars))
+        # Remark: we do not call `request_type._update_link_config`
+        # because we do not want file links to be modified depending on the context (e.g. `/me`)
 
 
 class RequestFilesServiceConfig(FileServiceConfig, ConfiguratorMixin):
