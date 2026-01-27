@@ -41,6 +41,7 @@ class RequestCommentsResourceConfig(RecordResourceConfig):
         "item": "/<request_id>/comments/<comment_id>",
         "reply": "/<request_id>/comments/<comment_id>/reply",
         "replies": "/<request_id>/comments/<comment_id>/replies",
+        "replies_focused": "/<request_id>/comments/<comment_id>/replies_focused",
         "timeline": "/<request_id>/timeline",
         "timeline_focused": "/<request_id>/timeline_focused",
     }
@@ -51,6 +52,7 @@ class RequestCommentsResourceConfig(RecordResourceConfig):
     #          request.
     request_list_view_args = {
         "request_id": fields.UUID(),
+        "comment_id": fields.Str(),
     }
     request_item_view_args = {
         "request_id": fields.Str(),

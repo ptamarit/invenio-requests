@@ -46,36 +46,40 @@ class RequestEventSchema(BaseRecordSchema):
 
     def get_permissions(self, obj):
         """Return permissions to act on comments or empty dict."""
+        service = current_requests.request_events_service
+        request = self.context.get("request", None)
+        permissions = {}
         is_comment = obj.type == CommentEventType
-        if is_comment:
-            service = current_requests.request_events_service
-            request = self.context.get("request", None)
-            permissions = {
-                "can_update_comment": service.check_permission(
-                    self.context["identity"],
-                    "update_comment",
-                    event=obj,
-                    request=request,
-                ),
-                "can_delete_comment": service.check_permission(
-                    self.context["identity"],
-                    "delete_comment",
-                    event=obj,
-                    request=request,
-                ),
-            }
 
-            if request is not None:
-                permissions["can_reply_comment"] = service.check_permission(
-                    self.context["identity"],
-                    "reply_comment",
-                    event=obj,
-                    request=request,
-                )
-
-            return permissions
-        else:
+        if request is None:
             return {}
+
+        if is_comment:
+            permissions["can_update_comment"] = service.check_permission(
+                self.context["identity"],
+                "update_comment",
+                event=obj,
+                request=request,
+            )
+            permissions["can_delete_comment"] = service.check_permission(
+                self.context["identity"],
+                "delete_comment",
+                event=obj,
+                request=request,
+            )
+        else:
+            # Other event types (e.g. log events) might be deleted comments, for which these permissions are inherently False.
+            permissions["can_update_comment"] = False
+            permissions["can_delete_comment"] = False
+
+        permissions["can_reply_comment"] = service.check_permission(
+            self.context["identity"],
+            "reply_comment",
+            event=obj,
+            request=request,
+        )
+
+        return permissions
 
 
 class RequestFileSchema(Schema):

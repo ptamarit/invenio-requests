@@ -27,7 +27,7 @@ class TimelineCommentEventControlled extends Component {
   };
 
   updateComment = async (content, format) => {
-    const { updateComment, event } = this.props;
+    const { updateComment, event, page } = this.props;
 
     if (!content) return;
 
@@ -36,7 +36,7 @@ class TimelineCommentEventControlled extends Component {
     });
 
     try {
-      await updateComment({ content, format, requestEventData: event });
+      await updateComment({ content, format, requestEventData: event, page });
 
       this.setState({
         isLoading: false,
@@ -53,9 +53,9 @@ class TimelineCommentEventControlled extends Component {
   };
 
   deleteComment = async () => {
-    const { deleteComment, event, openConfirmModal } = this.props;
+    const { deleteComment, event, openConfirmModal, page } = this.props;
 
-    openConfirmModal(() => deleteComment({ requestEventData: event }));
+    openConfirmModal(() => deleteComment({ requestEventData: event, page }));
   };
 
   render() {
@@ -67,6 +67,8 @@ class TimelineCommentEventControlled extends Component {
       allowQuoteReply,
       allowCopyLink,
       allowReply,
+      request,
+      isBeforeLoadMore,
     } = this.props;
     const { isLoading, isEditing, error } = this.state;
 
@@ -87,6 +89,8 @@ class TimelineCommentEventControlled extends Component {
           allowQuoteReply={allowQuoteReply}
           allowCopyLink={allowCopyLink}
           allowReply={allowReply}
+          request={request}
+          isBeforeLoadMore={isBeforeLoadMore}
         />
       </Overridable>
     );
@@ -104,6 +108,9 @@ TimelineCommentEventControlled.propTypes = {
   allowQuoteReply: PropTypes.bool,
   allowCopyLink: PropTypes.bool,
   allowReply: PropTypes.bool,
+  request: PropTypes.object.isRequired,
+  page: PropTypes.number.isRequired,
+  isBeforeLoadMore: PropTypes.bool.isRequired,
 };
 
 TimelineCommentEventControlled.defaultProps = {

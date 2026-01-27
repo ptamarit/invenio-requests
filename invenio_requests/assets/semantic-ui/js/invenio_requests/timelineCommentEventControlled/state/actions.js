@@ -4,7 +4,7 @@
 // Invenio Requests is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
-import { clearTimelineInterval } from "../../timeline/state/actions";
+import { clearTimelineInterval } from "../../timelineParent/state/actions";
 import { payloadSerializer } from "../../api/serializers";
 
 export const updateComment = ({
@@ -12,6 +12,7 @@ export const updateComment = ({
   format,
   parentRequestEventId,
   requestEventData,
+  page,
   successEvent,
   loadingEvent,
 }) => {
@@ -24,7 +25,7 @@ export const updateComment = ({
     dispatch({
       type: loadingEvent,
       payload: {
-        parentRequestEventId: parentRequestEventId,
+        parentRequestEventId,
       },
     });
 
@@ -34,7 +35,8 @@ export const updateComment = ({
       type: successEvent,
       payload: {
         updatedComment: response.data,
-        parentRequestEventId: parentRequestEventId,
+        parentRequestEventId,
+        page,
       },
     });
 
@@ -47,6 +49,7 @@ export const deleteComment = ({
   requestEventData,
   loadingEvent,
   successEvent,
+  page,
 }) => {
   return async (dispatch, _, config) => {
     dispatch(clearTimelineInterval());
@@ -55,7 +58,7 @@ export const deleteComment = ({
     dispatch({
       type: loadingEvent,
       payload: {
-        parentRequestEventId: parentRequestEventId,
+        parentRequestEventId,
       },
     });
 
@@ -65,7 +68,8 @@ export const deleteComment = ({
       type: successEvent,
       payload: {
         deletedCommentId: requestEventData.id,
-        parentRequestEventId: parentRequestEventId,
+        parentRequestEventId,
+        page,
       },
     });
 

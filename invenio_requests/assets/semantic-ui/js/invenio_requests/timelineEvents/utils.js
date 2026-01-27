@@ -7,7 +7,6 @@
 import { RequestEventsLinksExtractor } from "../api/InvenioRequestEventsApi";
 
 const COMMENT_PREFIX = "#commentevent-";
-const REPLY_PREFIX = "#replyevent-";
 
 export const isEventSelected = (event) => {
   const eventUrl = new URL(new RequestEventsLinksExtractor(event.links).eventHtmlUrl);
@@ -18,18 +17,18 @@ export const isEventSelected = (event) => {
 export const getEventIdFromUrl = () => {
   const currentUrl = new URL(window.location.href);
   const hash = currentUrl.hash;
-  let eventId = null;
+  let parentEventId = null;
+  let replyEventId = null;
 
   if (hash.startsWith(COMMENT_PREFIX)) {
-    eventId = hash.substring(COMMENT_PREFIX.length);
-  } else if (hash.startsWith(REPLY_PREFIX)) {
-    eventId = hash.substring(REPLY_PREFIX.length);
+    let ids = hash.substring(COMMENT_PREFIX.length);
+    ids = ids.split("_");
+    parentEventId = ids[0];
+    if (ids.length === 2) {
+      replyEventId = ids[1];
+    }
+    return { parentEventId, replyEventId };
   }
 
-  return eventId;
-};
-
-export const isReplyEventInUrl = () => {
-  const currentUrl = new URL(window.location.href);
-  return currentUrl.hash.startsWith(REPLY_PREFIX);
+  return null;
 };

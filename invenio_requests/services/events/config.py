@@ -195,7 +195,7 @@ class RequestEventLink(Link):
         request_type = current_request_type_registry.lookup(vars["request_type"])
         parent_id = obj.parent_id if obj.parent_id else obj.id
         is_reply = obj.parent_id is not None
-        event_anchor = f"replyevent-{obj.id}" if is_reply else f"commentevent-{obj.id}"
+        event_anchor = f"commentevent-{parent_id}_{obj.id}" if is_reply else f"commentevent-{obj.id}"
         vars.update(
             {
                 "id": obj.id,
@@ -247,6 +247,9 @@ class RequestEventsServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         "replies": RequestEventLink(
             "{+api}/requests/{request_id}/comments/{parent_id}/replies"
         ),
+        "replies_focused": RequestEventLink(
+            "{+api}/requests/{request_id}/comments/{parent_id}/replies_focused"
+        )
     }
     links_search = pagination_links("{+api}/requests/{request_id}/timeline{?args*}")
 

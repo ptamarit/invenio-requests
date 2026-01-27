@@ -4,8 +4,7 @@
 // Invenio RDM Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
-import { timelineReducer } from "../timeline/state/reducer";
-import { commentEditorReducer } from "../timelineCommentEditor/state/reducer";
+import { timelineReducer } from "../timelineParent/state/reducer";
 import { combineReducers } from "redux";
 import { requestReducer } from "../request/state/reducer";
 import { timelineRepliesReducer } from "../timelineCommentReplies/state/reducer";
@@ -13,7 +12,6 @@ import { timelineRepliesReducer } from "../timelineCommentReplies/state/reducer"
 export default function createReducers() {
   return combineReducers({
     timeline: timelineReducer,
-    timelineCommentEditor: commentEditorReducer,
     timelineReplies: timelineRepliesReducer,
     request: requestReducer,
   });
