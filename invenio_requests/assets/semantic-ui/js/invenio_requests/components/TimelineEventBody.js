@@ -52,7 +52,7 @@ export const TimelineEventBody = ({
 
     document.addEventListener("selectionchange", onSelectionChange);
     return () => document.removeEventListener("selectionchange", onSelectionChange);
-  }, [ref]);
+  }, []);
 
   useEffect(() => {
     if (!collapsible) return;
@@ -65,7 +65,7 @@ export const TimelineEventBody = ({
 
     setIsOverflowing(overflowing);
     setMaxHeight(expanded || !overflowing ? fullHeight : collapsedHeight);
-  }, [refInner, expanded, collapsible, collapsedHeight]);
+  }, [expanded, collapsible, collapsedHeight]);
 
   const toggleCollapsed = () => {
     if (!collapsible) return;
@@ -103,21 +103,29 @@ export const TimelineEventBody = ({
 
   if (!quoteReply) {
     return (
-      <Overridable id="InvenioRequests.TimelineEventBody.layout">
+      <Overridable
+        id="InvenioRequests.TimelineEventBody.layout"
+        collapsible={collapsible}
+        collapsedHeight={collapsedHeight}
+      >
         <span
           ref={ref}
           className={`collapsible-comment ${
-            isOverflowing && !expanded ? "overflowing" : ""
+            isOverflowing ? (!expanded ? "overflowing" : "expanded") : ""
           }`}
         >
           <span
             ref={refInner}
-            className={`${collapsible && "collapsible-comment-inner"}`}
+            className={`${collapsible ? "collapsible-comment-inner" : ""}`}
             style={{ maxHeight: collapsible ? maxHeight : "none" }}
           >
             {content}
             {isOverflowing && collapsible && (
-              <button type="button" className="show-more" onClick={toggleCollapsed}>
+              <button
+                type="button"
+                className="ui tiny button text-only show-more"
+                onClick={toggleCollapsed}
+              >
                 {expanded ? i18next.t("Show less") : i18next.t("Show more")}
               </button>
             )}
@@ -138,7 +146,11 @@ export const TimelineEventBody = ({
   }
 
   return (
-    <Overridable id="InvenioRequests.TimelineEventBody.layout">
+    <Overridable
+      id="InvenioRequests.TimelineEventBody.layout"
+      collapsible={collapsible}
+      collapsedHeight={collapsedHeight}
+    >
       <Popup
         eventsEnabled={false}
         open={!!tooltipOffset}
@@ -149,12 +161,16 @@ export const TimelineEventBody = ({
           <span
             ref={ref}
             className={`collapsible-comment ${
-              isOverflowing && !expanded && collapsible ? "overflowing" : ""
+              isOverflowing
+                ? !expanded && collapsible
+                  ? "overflowing"
+                  : "expanded"
+                : ""
             }`}
           >
             <span
               ref={refInner}
-              className={`${collapsible && "collapsible-comment-inner"}`}
+              className={`${collapsible ? "collapsible-comment-inner" : ""}`}
               style={{ maxHeight: collapsible ? maxHeight : "none" }}
             >
               {format === "html" ? (
@@ -163,7 +179,11 @@ export const TimelineEventBody = ({
                 content
               )}
               {isOverflowing && collapsible && (
-                <button type="button" className="show-more" onClick={toggleCollapsed}>
+                <button
+                  type="button"
+                  className="ui tiny button text-only show-more"
+                  onClick={toggleCollapsed}
+                >
                   {expanded ? i18next.t("Show less") : i18next.t("Show more")}
                 </button>
               )}
