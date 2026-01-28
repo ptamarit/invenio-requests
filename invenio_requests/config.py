@@ -13,6 +13,10 @@ from invenio_i18n import lazy_gettext as _
 from invenio_users_resources.entity_resolvers import GroupResolver, UserResolver
 
 from invenio_requests.services.requests import facets
+from invenio_requests.services.requests.components import (
+    RequestCommentFileCleanupComponent,
+    RequestCommentFileValidationComponent,
+)
 
 from .customizations import CommentEventType, LogEventType, ReviewersUpdatedType
 from .services.permissions import PermissionPolicy
@@ -146,3 +150,8 @@ Additional replies can be loaded via pagination.
 
 REQUESTS_FILES_DEFAULT_QUOTA_SIZE = 100 * 10**6  # 100MB
 REQUESTS_FILES_DEFAULT_MAX_FILE_SIZE = 10 * 10**6  # 10MB
+
+REQUESTS_EVENTS_SERVICE_COMPONENTS = [
+    RequestCommentFileValidationComponent,
+    RequestCommentFileCleanupComponent,
+]

@@ -12,6 +12,8 @@ from enum import Enum
 from functools import partial
 
 from flask import current_app
+from invenio_db import db
+from invenio_files_rest.models import ObjectVersion
 from invenio_records.dumpers import SearchDumper
 from invenio_records.systemfields import ConstantField, DictField, ModelField
 from invenio_records_resources.records.api import FileRecord, Record
@@ -123,6 +125,19 @@ class RequestFile(FileRecord):
     """Request file API."""
 
     model_cls = RequestFileMetadata
+
+    @classmethod
+    def list_by_file_ids(cls, record_id, file_ids):
+        """Get record files by record ID and file IDs."""
+        with db.session.no_autoflush:
+            query = cls.model_cls.query.join(ObjectVersion).filter(
+                cls.model_cls.record_id == record_id,
+                ObjectVersion.file_id.in_(file_ids),
+                cls.model_cls.is_deleted != True,
+            )
+
+            for obj in query:
+                yield cls(obj.data, model=obj)
 
 
 class Request(Record):
