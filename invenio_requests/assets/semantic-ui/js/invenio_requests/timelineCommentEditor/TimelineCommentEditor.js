@@ -11,6 +11,7 @@ import { Container, Message, Icon } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { i18next } from "@translations/invenio_requests/i18next";
 import { RequestEventAvatarContainer } from "../components/RequestsFeed";
+import { InvenioRequestFilesApi } from "../api/InvenioRequestFilesApi";
 
 const TimelineCommentEditor = ({
   isLoading,
@@ -19,6 +20,9 @@ const TimelineCommentEditor = ({
   restoreCommentContent,
   setCommentContent,
   appendedCommentContent,
+  files,
+  restoreCommentFiles,
+  setCommentFiles,
   error,
   submitComment,
   userAvatar,
@@ -28,10 +32,15 @@ const TimelineCommentEditor = ({
   saveButtonIcon,
   onCancel,
   disabled,
+  request,
 }) => {
   useEffect(() => {
     restoreCommentContent();
   }, [restoreCommentContent]);
+
+  useEffect(() => {
+    restoreCommentFiles();
+  }, [restoreCommentFiles]);
 
   const editorRef = useRef(null);
   useEffect(() => {
@@ -51,6 +60,16 @@ const TimelineCommentEditor = ({
     },
     [autoFocus]
   );
+
+  const onFileUpload = async (filename, payload, options) => {
+    const client = new InvenioRequestFilesApi();
+    return await client.uploadFile(request.id, filename, payload, options);
+  };
+
+  const onFileDelete = async (file) => {
+    const client = new InvenioRequestFilesApi();
+    await client.deleteFile(request.id, file.key);
+  };
 
   return (
     <div className="timeline-comment-editor-container">
@@ -74,12 +93,18 @@ const TimelineCommentEditor = ({
             inputValue={commentContent}
             // initialValue is not allowed to change, so we use `storedCommentContent` which is set at most once
             initialValue={storedCommentContent}
-            onEditorChange={(_, editor) => {
+            onEditorChange={(event, editor) => {
               setCommentContent(editor.getContent());
             }}
             onInit={onInit}
             minHeight={150}
             disabled={!canCreateComment || disabled}
+            files={files}
+            onFilesChange={(files) => {
+              setCommentFiles(files);
+            }}
+            onFileUpload={onFileUpload}
+            onFileDelete={onFileDelete}
           />
         </Container>
       </div>
@@ -97,7 +122,7 @@ const TimelineCommentEditor = ({
           size="medium"
           content={saveButtonLabel}
           loading={isLoading}
-          onClick={() => submitComment(commentContent, "html")}
+          onClick={() => submitComment(commentContent, "html", files)}
           disabled={!canCreateComment}
         />
       </div>
@@ -107,6 +132,9 @@ const TimelineCommentEditor = ({
 
 TimelineCommentEditor.propTypes = {
   commentContent: PropTypes.string,
+  files: PropTypes.array,
+  restoreCommentFiles: PropTypes.func.isRequired,
+  setCommentFiles: PropTypes.func.isRequired,
   storedCommentContent: PropTypes.string,
   appendedCommentContent: PropTypes.string,
   isLoading: PropTypes.bool,
@@ -121,10 +149,12 @@ TimelineCommentEditor.propTypes = {
   saveButtonIcon: PropTypes.string,
   onCancel: PropTypes.func,
   disabled: PropTypes.bool,
+  request: PropTypes.object.isRequired,
 };
 
 TimelineCommentEditor.defaultProps = {
   commentContent: "",
+  files: [],
   storedCommentContent: null,
   appendedCommentContent: "",
   isLoading: false,
