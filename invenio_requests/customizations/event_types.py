@@ -176,10 +176,24 @@ class ReviewersUpdatedType(EventType):
         )
 
 
+class FileDetailsLinksSchema(Schema):
+    """File details links schema."""
+
+    self = fields.Url(relative=True, absolute=False, dump_only=True)
+    content = fields.Url(relative=True, absolute=False, dump_only=True)
+    download_html = fields.Url(relative=True, absolute=False, dump_only=True)
+
+
 class FileDetailsSchema(Schema):
     """File details schema."""
 
     file_id = fields.String(validate=is_uuid)
+    key = fields.String(dump_only=True)
+    original_filename = fields.String(dump_only=True)
+    size = fields.Integer(dump_only=True)
+    mimetype = fields.String(dump_only=True)
+    created = fields.String(dump_only=True)
+    links = fields.Nested(FileDetailsLinksSchema, dump_only=True)
 
 
 class CommentEventType(EventType):

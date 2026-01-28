@@ -22,6 +22,8 @@ def assert_api_response_json(expected_json, received_json):
     # We don't compare dynamic times at this point
     received_json.pop("created")
     received_json.pop("updated")
+    for file in received_json.get("payload", {}).get("files", []):
+        file.pop("created")
     assert expected_json == received_json
 
 
@@ -153,16 +155,12 @@ def assert_comment_response(
     files_details,
     events_resource_data_with_files,
 ):
-    file_details_response = [
-        {"file_id": file_details["file_id"]} for file_details in files_details
-    ]
-
     expected_json = {
         "id": comment_id,
         "payload": {
             "content": events_resource_data_with_files["payload"]["content"],
             "format": events_resource_data_with_files["payload"]["format"],
-            "files": file_details_response,
+            "files": files_details,
         },
         "created_by": {"user": "1"},
         "links": {

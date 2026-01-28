@@ -22,6 +22,7 @@ from invenio_records_resources.records.systemfields import FilesField, IndexFiel
 from ..customizations import RequestState as State
 from .dumpers import (
     CalculatedFieldDumperExt,
+    FilesDumperExt,
     GrantTokensDumperExt,
     ParentChildDumperExt,
 )
@@ -61,9 +62,10 @@ class RequestEvent(Record):
     dumper = SearchDumper(
         extensions=[
             ParentChildDumperExt(),
+            FilesDumperExt(),
         ]
     )
-    """Search dumper with parent-child relationship extension."""
+    """Search dumper with parent-child relationship extension and files extension."""
 
     # Systemfields
     metadata = None
