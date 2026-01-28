@@ -15,6 +15,8 @@ import {
   REPLY_DELETE_COMMENT,
   REPLY_RESTORE_DRAFT_CONTENT,
   REPLY_SET_DRAFT_CONTENT,
+  REPLY_RESTORE_DRAFT_FILES,
+  REPLY_SET_DRAFT_FILES,
   REPLY_UPDATE_COMMENT,
   SET_PAGE,
   IS_REPLYING,
@@ -50,6 +52,7 @@ const initialCommentStatus = {
   draftContent: "",
   storedDraftContent: "",
   appendedDraftContent: "",
+  draftFiles: [],
   isReplying: false,
 };
 
@@ -152,6 +155,7 @@ export const timelineRepliesReducer = (state = initialState, action) => {
       return newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
         submitting: false,
         draftContent: "",
+        draftFiles: [],
       });
     case IS_REPLYING:
       return newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
@@ -211,10 +215,23 @@ export const timelineRepliesReducer = (state = initialState, action) => {
             .draftContent + action.payload.content,
         isReplying: true,
       });
+
+    case REPLY_SET_DRAFT_FILES:
+      return newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
+        draftFiles: action.payload.files,
+      });
+
+    case REPLY_RESTORE_DRAFT_FILES:
+      return newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
+        draftFiles: action.payload.files,
+      });
+
     case CLEAR_DRAFT:
+      console.log("CLEAR_DRAFT");
       return newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
         draftContent: "",
         storedDraftContent: "",
+        draftFiles: [],
       });
     case REPLY_UPDATE_COMMENT:
       return {
