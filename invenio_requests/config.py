@@ -155,3 +155,11 @@ REQUESTS_EVENTS_SERVICE_COMPONENTS = [
     RequestCommentFileValidationComponent,
     RequestCommentFileCleanupComponent,
 ]
+
+REQUESTS_COMMENTS_ALLOWED_EXTRA_HTML_TAGS = ["img"]
+"""Extend allowed HTML tags list for requests comments content."""
+
+REQUESTS_COMMENTS_ALLOWED_EXTRA_HTML_ATTRS = {
+    "img": ["src", "alt", "width", "height"],
+}
+"""Extend allowed HTML attrs list for requests comments content."""
