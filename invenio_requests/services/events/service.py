@@ -230,6 +230,7 @@ class RequestEventsService(RecordService):
                 identity=identity, record=event, request=request, event_type=event.type
             ),
         )
+
         event["payload"]["content"] = data["payload"]["content"]
         event["payload"]["format"] = data["payload"]["format"]
 
@@ -242,6 +243,11 @@ class RequestEventsService(RecordService):
             request=request,
             uow=uow,
         )
+
+        # Updating the list of files after running components,
+        # so that RequestCommentFileCleanupComponent can compare the list of files.
+        if "files" in data["payload"]:
+            event["payload"]["files"] = data["payload"]["files"]
 
         # Persist record (DB and index)
         uow.register(RecordCommitOp(event, indexer=self.indexer))
@@ -294,7 +300,10 @@ class RequestEventsService(RecordService):
             data,
             context=dict(identity=identity, record=event, event_type=event.type),
         )
-        event["payload"] = data["payload"]
+
+        for data_key, data_value in data["payload"].items():
+            if data_key != "files":
+                event["payload"][data_key] = data_value
 
         # Run components
         self.run_components(
@@ -305,6 +314,11 @@ class RequestEventsService(RecordService):
             request=request,
             uow=uow,
         )
+
+        # Updating the list of files after running components,
+        # so that RequestCommentFileCleanupComponent can get the list of files.
+        if "files" in data["payload"]:
+            event["payload"]["files"] = data["payload"]["files"]
 
         # Commit the updated comment
         uow.register(RecordCommitOp(event, indexer=self.indexer))

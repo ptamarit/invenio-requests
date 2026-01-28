@@ -8,13 +8,25 @@
 """Base class for creating custom event types of requests."""
 
 import inspect
+from uuid import UUID
 
 import marshmallow as ma
-from marshmallow import RAISE, fields, validate
+from invenio_i18n import lazy_gettext as _
+from marshmallow import RAISE, Schema, ValidationError, fields, validate
 from marshmallow.validate import OneOf
 from marshmallow_utils import fields as utils_fields
 
 from ..proxies import current_requests
+
+
+def is_uuid(value):
+    """Make sure value is a UUID."""
+    try:
+        UUID(value)
+    except (ValueError, TypeError):
+        raise ValidationError(
+            _("The ID must be an Universally Unique IDentifier (UUID).")
+        )
 
 
 class EventType:
@@ -164,6 +176,12 @@ class ReviewersUpdatedType(EventType):
         )
 
 
+class FileDetailsSchema(Schema):
+    """File details schema."""
+
+    file_id = fields.String(validate=is_uuid)
+
+
 class CommentEventType(EventType):
     """Comment event type."""
 
@@ -185,6 +203,7 @@ class CommentEventType(EventType):
                 validate=validate.OneOf(choices=[e.value for e in RequestEventFormat]),
                 load_default=RequestEventFormat.HTML.value,
             ),
+            files=fields.List(fields.Nested(FileDetailsSchema)),
         )
 
     payload_required = True
