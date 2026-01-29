@@ -15,15 +15,21 @@ from io import BytesIO
 from uuid import UUID
 
 from invenio_requests.customizations.event_types import CommentEventType
+from invenio_requests.records.api import RequestEvent
 
 
 def assert_api_response_json(expected_json, received_json):
     """Assert the REST API response's json."""
     # We don't compare dynamic times at this point
-    received_json.pop("created")
-    received_json.pop("updated")
+    received_json.pop("created", None)
+    received_json.pop("updated", None)
     for file in received_json.get("payload", {}).get("files", []):
         file.pop("created")
+    for hits in received_json.get("hits", {}).get("hits", []):
+        hits.pop("created")
+        hits.pop("updated")
+        for file in hits.get("payload", {}).get("files", []):
+            file.pop("created")
     assert expected_json == received_json
 
 
@@ -146,6 +152,92 @@ def get_events_resource_data_with_files(files_details, events_resource_data):
     return events_resource_data_with_files
 
 
+def get_and_assert_timeline_response(
+    client,
+    request_id,
+    comment_id,
+    files_details,
+    events_resource_data,
+    headers,
+    expected_revision_id,
+):
+    # Refresh index
+    RequestEvent.index.refresh()
+
+    # Get the timeline.
+    response = client.get(
+        f"/requests/{request_id}/timeline?expand=1",
+        headers=headers,
+    )
+
+    expected_status_code = 200
+
+    expected_json = {
+        "hits": {
+            "hits": [
+                {
+                    "children": [],
+                    "children_count": 0,
+                    "created_by": {
+                        "user": "1",
+                    },
+                    "expanded": {
+                        "created_by": {
+                            "active": True,
+                            "blocked_at": None,
+                            "confirmed_at": None,
+                            "email": "user1@example.org",
+                            "id": "1",
+                            "is_current_user": True,
+                            "links": {
+                                "avatar": "https://127.0.0.1:5000/api/users/1/avatar.svg",
+                                "records_html": "https://127.0.0.1:5000/search/records?q=parent.access.owned_by.user:1",
+                                "self": "https://127.0.0.1:5000/api/users/1",
+                            },
+                            "profile": {
+                                "affiliations": "CERN",
+                                "full_name": "user1",
+                            },
+                            "username": None,
+                            "verified_at": None,
+                        },
+                    },
+                    "id": comment_id,
+                    "links": {
+                        "replies": f"https://127.0.0.1:5000/api/requests/{request_id}/comments/{comment_id}/replies",
+                        "reply": f"https://127.0.0.1:5000/api/requests/{request_id}/comments/{comment_id}/reply",
+                        "self": f"https://127.0.0.1:5000/api/requests/{request_id}/comments/{comment_id}",
+                        "self_html": f"https://127.0.0.1:5000/requests/{request_id}#commentevent-{comment_id}",
+                    },
+                    "parent_id": None,
+                    "payload": {
+                        "content": events_resource_data["payload"]["content"],
+                        "format": events_resource_data["payload"]["format"],
+                        "files": files_details,
+                    },
+                    "permissions": {
+                        "can_delete_comment": True,
+                        "can_reply_comment": True,
+                        "can_update_comment": True,
+                    },
+                    "revision_id": expected_revision_id,
+                    "type": "C",
+                },
+            ],
+            "total": 1,
+        },
+        "links": {
+            "self": f"https://127.0.0.1:5000/api/requests/{request_id}/timeline?expand=True&page=1&size=25&sort=oldest",
+        },
+        "page": 1,
+        "sortBy": "oldest",
+    }
+    if not files_details:
+        expected_json["hits"]["hits"][0]["payload"].pop("files")
+
+    assert_api_response(response, expected_status_code, expected_json)
+
+
 def assert_comment_response(
     expected_status_code,
     expected_revision_id,
@@ -178,7 +270,6 @@ def assert_comment_response(
         "revision_id": expected_revision_id,
         "type": CommentEventType.type_id,
     }
-    # TODO: Good idea to get a response without a files array?
     if not files_details:
         expected_json["payload"].pop("files")
     assert_api_response(response, expected_status_code, expected_json)
@@ -221,6 +312,16 @@ def submit_comment(
             events_resource_data_with_files=events_resource_data_with_files,
         )
 
+        get_and_assert_timeline_response(
+            client=client,
+            request_id=request_id,
+            comment_id=comment_id,
+            files_details=files_details,
+            events_resource_data=events_resource_data,
+            headers=headers,
+            expected_revision_id=1,
+        )
+
         return comment_id
 
 
@@ -251,6 +352,16 @@ def update_comment(
         comment_id=comment_id,
         files_details=files_details,
         events_resource_data_with_files=events_resource_data_with_files,
+    )
+
+    get_and_assert_timeline_response(
+        client=client,
+        request_id=request_id,
+        comment_id=comment_id,
+        files_details=files_details,
+        events_resource_data=events_resource_data,
+        headers=headers,
+        expected_revision_id=2,
     )
 
 
