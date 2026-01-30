@@ -8,13 +8,11 @@
 """Search dumpers, for transforming to and from versions to index."""
 
 from .calculated import CalculatedFieldDumperExt
-from .files import FilesDumperExt
 from .granttokens import GrantTokensDumperExt
 from .parentchild import ParentChildDumperExt
 
 __all__ = (
     "CalculatedFieldDumperExt",
-    "FilesDumperExt",
     "GrantTokensDumperExt",
     "ParentChildDumperExt",
 )
