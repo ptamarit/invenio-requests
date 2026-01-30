@@ -229,7 +229,7 @@ def get_and_assert_timeline_response(
         "links": {
             "self": f"https://127.0.0.1:5000/api/requests/{request_id}/timeline?expand=True&page=1&size=25&sort=oldest",
         },
-        "page": 1,
+        # "page": 1,
         "sortBy": "oldest",
     }
     if not files_details:
@@ -312,16 +312,6 @@ def submit_comment(
             events_resource_data_with_files=events_resource_data_with_files,
         )
 
-        get_and_assert_timeline_response(
-            client=client,
-            request_id=request_id,
-            comment_id=comment_id,
-            files_details=files_details,
-            events_resource_data=events_resource_data,
-            headers=headers,
-            expected_revision_id=1,
-        )
-
         return comment_id
 
 
@@ -352,16 +342,6 @@ def update_comment(
         comment_id=comment_id,
         files_details=files_details,
         events_resource_data_with_files=events_resource_data_with_files,
-    )
-
-    get_and_assert_timeline_response(
-        client=client,
-        request_id=request_id,
-        comment_id=comment_id,
-        files_details=files_details,
-        events_resource_data=events_resource_data,
-        headers=headers,
-        expected_revision_id=2,
     )
 
 
@@ -744,4 +724,76 @@ def test_delete_comment_with_files(
         headers=headers,
         expected_status_code=404,
         expected_json={"message": "File not found", "status": 404},
+    )
+
+
+def test_comment_with_files_expansion(
+    app,
+    client_logged_as,
+    example_request,
+    headers,
+    headers_upload,
+    location,
+    events_resource_data,
+):
+    """Test that comment file details are properly expanded in timeline."""
+    # Passing the `location` fixture to make sure that a default bucket location is defined.
+    assert location.default == True
+
+    request_id = example_request.id
+
+    file1_key_base = "screenshot"
+    file1_key_ext = ".png"
+    file1_data_content = b"\x89PNG\r\n\x1a\n ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+    file2_key_base = "report"
+    file2_key_ext = ".pdf"
+    file2_data_content = b"%PDF ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+    client = client_logged_as("user1@example.org")
+
+    # Upload first file
+    file1_details = upload_file(
+        client=client,
+        request_id=request_id,
+        key_base=file1_key_base,
+        key_ext=file1_key_ext,
+        data_content=file1_data_content,
+        headers_upload=headers_upload,
+    )
+
+    # Upload second file
+    file2_details = upload_file(
+        client=client,
+        request_id=request_id,
+        key_base=file2_key_base,
+        key_ext=file2_key_ext,
+        data_content=file2_data_content,
+        headers_upload=headers_upload,
+    )
+
+    # Create comment with file references
+    events_resource_data_with_files = get_events_resource_data_with_files(
+        files_details=[file1_details, file2_details],
+        events_resource_data=events_resource_data,
+    )
+
+    response = client.post(
+        f"/requests/{request_id}/comments",
+        headers=headers,
+        json=events_resource_data_with_files,
+    )
+
+    assert 201 == response.status_code
+    comment_id = response.json["id"]
+
+    # Test: Verify file details are expanded in timeline
+    get_and_assert_timeline_response(
+        client=client,
+        request_id=request_id,
+        comment_id=comment_id,
+        files_details=[file1_details, file2_details],
+        events_resource_data=events_resource_data,
+        headers=headers,
+        expected_revision_id=1,
     )

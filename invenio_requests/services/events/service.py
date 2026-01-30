@@ -29,7 +29,6 @@ from invenio_search.engine import dsl
 from invenio_requests.customizations import CommentEventType
 from invenio_requests.customizations.event_types import LogEventType
 from invenio_requests.proxies import current_requests_service as requests_service
-from invenio_requests.records.dumpers.files import FilesDumperExt
 from invenio_requests.services.results import EntityResolverExpandableField
 
 from ...errors import (
@@ -50,7 +49,13 @@ class RequestEventsService(RecordService):
 
     @property
     def expandable_fields(self):
-        """Get expandable fields."""
+        """Get expandable fields for request events.
+
+        Includes:
+        - created_by: User or email who created the event
+
+        Note: payload.files: File attachments in comment events are resolved in the result class.
+        """
         return [EntityResolverExpandableField("created_by")]
 
     def links_tpl_factory(self, links, **context):
@@ -164,8 +169,6 @@ class RequestEventsService(RecordService):
 
             uow.register(NotificationOp(builder.build(request, event)))
 
-        FilesDumperExt().dump(event, data)
-
         return self.result_item(
             self,
             identity,
@@ -257,8 +260,6 @@ class RequestEventsService(RecordService):
 
         # Reindex the request to update events-related computed fields
         uow.register(RecordIndexOp(request, indexer=requests_service.indexer))
-
-        FilesDumperExt().dump(event, data)
 
         return self.result_item(
             self,

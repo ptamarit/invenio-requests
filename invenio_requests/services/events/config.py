@@ -92,6 +92,9 @@ class RequestEventList(RecordList):
         if self._expand and self._fields_resolver:
             self._expand_children_fields(res["hits"]["hits"])
 
+            # Batch expand file details for all hits
+            self._batch_expand_file_details(res["hits"]["hits"])
+
         return res
 
     def _expand_children_fields(self, hits):
@@ -113,6 +116,92 @@ class RequestEventList(RecordList):
             for child in all_children:
                 fields = self._fields_resolver.expand(self._identity, child)
                 child["expanded"] = fields
+
+    def _batch_expand_file_details(self, hits):
+        """Batch expand file details for all hits in a single database query.
+
+        :param hits: List of hit dictionaries that may contain payload.files
+        """
+        from uuid import UUID
+        from invenio_requests.records.api import RequestFile
+
+        if not hits or not self._request:
+            return
+
+        request_id = self._request.id
+
+        # Collect all file IDs from all hits (parents and children)
+        all_file_ids = set()
+        for hit in hits:
+            # Collect from parent
+            parent_files = hit.get("payload", {}).get("files", [])
+            for file_obj in parent_files:
+                if "file_id" in file_obj:
+                    all_file_ids.add(UUID(file_obj["file_id"]))
+
+            # Collect from children
+            for child in hit.get("children", []):
+                child_files = child.get("payload", {}).get("files", [])
+                for file_obj in child_files:
+                    if "file_id" in file_obj:
+                        all_file_ids.add(UUID(file_obj["file_id"]))
+
+        # Early return if no files to expand
+        if not all_file_ids:
+            return
+
+        # Single batch query to fetch all files
+        request_files = RequestFile.list_by_file_ids(request_id, list(all_file_ids))
+        request_files_by_file_id = {
+            request_file.file.file_id: request_file for request_file in request_files
+        }
+
+        # Expand files in all hits
+        for hit in hits:
+            # Expand parent files
+            self._expand_files_in_projection(hit, request_id, request_files_by_file_id)
+
+            # Expand children files
+            for child in hit.get("children", []):
+                self._expand_files_in_projection(
+                    child, request_id, request_files_by_file_id
+                )
+
+    def _expand_files_in_projection(
+        self, projection, request_id, request_files_by_file_id
+    ):
+        """Expand files in a single projection using cached file data.
+
+        :param projection: The projection dictionary containing payload
+        :param request_id: The request ID for generating links
+        :param request_files_by_file_id: Pre-fetched files indexed by file_id
+        """
+        from uuid import UUID
+
+        payload_files = projection.get("payload", {}).get("files", [])
+
+        # Expand each file with details from the cache
+        for payload_file in payload_files:
+            if "file_id" not in payload_file:
+                continue
+
+            payload_file_uuid = UUID(payload_file["file_id"])
+            file_details = request_files_by_file_id.get(payload_file_uuid)
+
+            # Only expand if the file is found in the database
+            if file_details:
+                payload_file["key"] = file_details.file.key
+                payload_file["original_filename"] = file_details.model.data[
+                    "original_filename"
+                ]
+                payload_file["size"] = file_details.file.size
+                payload_file["mimetype"] = file_details.file.mimetype
+                payload_file["created"] = file_details.file.created
+                payload_file["links"] = {
+                    "self": f"/api/requests/{request_id}/files/{file_details.file.key}",
+                    "content": f"/api/requests/{request_id}/files/{file_details.file.key}/content",
+                    "download_html": f"/requests/{request_id}/files/{file_details.file.key}",
+                }
 
     @property
     def hits(self):
