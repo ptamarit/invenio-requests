@@ -13,8 +13,6 @@ import {
   PARENT_SET_DRAFT_CONTENT,
   PARENT_RESTORE_DRAFT_FILES,
   PARENT_SET_DRAFT_FILES,
-  SETTING_FILES,
-  RESTORE_FILES,
 } from "./actions";
 
 const initialState = {
@@ -31,8 +29,6 @@ export const commentEditorReducer = (state = initialState, action) => {
       return { ...state, commentContent: action.payload.content };
     case PARENT_SET_DRAFT_FILES:
       return { ...state, files: action.payload.files };
-    case SETTING_FILES:
-      return { ...state, files: action.payload };
     case IS_LOADING:
       return { ...state, isLoading: true };
     case HAS_ERROR:
@@ -56,11 +52,6 @@ export const commentEditorReducer = (state = initialState, action) => {
       return {
         ...state,
         files: action.payload.files,
-      };
-    case RESTORE_FILES:
-      return {
-        ...state,
-        files: action.payload,
       };
     default:
       return state;

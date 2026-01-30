@@ -20,8 +20,6 @@ export const PARENT_RESTORE_DRAFT_CONTENT = "eventEditor/RESTORE_CONTENT";
 export const PARENT_SET_DRAFT_FILES = "eventEditor/SETTING_FILES";
 export const PARENT_RESTORE_DRAFT_FILES = "eventEditor/RESTORE_FILES";
 export const APPEND_CONTENT = "eventEditor/APPENDING_CONTENT";
-export const SETTING_FILES = "eventEditor/SETTING_FILES";
-export const RESTORE_FILES = "eventEditor/RESTORE_FILES";
 
 const draftCommentKey = (requestId, parentRequestEventId) =>
   `draft-comment-${requestId}${parentRequestEventId ? "-" + parentRequestEventId : ""}`;
