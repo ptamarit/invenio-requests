@@ -91,7 +91,7 @@ export const setEventFiles = (files, parentRequestEventId, event) => {
       // This should not be a fatal error. The comment editor is still usable if
       // draft saving isn't working (e.g. on very old browsers or ultra-restricted
       // environments with 0 storage quota.)
-      console.warn("Failed to save comment:", e);
+      console.warn("Failed to save comment files:", e);
     }
   };
 };
@@ -124,13 +124,11 @@ export const restoreEventFiles = (parentRequestEventId, event) => {
     let savedDraftFiles = null;
     try {
       savedDraftFiles = getDraftFiles(request.data.id, parentRequestEventId);
-      console.log({ savedDraftFiles });
     } catch (e) {
       console.warn("Failed to get saved files:", e);
     }
 
     if (savedDraftFiles) {
-      console.log({ event });
       dispatch({
         type: event,
         payload: {

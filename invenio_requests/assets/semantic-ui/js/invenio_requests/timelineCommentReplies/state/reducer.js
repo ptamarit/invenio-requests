@@ -227,7 +227,6 @@ export const timelineRepliesReducer = (state = initialState, action) => {
       });
 
     case CLEAR_DRAFT:
-      console.log("CLEAR_DRAFT");
       return newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
         draftContent: "",
         storedDraftContent: "",
