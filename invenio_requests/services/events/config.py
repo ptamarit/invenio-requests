@@ -123,6 +123,8 @@ class RequestEventList(RecordList):
         :param hits: List of hit dictionaries that may contain payload.files
         """
         from uuid import UUID
+        from invenio_records_resources.services.base.links import LinksTemplate
+        from invenio_requests.proxies import current_request_files_service
         from invenio_requests.records.api import RequestFile
 
         if not hits or not self._request:
@@ -156,31 +158,41 @@ class RequestEventList(RecordList):
             request_file.file.file_id: request_file for request_file in request_files
         }
 
+        # Create link template from the request files service config (single source of truth)
+        file_links_tpl = LinksTemplate(current_request_files_service.config.links_item)
+
         # Expand files in all hits
         for hit in hits:
             # Expand parent files
-            self._expand_files_in_projection(hit, request_id, request_files_by_file_id)
+            self._expand_files_in_projection(
+                hit, request_files_by_file_id, file_links_tpl
+            )
 
             # Expand children files
             for child in hit.get("children", []):
                 self._expand_files_in_projection(
-                    child, request_id, request_files_by_file_id
+                    child, request_files_by_file_id, file_links_tpl
                 )
 
     def _expand_files_in_projection(
-        self, projection, request_id, request_files_by_file_id
+        self, projection, request_files_by_file_id, file_links_tpl
     ):
         """Expand files in a single projection using cached file data.
 
         :param projection: The projection dictionary containing payload
-        :param request_id: The request ID for generating links
         :param request_files_by_file_id: Pre-fetched files indexed by file_id
+        :param file_links_tpl: LinksTemplate for generating file links
         """
         from uuid import UUID
 
         payload_files = projection.get("payload", {}).get("files", [])
 
-        # Expand each file with details from the cache
+        # Nothing to expand if no files
+        if not payload_files:
+            return
+
+        # Build expanded files list at the projection level
+        expanded_files = []
         for payload_file in payload_files:
             if "file_id" not in payload_file:
                 continue
@@ -190,18 +202,22 @@ class RequestEventList(RecordList):
 
             # Only expand if the file is found in the database
             if file_details:
-                payload_file["key"] = file_details.file.key
-                payload_file["original_filename"] = file_details.model.data[
-                    "original_filename"
-                ]
-                payload_file["size"] = file_details.file.size
-                payload_file["mimetype"] = file_details.file.mimetype
-                payload_file["created"] = file_details.file.created
-                payload_file["links"] = {
-                    "self": f"/api/requests/{request_id}/files/{file_details.file.key}",
-                    "content": f"/api/requests/{request_id}/files/{file_details.file.key}/content",
-                    "download_html": f"/requests/{request_id}/files/{file_details.file.key}",
-                }
+                expanded_files.append({
+                    "file_id": str(file_details.file.file_id),
+                    "key": file_details.file.key,
+                    "original_filename": file_details.model.data["original_filename"],
+                    "size": file_details.file.size,
+                    "mimetype": file_details.file.mimetype,
+                    "created": file_details.file.created,
+                    # Use link template to expand links
+                    "links": file_links_tpl.expand(self._identity, file_details),
+                })
+
+        # Add expanded files to the projection's expanded field
+        if expanded_files:
+            if "expanded" not in projection:
+                projection["expanded"] = {}
+            projection["expanded"]["files"] = expanded_files
 
     @property
     def hits(self):

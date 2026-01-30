@@ -23,13 +23,29 @@ def assert_api_response_json(expected_json, received_json):
     # We don't compare dynamic times at this point
     received_json.pop("created", None)
     received_json.pop("updated", None)
+
+    # Handle expanded files at payload level (old format)
     for file in received_json.get("payload", {}).get("files", []):
-        file.pop("created")
-    for hits in received_json.get("hits", {}).get("hits", []):
-        hits.pop("created")
-        hits.pop("updated")
-        for file in hits.get("payload", {}).get("files", []):
+        if "created" in file:
             file.pop("created")
+
+    # Handle files in hits
+    for hit in received_json.get("hits", {}).get("hits", []):
+        hit.pop("created")
+        hit.pop("updated")
+
+        # Remove created from expanded files at the hit level
+        for file in hit.get("expanded", {}).get("files", []):
+            file.pop("created", None)
+
+        # Also handle files in children
+        for child in hit.get("children", []):
+            child.pop("created", None)
+            child.pop("updated", None)
+            # Remove created from expanded files in children
+            for file in child.get("expanded", {}).get("files", []):
+                file.pop("created", None)
+
     assert expected_json == received_json
 
 
@@ -213,7 +229,6 @@ def get_and_assert_timeline_response(
                     "payload": {
                         "content": events_resource_data["payload"]["content"],
                         "format": events_resource_data["payload"]["format"],
-                        "files": files_details,
                     },
                     "permissions": {
                         "can_delete_comment": True,
@@ -232,8 +247,14 @@ def get_and_assert_timeline_response(
         # "page": 1,
         "sortBy": "oldest",
     }
-    if not files_details:
-        expected_json["hits"]["hits"][0]["payload"].pop("files")
+
+    # Add files to payload if present (minimal structure with just file_id)
+    if files_details:
+        expected_json["hits"]["hits"][0]["payload"]["files"] = [
+            {"file_id": file_detail["file_id"]} for file_detail in files_details
+        ]
+        # Add expanded files to the expanded field
+        expected_json["hits"]["hits"][0]["expanded"]["files"] = files_details
 
     assert_api_response(response, expected_status_code, expected_json)
 
