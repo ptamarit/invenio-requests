@@ -22,6 +22,7 @@ from invenio_records_resources.services.records.results import (
 )
 
 from invenio_requests.services.links import (
+    RequestListOfCommentsEndpointLink,
     RequestSingleCommentEndpointLink,
     RequestTypeDependentEndpointLink,
 )
@@ -209,7 +210,10 @@ def request_event_anchor(_, vars):
     if request_event is None:
         return None
 
-    return f"commentevent-{request_event.id}"
+    if request_event.parent_id is not None:
+        return f"commentevent-{request_event.parent_id}_{request_event.id}"
+    else:
+        return f"commentevent-{request_event.id}"
 
 
 class RequestEventsServiceConfig(RecordServiceConfig, ConfiguratorMixin):
@@ -256,6 +260,10 @@ class RequestEventsServiceConfig(RecordServiceConfig, ConfiguratorMixin):
             "request_events.get_replies",
             # The replies link is only shown if the request_event is top-level
             # only case where there *can* be replies
+            when=lambda obj, vars: obj.parent_id is None,
+        ),
+        "replies_focused": RequestSingleCommentEndpointLink(
+            "request_events.focused_replies",
             when=lambda obj, vars: obj.parent_id is None,
         ),
     }

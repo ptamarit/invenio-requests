@@ -46,6 +46,17 @@ export class RequestEventsLinksExtractor {
     return this.#links.replies;
   }
 
+  get focusedRepliesUrl() {
+    if (!this.#links.replies_focused) {
+      throw TypeError(
+        i18next.t("{{link_name}} link missing from resource.", {
+          link_name: "Focused replies",
+        })
+      );
+    }
+    return this.#links.replies_focused;
+  }
+
   get replyUrl() {
     if (!this.#links.reply) {
       throw TypeError(
@@ -81,6 +92,16 @@ export class InvenioRequestEventsApi {
     return await http.get(this.#links.repliesUrl, {
       params: {
         expand: 1,
+        ...params,
+      },
+    });
+  };
+
+  getRepliesFocused = async (focusReplyEventId, params) => {
+    return await http.get(this.#links.focusedRepliesUrl, {
+      params: {
+        expand: 1,
+        focus_event_id: focusReplyEventId,
         ...params,
       },
     });

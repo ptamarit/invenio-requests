@@ -64,6 +64,7 @@ class RequestCommentsResource(RecordResource):
             route("GET", routes["timeline"], self.search),
             route("GET", routes["timeline_focused"], self.focused_list),
             route("GET", routes["replies"], self.get_replies),
+            route("GET", routes["replies_focused"], self.focused_replies),
         ]
 
     @list_view_args_parser
@@ -189,5 +190,21 @@ class RequestCommentsResource(RecordResource):
             params=resource_requestctx.args,
             search_preference=search_preference(),
             expand=resource_requestctx.args.get("expand", False),
+        )
+        return hits.to_dict(), 200
+
+    @list_view_args_parser
+    @request_extra_args
+    @search_args_parser
+    @response_handler(many=True)
+    def focused_replies(self):
+        """List the reply page containing the event with ID focus_event_id, or the first page of results if this is not found."""
+        hits = self.service.focused_reply_list(
+            identity=g.identity,
+            parent_id=resource_requestctx.view_args["comment_id"],
+            focus_reply_event_id=resource_requestctx.args.get("focus_event_id"),
+            page_size=resource_requestctx.args.get("size"),
+            expand=resource_requestctx.args.get("expand", False),
+            params=resource_requestctx.args,
         )
         return hits.to_dict(), 200

@@ -8,21 +8,16 @@ import { applyMiddleware, createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { default as createReducers } from "./state/reducers";
 import thunk from "redux-thunk";
-import { initialState as initialTimeLineState } from "./timeline/state/reducer";
 
 const composeEnhancers = composeWithDevTools({
   name: "InvenioRequests",
 });
 
 export function configureStore(config) {
-  const { size } = config.defaultQueryParams;
-
   return createStore(
     createReducers(),
     // config object will be available in the actions,
-    {
-      timeline: { ...initialTimeLineState, size },
-    },
+    {},
     composeEnhancers(applyMiddleware(thunk.withExtraArgument(config)))
   );
 }

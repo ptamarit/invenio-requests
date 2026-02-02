@@ -321,7 +321,7 @@ class RequestEventsService(RecordService):
         params=None,
         search_preference=None,
         preview_size=None,
-        **kwargs
+        **kwargs,
     ):
         """Search for events (timeline) for a given request.
 
@@ -397,6 +397,7 @@ class RequestEventsService(RecordService):
         """Return a page of results focused on a given event, or the first page if the event is not found.
 
         Only searches parent comments (excludes child comments/replies).
+        If the focused event is a reply (child comment), the page containing its parent will be returned.
         """
         # Permissions - guarded by the request's can_read.
         request = self._get_request(request_id)
@@ -410,14 +411,14 @@ class RequestEventsService(RecordService):
             # might not be valid for this particular event.
             if str(focus_event.request_id) != str(request_id):
                 raise PermissionDeniedError()
+
+            if focus_event.parent_id is not None:
+                focus_event = self._get_event(focus_event.parent_id)
         except sqlalchemy.exc.NoResultFound:
             # Silently ignore
             pass
 
         params = {"sort": "oldest", "size": page_size}
-
-        # TODO: this needs to be adpated to focus on links to child comments
-        # See https://github.com/inveniosoftware/invenio-requests/issues/542
 
         # Build filter to only include parent comments (exclude child comments)
         parent_filter = dsl.Q(
@@ -474,7 +475,7 @@ class RequestEventsService(RecordService):
         search_preference=None,
         expand=False,
         extra_filter=None,
-        **kwargs
+        **kwargs,
     ):
         """Scan for events matching the querystring."""
         request = self._get_request(request_id)
@@ -566,6 +567,97 @@ class RequestEventsService(RecordService):
             ),
             expandable_fields=self.expandable_fields,
             expand=expand,
+            request=request,
+        )
+
+    def focused_reply_list(
+        self,
+        identity,
+        parent_id,
+        focus_reply_event_id,
+        page_size,
+        expand=False,
+        search_preference=None,
+        params=None,
+    ):
+        """Return a page of results focused on a given reply event, or the first page if the event is not found.
+
+        Only searches reply comments (excludes parents comments/replies).
+        """
+        parent_event = self._get_event(parent_id)
+        request = self._get_request(parent_event.request_id)
+        # Permissions - guarded by the request's can_read.
+        self.require_permission(identity, "read", request=request)
+
+        # If a specific event ID is requested, we need to work out the corresponding page number.
+        focus_event = None
+        try:
+            focus_event = self._get_event(focus_reply_event_id)
+            # Make sure the event belongs to the request, otherwise the `require_permission` call above
+            # might not be valid for this particular event.
+            if str(focus_event.request_id) != str(parent_event.request_id):
+                raise PermissionDeniedError()
+
+            if str(focus_event.parent_id) != str(parent_id):
+                raise Exception("Focus event must be a reply to the parent.")
+
+            if focus_event.parent_id is None:
+                raise Exception("Cannot focus on non-reply event.")
+        except sqlalchemy.exc.NoResultFound:
+            # Silently ignore
+            pass
+
+        params = params or {}
+        params.setdefault("sort", "newest")
+        params.setdefault("size", page_size)
+
+        replies_filter = dsl.Q(
+            "bool",
+            must=[
+                dsl.Q("term", request_id=str(request.id)),
+                dsl.Q("term", parent_id=parent_id),
+            ],
+        )
+        search = self._search(
+            "search",
+            identity,
+            params,
+            search_preference,
+            permission_action="unused",
+            extra_filter=replies_filter,
+            versioning=False,
+        )
+
+        page = 1
+        if focus_event is not None:
+            num_newer_than_event = search.filter(
+                "range", created={"gt": focus_event.created}
+            ).count()
+            page = num_newer_than_event // page_size + 1
+
+        # Re run the pagination param interpreter to update the search with the new page number
+        params.update(page=page)
+        search = PaginationParam(self.config.search).apply(identity, search, params)
+
+        # We deactivated versioning before (it doesn't apply for count queries) so we need to re-enable it.
+        search_result = search.params(version=True).execute()
+        return self.result_list(
+            self,
+            identity,
+            search_result,
+            params,
+            links_tpl=self.links_tpl_factory(
+                self.config.links_replies,
+                request_id=str(request.id),
+                comment_id=parent_id,
+                args=params,
+            ),
+            links_item_tpl=self.links_tpl_factory(
+                self.config.links_item, request=request, request_type=request.type
+            ),
+            expandable_fields=self.expandable_fields,
+            expand=expand,
+            request=request,
         )
 
     # Utilities

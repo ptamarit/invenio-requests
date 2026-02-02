@@ -5,52 +5,68 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import {
+  APPEND_TO_PAGE,
   CLEAR_DRAFT,
   HAS_ERROR,
-  HAS_NEW_DATA,
-  IS_LOADING,
-  IS_SUBMISSION_COMPLETE,
-  IS_SUBMITTING,
+  HAS_SUBMISSION_ERROR,
   REPLY_APPEND_DRAFT_CONTENT,
-  REPLY_DELETE_COMMENT,
+  REPLY_DELETED_COMMENT,
   REPLY_RESTORE_DRAFT_CONTENT,
   REPLY_SET_DRAFT_CONTENT,
-  REPLY_UPDATE_COMMENT,
+  REPLY_UPDATED_COMMENT,
+  SET_LOADING,
   SET_PAGE,
-  IS_REPLYING,
-  IS_NOT_REPLYING,
+  SET_REPLYING,
+  SET_SUBMITTING,
+  SET_TOTAL_HITS,
+  SET_WARNING,
 } from "./actions";
 import _cloneDeep from "lodash/cloneDeep";
+import { findEventPageAndIndex, newOrIncreasedTotalHits } from "../../state/utils.js";
 
 // Store lists of child comments and status objects, both grouped by parent request event ID.
 // This follows Redux recommendations for a neater and more maintainable state shape: https://redux.js.org/usage/structuring-reducers/normalizing-state-shape#designing-a-normalized-state
 export const initialState = {
+  // { parent_event_id: { page_number: comment[] } }
   commentRepliesData: {},
+  // { parent_event_id: status_obj (see below) }
   commentStatuses: {},
 };
 
+/**
+ * @returns object { page_number: comment[] }
+ */
 export const selectCommentReplies = (state, parentRequestEventId) => {
   const { commentRepliesData } = state;
   if (Object.prototype.hasOwnProperty.call(commentRepliesData, parentRequestEventId)) {
     return commentRepliesData[parentRequestEventId];
   } else {
-    return [];
+    return {};
+  }
+};
+
+export const newOrAppendedPage = (state, parentRequestEventId, page, hits) => {
+  const commentReplies = selectCommentReplies(state, parentRequestEventId);
+  if (Object.prototype.hasOwnProperty.call(commentReplies, page)) {
+    return [...commentReplies[page], ...hits];
+  } else {
+    return hits;
   }
 };
 
 // Initial value for a single item in `commentStatuses`
 const initialCommentStatus = {
-  totalReplyCount: 0,
+  pageNumbers: [],
+  totalHits: 0,
   loading: false,
   submitting: false,
   error: null,
-  page: 1,
-  pageSize: 5,
-  hasMore: false,
+  warning: null,
+  submissionError: null,
   draftContent: "",
   storedDraftContent: "",
   appendedDraftContent: "",
-  isReplying: false,
+  replying: false,
 };
 
 export const selectCommentRepliesStatus = (state, parentRequestEventId) => {
@@ -66,15 +82,19 @@ export const selectCommentRepliesStatus = (state, parentRequestEventId) => {
 
 const newCommentRepliesWithUpdate = (childComments, updatedComment) => {
   const newChildComments = _cloneDeep(childComments);
-  const index = newChildComments.findIndex((c) => c.id === updatedComment.id);
-  newChildComments[index] = updatedComment;
+  const position = findEventPageAndIndex(newChildComments, updatedComment.id);
+  if (position === null) return newChildComments;
+
+  newChildComments[position.pageNumber][position.indexInPage] = {
+    ...newChildComments[position.pageNumber][position.indexInPage],
+    ...updatedComment,
+  };
   return newChildComments;
 };
 
 const newCommentRepliesWithDelete = (childComments, deletedCommentId) => {
-  const deletedComment = childComments.find((c) => c.id === deletedCommentId);
   return newCommentRepliesWithUpdate(childComments, {
-    ...deletedComment,
+    id: deletedCommentId,
     type: "L",
     payload: {
       content: "comment was deleted",
@@ -98,97 +118,92 @@ const newStateWithUpdatedStatus = (state, parentRequestEventId, newStatus) => {
   };
 };
 
-/**
- * Returns an object to include in an item of `commentStatuses`.
- * Either sets `totalReplyCount` if `totalCount` is defined, or increases if `increaseCountBy` is defined
- */
-const newOrIncreasedReplyCount = (state, payload) => {
-  if (payload.totalCount) {
-    return { totalReplyCount: payload.totalCount };
-  } else if (payload.increaseCountBy) {
-    const status = selectCommentRepliesStatus(state, payload.parentRequestEventId);
-    return { totalReplyCount: status.totalReplyCount + payload.increaseCountBy };
-  }
-  return {};
-};
-
-/**
- * Returns the new list of replies, with the new replies either prepended or
- * appended depending on the value of `payload.position`
- */
-const prependedOrAppendedCommentReplies = (state, payload) => {
-  const existingCommentReplies = selectCommentReplies(
-    state,
-    payload.parentRequestEventId
-  );
-
-  if (payload.position === "top") {
-    return [
-      // Prepend the new comments so they're shown at the top of the list.
-      ...payload.newChildComments,
-      ...existingCommentReplies,
-    ];
-  } else {
-    return [
-      ...existingCommentReplies,
-      // Append the new comments since they are newer
-      ...payload.newChildComments,
-    ];
-  }
+const newPageNumbersWithPage = (state, parentRequestEventId, page) => {
+  return [
+    // Pass through a set to ensure de-duplication
+    ...new Set(selectCommentRepliesStatus(state, parentRequestEventId).pageNumbers).add(
+      page
+    ),
+  ].toSorted((a, b) => a - b);
 };
 
 export const timelineRepliesReducer = (state = initialState, action) => {
   switch (action.type) {
-    case IS_LOADING:
+    case SET_LOADING:
       return newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
-        loading: true,
+        loading: action.payload.loading,
         error: null,
       });
-    case IS_SUBMITTING:
+    case SET_SUBMITTING:
       return newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
-        submitting: true,
+        submitting: action.payload.submitting,
+        submissionError: null,
       });
-    case IS_SUBMISSION_COMPLETE:
+    case SET_TOTAL_HITS:
+      return newStateWithUpdatedStatus(
+        state,
+        action.payload.parentRequestEventId,
+        newOrIncreasedTotalHits(
+          selectCommentRepliesStatus(state, action.payload.parentRequestEventId),
+          action.payload
+        )
+      );
+    case SET_REPLYING:
       return newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
-        submitting: false,
-        draftContent: "",
+        replying: action.payload.replying,
       });
-    case IS_REPLYING:
-      return newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
-        isReplying: true,
-      });
-    case IS_NOT_REPLYING:
-      return newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
-        isReplying: false,
-      });
-    case HAS_NEW_DATA:
+    case SET_PAGE:
       return {
         ...newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
-          loading: false,
-          error: null,
-          hasMore: action.payload.hasMore,
-          page: action.payload.nextPage,
-          // Don't set if not specified
-          ...(action.payload.pageSize ? { pageSize: action.payload.pageSize } : {}),
-          ...newOrIncreasedReplyCount(state, action.payload),
+          pageNumbers: newPageNumbersWithPage(
+            state,
+            action.payload.parentRequestEventId,
+            action.payload.page
+          ),
         }),
         commentRepliesData: {
           ...state.commentRepliesData,
-          [action.payload.parentRequestEventId]: prependedOrAppendedCommentReplies(
+          [action.payload.parentRequestEventId]: {
+            ...selectCommentReplies(state, action.payload.parentRequestEventId),
+            [action.payload.page]: action.payload.hits,
+          },
+        },
+      };
+    case SET_WARNING:
+      return newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
+        warning: action.payload.warning,
+      });
+    case APPEND_TO_PAGE:
+      return {
+        ...newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
+          pageNumbers: newPageNumbersWithPage(
             state,
-            action.payload
+            action.payload.parentRequestEventId,
+            action.payload.page
           ),
+        }),
+        commentRepliesData: {
+          ...state.commentRepliesData,
+          [action.payload.parentRequestEventId]: {
+            ...selectCommentReplies(state, action.payload.parentRequestEventId),
+            [action.payload.page]: newOrAppendedPage(
+              state,
+              action.payload.parentRequestEventId,
+              action.payload.page,
+              action.payload.hits
+            ),
+          },
         },
       };
     case HAS_ERROR:
       return newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
         error: action.payload.error,
         loading: false,
-        submitting: false,
       });
-    case SET_PAGE:
+    case HAS_SUBMISSION_ERROR:
       return newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
-        page: action.payload.page,
+        submissionError: action.payload.error,
+        submitting: false,
       });
     case REPLY_SET_DRAFT_CONTENT:
       return newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
@@ -209,14 +224,14 @@ export const timelineRepliesReducer = (state = initialState, action) => {
         appendedDraftContent:
           selectCommentRepliesStatus(state, action.payload.parentRequestEventId)
             .draftContent + action.payload.content,
-        isReplying: true,
+        replying: true,
       });
     case CLEAR_DRAFT:
       return newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
         draftContent: "",
         storedDraftContent: "",
       });
-    case REPLY_UPDATE_COMMENT:
+    case REPLY_UPDATED_COMMENT:
       return {
         ...newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
           submitting: false,
@@ -229,7 +244,7 @@ export const timelineRepliesReducer = (state = initialState, action) => {
           ),
         },
       };
-    case REPLY_DELETE_COMMENT:
+    case REPLY_DELETED_COMMENT:
       return {
         ...newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
           submitting: false,

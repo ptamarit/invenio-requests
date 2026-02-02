@@ -8,23 +8,24 @@ import { errorSerializer, payloadSerializer } from "../../api/serializers";
 import {
   deleteDraftComment,
   setDraftComment,
-} from "../../timelineCommentEditor/state/actions";
-import { selectCommentReplies, selectCommentRepliesStatus } from "./reducer";
+} from "../../timelineCommentEditor/draftStorage";
+import { i18next } from "@translations/invenio_requests/i18next";
 
-export const IS_LOADING = "timelineReplies/IS_LOADING";
-export const IS_SUBMITTING = "timelineReplies/IS_SUBMITTING";
-export const IS_REPLYING = "timelineReplies/IS_REPLYING";
-export const IS_NOT_REPLYING = "timelineReplies/IS_NOT_REPLYING";
-export const HAS_NEW_DATA = "timelineReplies/HAS_DATA";
-export const IS_SUBMISSION_COMPLETE = "timelineReplies/IS_SUBMISSION_COMPLETE";
-export const HAS_ERROR = "timelineReplies/HAS_ERROR";
+export const SET_LOADING = "timelineReplies/SET_LOADING";
+export const SET_TOTAL_HITS = "timelineReplies/SET_TOTAL_HITS";
+export const SET_SUBMITTING = "timelineReplies/SET_SUBMITTING";
+export const SET_REPLYING = "timelineReplies/SET_REPLYING";
 export const SET_PAGE = "timelineReplies/SET_PAGE";
+export const APPEND_TO_PAGE = "timelineReplies/APPEND_TO_PAGE";
+export const HAS_ERROR = "timelineReplies/HAS_ERROR";
+export const SET_WARNING = "timelineReplies/SET_WARNING";
+export const HAS_SUBMISSION_ERROR = "timelineReplies/HAS_SUBMISSION_ERROR";
 export const CLEAR_DRAFT = "timelineReplies/CLEAR_DRAFT";
 export const REPLY_APPEND_DRAFT_CONTENT = "timelineReplies/APPEND_DRAFT_CONTENT";
 export const REPLY_SET_DRAFT_CONTENT = "timelineReplies/SET_DRAFT_CONTENT";
 export const REPLY_RESTORE_DRAFT_CONTENT = "timelineReplies/RESTORE_DRAFT_CONTENT";
-export const REPLY_UPDATE_COMMENT = "timelineReplies/UPDATE_COMMENT";
-export const REPLY_DELETE_COMMENT = "timelineReplies/DELETE_COMMENT";
+export const REPLY_UPDATED_COMMENT = "timelineReplies/UPDATED_COMMENT";
+export const REPLY_DELETED_COMMENT = "timelineReplies/DELETED_COMMENT";
 
 export const appendEventContent = (parentRequestEventId, content) => {
   return (dispatch, getState) => {
@@ -45,85 +46,143 @@ export const appendEventContent = (parentRequestEventId, content) => {
   };
 };
 
-export const setIsReplying = (parentRequestEventId, isReplying) => {
+export const setIsReplying = (parentRequestEventId, replying) => {
   return (dispatch) => {
     dispatch({
-      type: isReplying ? IS_REPLYING : IS_NOT_REPLYING,
+      type: SET_REPLYING,
       payload: {
         parentRequestEventId,
+        replying,
       },
     });
   };
 };
 
-export const setInitialReplies = (parentRequestEvent) => {
-  return (dispatch, _, config) => {
+export const setInitialReplies = (parentRequestEvent, focusEvent) => {
+  return async (dispatch, _, config) => {
     // The server has the children newest-to-oldest, and we need oldest-to-newest so the newest is shown at the bottom.
     const children = (parentRequestEvent.children || []).toReversed();
     const childrenCount = parentRequestEvent.children_count || 0;
-    // If we have children_count, check if there are more children than what's in the preview
-    // Otherwise, assume no more if children array is empty
-    const hasMore = childrenCount > children.length;
-
-    const { defaultReplyQueryParams } = config ?? {};
-    const pageSize = defaultReplyQueryParams.size ?? 5;
+    const { size: pageSize } = config.defaultReplyQueryParams;
 
     dispatch({
-      type: HAS_NEW_DATA,
+      type: SET_WARNING,
+      payload: { parentRequestEventId: parentRequestEvent.id, warning: null },
+    });
+    dispatch({
+      type: SET_PAGE,
       payload: {
-        position: "top",
         parentRequestEventId: parentRequestEvent.id,
-        newChildComments: children,
-        hasMore: hasMore,
-        totalCount: childrenCount,
-        nextPage: 2,
-        pageSize,
+        hits: children,
+        page: 1,
       },
     });
+    dispatch({
+      type: SET_TOTAL_HITS,
+      payload: {
+        parentRequestEventId: parentRequestEvent.id,
+        totalHits: childrenCount,
+      },
+    });
+
+    if (
+      focusEvent &&
+      focusEvent.parentEventId === parentRequestEvent.id &&
+      focusEvent.replyEventId
+    ) {
+      // Check if focused event is on first or last page
+      const existsInPreview = children.some((h) => h.id === focusEvent.replyEventId);
+
+      if (!existsInPreview) {
+        // Fetch focused event info to know which page it's on
+        const focusedPageResponse = await config
+          .requestEventsApi(parentRequestEvent.links)
+          .getRepliesFocused(focusEvent.replyEventId, {
+            size: pageSize,
+            sort: "newest",
+          });
+
+        if (
+          focusedPageResponse.data.hits.hits.some(
+            (h) => h.id === focusEvent.replyEventId
+          )
+        ) {
+          dispatch({
+            type: SET_PAGE,
+            payload: {
+              parentRequestEventId: parentRequestEvent.id,
+              hits: focusedPageResponse.data.hits.hits.toReversed(),
+              page: focusedPageResponse.data.page,
+            },
+          });
+        } else {
+          // Show a warning if the event ID in the hash was not found in the response list of events.
+          // This happens if the server cannot find the requested event.
+          dispatch({
+            type: SET_WARNING,
+            payload: {
+              parentRequestEventId: parentRequestEvent.id,
+              warning: i18next.t("We couldn't find the reply you were looking for."),
+            },
+          });
+        }
+      }
+    }
   };
 };
 
-export const loadOlderReplies = (parentRequestEvent) => {
-  return async (dispatch, getState, config) => {
-    const { timelineReplies } = getState();
-    const { page } = selectCommentRepliesStatus(timelineReplies, parentRequestEvent.id);
-    const commentReplies = selectCommentReplies(timelineReplies, parentRequestEvent.id);
-    const { defaultReplyQueryParams } = config ?? {};
-    const pageSize = defaultReplyQueryParams.size ?? 5;
+export const fetchRepliesPage = (parentRequestEvent, page) => {
+  return async (dispatch, _, config) => {
+    const { size: pageSize } = config.defaultReplyQueryParams;
 
     dispatch({
-      type: IS_LOADING,
-      payload: { parentRequestEventId: parentRequestEvent.id },
+      type: SET_LOADING,
+      payload: { parentRequestEventId: parentRequestEvent.id, loading: true },
     });
 
-    const api = config.requestEventsApi(parentRequestEvent.links);
-    const response = await api.getReplies({
-      size: pageSize,
-      page,
-      sort: "newest",
-    });
+    try {
+      const api = config.requestEventsApi(parentRequestEvent.links);
+      const response = await api.getReplies({
+        size: pageSize,
+        page,
+        sort: "newest",
+      });
 
-    const hits = response.data.hits.hits;
-    const totalLocalCommentCount = commentReplies.length + hits.length;
-    const hasMore = totalLocalCommentCount < response.data.hits.total;
+      dispatch({
+        type: SET_PAGE,
+        payload: {
+          parentRequestEventId: parentRequestEvent.id,
+          // `hits` is ordered newest-to-oldest, which is correct for the pagination order.
+          // But we need to insert the comments oldest-to-newest in the UI.
+          hits: response.data.hits.hits.toReversed(),
+          page,
+        },
+      });
 
-    let nextPage = response.data.page;
-    if (hasMore) {
-      nextPage = response.data.page + 1;
+      dispatch({
+        type: SET_TOTAL_HITS,
+        payload: {
+          parentRequestEventId: parentRequestEvent.id,
+          totalHits: response.data.hits.total,
+        },
+      });
+
+      dispatch({
+        type: SET_LOADING,
+        payload: {
+          parentRequestEventId: parentRequestEvent.id,
+          loading: false,
+        },
+      });
+    } catch (error) {
+      dispatch({
+        type: HAS_ERROR,
+        payload: {
+          parentRequestEventId: parentRequestEvent.id,
+          error: errorSerializer(error),
+        },
+      });
     }
-
-    dispatch({
-      type: HAS_NEW_DATA,
-      payload: {
-        position: "top",
-        parentRequestEventId: parentRequestEvent.id,
-        hasMore,
-        // `hits` is ordered newest-to-oldest, which is correct for the pagination order.
-        // But we need to insert the comments oldest-to-newest in the UI.
-        newChildComments: hits.toReversed(),
-        nextPage: nextPage,
-      },
-    });
   };
 };
 
@@ -132,9 +191,10 @@ export const submitReply = (parentRequestEvent, content, format) => {
     const { request } = getState();
 
     dispatch({
-      type: IS_SUBMITTING,
+      type: SET_SUBMITTING,
       payload: {
         parentRequestEventId: parentRequestEvent.id,
+        submitting: true,
       },
     });
 
@@ -151,25 +211,41 @@ export const submitReply = (parentRequestEvent, content, format) => {
         console.warn("Failed to delete saved comment:", e);
       }
 
-      await dispatch({
-        type: HAS_NEW_DATA,
+      dispatch({
+        type: APPEND_TO_PAGE,
         payload: {
-          position: "bottom",
           parentRequestEventId: parentRequestEvent.id,
-          newChildComments: [response.data],
+          hits: [response.data],
+          page: 0,
+        },
+      });
+
+      dispatch({
+        type: SET_TOTAL_HITS,
+        payload: {
+          parentRequestEventId: parentRequestEvent.id,
           increaseCountBy: 1,
         },
       });
 
       dispatch({
-        type: IS_SUBMISSION_COMPLETE,
+        type: SET_SUBMITTING,
         payload: {
           parentRequestEventId: parentRequestEvent.id,
+          submitting: false,
+        },
+      });
+
+      dispatch({
+        type: REPLY_SET_DRAFT_CONTENT,
+        payload: {
+          parentRequestEventId: parentRequestEvent.id,
+          content: "",
         },
       });
     } catch (error) {
       dispatch({
-        type: HAS_ERROR,
+        type: HAS_SUBMISSION_ERROR,
         payload: {
           parentRequestEventId: parentRequestEvent.id,
           error: errorSerializer(error),
@@ -181,14 +257,14 @@ export const submitReply = (parentRequestEvent, content, format) => {
   };
 };
 
-export const clearDraft = (parentRequestEvent) => {
+export const clearDraft = (parentRequestEventId) => {
   return (dispatch, getState) => {
     const { request } = getState();
-    deleteDraftComment(request.data.id, parentRequestEvent.id);
+    deleteDraftComment(request.data.id, parentRequestEventId);
     dispatch({
       type: CLEAR_DRAFT,
       payload: {
-        parentRequestEventId: parentRequestEvent.id,
+        parentRequestEventId,
       },
     });
   };

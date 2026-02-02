@@ -55,6 +55,7 @@ def test_simple_comment_flow(
         "links": {
             "reply": f"https://127.0.0.1:5000/api/requests/{request_id}/comments/{comment_id}/reply",  # noqa
             "replies": f"https://127.0.0.1:5000/api/requests/{request_id}/comments/{comment_id}/replies",  # noqa
+            "replies_focused": f"https://127.0.0.1:5000/api/requests/{request_id}/comments/{comment_id}/replies_focused",
             "self": f"https://127.0.0.1:5000/api/requests/{request_id}/comments/{comment_id}",  # noqa
             "self_html": f"https://127.0.0.1:5000/requests/{request_id}#commentevent-{comment_id}",
         },
@@ -105,6 +106,7 @@ def test_simple_comment_flow(
         "links": {
             "reply": f"https://127.0.0.1:5000/api/requests/{request_id}/comments/{comment_id}/reply",  # noqa
             "replies": f"https://127.0.0.1:5000/api/requests/{request_id}/comments/{comment_id}/replies",  # noqa
+            "replies_focused": f"https://127.0.0.1:5000/api/requests/{request_id}/comments/{comment_id}/replies_focused",
             "self": f"https://127.0.0.1:5000/api/requests/{request_id}/comments/{comment_id}",  # noqa
             "self_html": f"https://127.0.0.1:5000/requests/{request_id}#commentevent-{comment_id}",
         },

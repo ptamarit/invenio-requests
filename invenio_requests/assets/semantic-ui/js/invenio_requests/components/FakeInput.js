@@ -34,7 +34,7 @@ FakeInput.propTypes = {
   placeholder: PropTypes.string.isRequired,
   userAvatar: PropTypes.string,
   onActivate: PropTypes.func.isRequired,
-  className: PropTypes.bool,
+  className: PropTypes.string,
   disabled: PropTypes.bool,
 };
 

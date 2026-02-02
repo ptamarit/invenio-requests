@@ -19,6 +19,7 @@ from marshmallow import (
 )
 from marshmallow_utils import fields as utils_fields
 from marshmallow_utils.context import context_schema
+from marshmallow_utils.fields import Links
 
 from invenio_requests.proxies import current_requests
 
@@ -45,37 +46,41 @@ class RequestEventSchema(BaseRecordSchema):
 
     def get_permissions(self, obj):
         """Return permissions to act on comments or empty dict."""
-        is_comment = obj.type == CommentEventType
+        service = current_requests.request_events_service
+
         current_identity = context_schema.get()["identity"]
         current_request = context_schema.get().get("request", None)
-        if is_comment:
-            service = current_requests.request_events_service
-            permissions = {
-                "can_update_comment": service.check_permission(
-                    current_identity,
-                    "update_comment",
-                    event=obj,
-                    request=current_request,
-                ),
-                "can_delete_comment": service.check_permission(
-                    current_identity,
-                    "delete_comment",
-                    event=obj,
-                    request=current_request,
-                ),
-            }
+        permissions = {}
 
-            if current_request is not None:
-                permissions["can_reply_comment"] = service.check_permission(
-                    current_identity,
-                    "reply_comment",
-                    event=obj,
-                    request=current_request,
-                )
-
-            return permissions
-        else:
+        if current_request is None:
             return {}
+
+        if obj.type == CommentEventType:
+            permissions["can_update_comment"] = service.check_permission(
+                current_identity,
+                "update_comment",
+                event=obj,
+                request=current_request,
+            )
+            permissions["can_delete_comment"] = service.check_permission(
+                current_identity,
+                "delete_comment",
+                event=obj,
+                request=current_request,
+            )
+        else:
+            # Other event types (e.g. log events) might be deleted comments, for which these permissions are inherently False.
+            permissions["can_update_comment"] = False
+            permissions["can_delete_comment"] = False
+
+        permissions["can_reply_comment"] = service.check_permission(
+            current_identity,
+            "reply_comment",
+            event=obj,
+            request=current_request,
+        )
+
+        return permissions
 
 
 class RequestSchema(BaseRecordSchema):

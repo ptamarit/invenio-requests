@@ -75,8 +75,12 @@ RequestEventInnerContainer.defaultProps = {
   isEvent: false,
 };
 
-export const RequestEventAvatarContainer = ({ src, hasLine, ...uiProps }) => (
-  <div className={`requests-avatar-container${hasLine ? " has-line" : ""}`}>
+export const RequestEventAvatarContainer = ({ src, hasLine, lineFade, ...uiProps }) => (
+  <div
+    className={`requests-avatar-container${hasLine ? " has-line" : ""}${
+      lineFade ? " line-fade" : ""
+    }`}
+  >
     {src && <Image src={src} rounded avatar {...uiProps} />}
     {!src && <Icon size="large" name="user circle outline" />}
   </div>
@@ -85,11 +89,13 @@ export const RequestEventAvatarContainer = ({ src, hasLine, ...uiProps }) => (
 RequestEventAvatarContainer.propTypes = {
   src: PropTypes.string,
   hasLine: PropTypes.bool,
+  lineFade: PropTypes.bool,
 };
 
 RequestEventAvatarContainer.defaultProps = {
   src: null,
   hasLine: false,
+  lineFade: false,
 };
 
 export const RequestEventItemIconContainer = ({ name, size, color }) => (
