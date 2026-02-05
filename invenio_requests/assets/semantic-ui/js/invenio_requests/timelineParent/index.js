@@ -26,7 +26,6 @@ import {
   updateComment,
 } from "../timelineCommentEventControlled/state/actions";
 import { appendEventContent } from "../timelineCommentReplies/state/actions";
-import { getDataset } from "../data";
 
 const mapDispatchToProps = (dispatch) => ({
   getTimelineWithRefresh: (includeEventId) =>
@@ -59,8 +58,6 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state) => {
-  const { defaultQueryParams } = getDataset();
-  const { size } = defaultQueryParams;
   return {
     hits: state.timeline.hits,
     totalHits: state.timeline.totalHits,
@@ -72,7 +69,6 @@ const mapStateToProps = (state) => {
     commentContent: state.timeline.commentContent,
     storedCommentContent: state.timeline.storedCommentContent,
     submissionError: state.timeline.submissionError,
-    size,
   };
 };
 

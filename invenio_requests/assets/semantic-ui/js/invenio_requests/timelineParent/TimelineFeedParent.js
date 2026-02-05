@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import TimelineFeedComponent from "../timeline/TimelineFeed";
 import PropTypes from "prop-types";
 import { getEventIdFromUrl } from "../timelineEvents/utils";
+import { DatasetContext } from "../data";
 
 class TimelineFeedParent extends Component {
   componentDidMount() {
@@ -14,9 +15,14 @@ class TimelineFeedParent extends Component {
     timelineStopRefresh();
   }
 
+  static contextType = DatasetContext;
+
   render() {
     const { getTimelineWithRefresh: _, timelineStopRefresh: __, ...props } = this.props;
-    return <TimelineFeedComponent {...props} />;
+    const {
+      defaultQueryParams: { size },
+    } = this.context;
+    return <TimelineFeedComponent size={size} {...props} />;
   }
 }
 

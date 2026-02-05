@@ -17,6 +17,7 @@ import PropTypes from "prop-types";
 import { configureStore } from "./store";
 import { OverridableContext } from "react-overridable";
 import { Provider } from "react-redux";
+import { DatasetContext } from "./data";
 
 export class InvenioRequestsApp extends Component {
   constructor(props) {
@@ -45,15 +46,19 @@ export class InvenioRequestsApp extends Component {
   }
 
   render() {
-    const {
-      overriddenCmps,
-      dataset: { userAvatar, permissions, config },
-    } = this.props;
+    const { overriddenCmps, dataset } = this.props;
+    const { userAvatar, permissions, config } = dataset;
 
     return (
       <OverridableContext.Provider value={overriddenCmps}>
         <Provider store={this.store}>
-          <Request userAvatar={userAvatar} permissions={permissions} config={config} />
+          <DatasetContext.Provider value={dataset}>
+            <Request
+              userAvatar={userAvatar}
+              permissions={permissions}
+              config={config}
+            />
+          </DatasetContext.Provider>
         </Provider>
       </OverridableContext.Provider>
     );
@@ -71,9 +76,4 @@ InvenioRequestsApp.defaultProps = {
   overriddenCmps: {},
   requestsApi: null,
   requestEventsApi: null,
-  defaultQueryParams: { size: 15 },
-  defaultReplyQueryParams: { size: 5 },
-  config: {
-    allowGroupReviewers: false,
-  },
 };

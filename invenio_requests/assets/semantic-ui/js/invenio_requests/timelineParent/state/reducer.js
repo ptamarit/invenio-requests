@@ -23,7 +23,6 @@ import {
 } from "./actions";
 import _cloneDeep from "lodash/cloneDeep";
 import { findEventPageAndIndex, newOrIncreasedTotalHits } from "../../state/utils";
-import { getDataset } from "../../data";
 
 export const initialState = {
   initialLoading: false,
@@ -66,11 +65,9 @@ const newStateWithDelete = (timelineState, deletedCommentId) => {
   });
 };
 
-const appendToLastOrNewPage = (timelineState, hit) => {
+const appendToLastOrNewPage = (timelineState, hit, pageSize) => {
   const lastPage = Math.max(...timelineState.pageNumbers);
   const lastPageSize = timelineState.hits[lastPage].length;
-  const { defaultQueryParams } = getDataset();
-  const { size: pageSize } = defaultQueryParams;
 
   if (lastPageSize >= pageSize) {
     return {
@@ -110,7 +107,7 @@ export const timelineReducer = (state = initialState, action) => {
         ),
       };
     case APPEND_TO_LAST_PAGE:
-      return appendToLastOrNewPage(state, action.payload.hit);
+      return appendToLastOrNewPage(state, action.payload.hit, action.payload.pageSize);
     case SET_TOTAL_HITS:
       return {
         ...state,

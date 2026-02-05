@@ -6,6 +6,8 @@
 // Invenio RDM Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
+import { createContext } from "react";
+
 export const requestDetailsDiv = document.getElementById("request-detail");
 
 export const getDataset = () => {
@@ -24,3 +26,5 @@ export const getDataset = () => {
     config: JSON.parse(requestDetailsDiv.dataset.config),
   };
 };
+
+export const DatasetContext = createContext(null);

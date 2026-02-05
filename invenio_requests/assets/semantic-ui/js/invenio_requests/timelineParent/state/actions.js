@@ -254,6 +254,7 @@ export const clearTimelineInterval = () => {
 export const submitComment = (content, format) => {
   return async (dispatch, getState, config) => {
     const { request } = getState();
+    const { size } = config.defaultQueryParams;
 
     dispatch(clearTimelineInterval());
 
@@ -279,6 +280,7 @@ export const submitComment = (content, format) => {
         type: APPEND_TO_LAST_PAGE,
         payload: {
           hit: response.data,
+          pageSize: size,
         },
       });
 
