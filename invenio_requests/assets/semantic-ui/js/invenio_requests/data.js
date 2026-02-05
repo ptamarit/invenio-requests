@@ -7,13 +7,20 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 export const requestDetailsDiv = document.getElementById("request-detail");
-export const request = JSON.parse(requestDetailsDiv.dataset.record);
-export const defaultQueryParams = JSON.parse(
-  requestDetailsDiv.dataset.defaultQueryConfig
-);
-export const defaultReplyQueryParams = JSON.parse(
-  requestDetailsDiv.dataset.defaultReplyQueryConfig
-);
-export const userAvatar = JSON.parse(requestDetailsDiv.dataset.userAvatar);
-export const permissions = JSON.parse(requestDetailsDiv.dataset.permissions);
-export const config = JSON.parse(requestDetailsDiv.dataset.config);
+
+export const getDataset = () => {
+  if (!requestDetailsDiv) {
+    throw new Error("Could not find div with ID `request-detail`");
+  }
+
+  return {
+    request: JSON.parse(requestDetailsDiv.dataset.record),
+    defaultQueryParams: JSON.parse(requestDetailsDiv.dataset.defaultQueryConfig),
+    defaultReplyQueryParams: JSON.parse(
+      requestDetailsDiv.dataset.defaultReplyQueryConfig
+    ),
+    userAvatar: JSON.parse(requestDetailsDiv.dataset.userAvatar),
+    permissions: JSON.parse(requestDetailsDiv.dataset.permissions),
+    config: JSON.parse(requestDetailsDiv.dataset.config),
+  };
+};

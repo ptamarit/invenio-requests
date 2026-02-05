@@ -24,10 +24,9 @@ export class InvenioRequestsApp extends Component {
     const {
       requestsApi,
       requestEventsApi,
-      request,
-      defaultQueryParams,
-      defaultReplyQueryParams,
+      dataset: { request, defaultQueryParams, defaultReplyQueryParams },
     } = this.props;
+
     const defaultRequestsApi = new InvenioRequestsAPI(
       new RequestLinksExtractor(request)
     );
@@ -46,7 +45,10 @@ export class InvenioRequestsApp extends Component {
   }
 
   render() {
-    const { overriddenCmps, userAvatar, permissions, config } = this.props;
+    const {
+      overriddenCmps,
+      dataset: { userAvatar, permissions, config },
+    } = this.props;
 
     return (
       <OverridableContext.Provider value={overriddenCmps}>
@@ -59,15 +61,10 @@ export class InvenioRequestsApp extends Component {
 }
 
 InvenioRequestsApp.propTypes = {
+  dataset: PropTypes.object.isRequired,
   requestsApi: PropTypes.object,
   requestEventsApi: PropTypes.object,
   overriddenCmps: PropTypes.object,
-  request: PropTypes.object.isRequired,
-  userAvatar: PropTypes.string.isRequired,
-  defaultQueryParams: PropTypes.object,
-  defaultReplyQueryParams: PropTypes.object,
-  permissions: PropTypes.object.isRequired,
-  config: PropTypes.object,
 };
 
 InvenioRequestsApp.defaultProps = {

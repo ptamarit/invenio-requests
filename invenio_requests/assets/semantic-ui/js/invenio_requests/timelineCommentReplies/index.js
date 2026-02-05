@@ -19,7 +19,6 @@ import {
   setIsReplying,
   submitReply,
 } from "./state/actions.js";
-import { defaultReplyQueryParams } from "../data.js";
 import {
   restoreDraftContent,
   setDraftContent,
@@ -29,6 +28,7 @@ import {
   updateComment,
 } from "../timelineCommentEventControlled/state/actions.js";
 import TimelineFeedRepliesComponent from "./TimelineFeedReplies.js";
+import { getDataset } from "../data.js";
 
 const mapDispatchToProps = (dispatch, { parentRequestEvent }) => ({
   fetchPage: (page) => dispatch(fetchRepliesPage(parentRequestEvent, page)),
@@ -78,6 +78,7 @@ const mapStateToProps = (state, { parentRequestEvent }) => {
     warning,
   } = selectCommentRepliesStatus(state.timelineReplies, parentRequestEvent.id);
 
+  const { defaultReplyQueryParams } = getDataset();
   const { size } = defaultReplyQueryParams;
 
   return {

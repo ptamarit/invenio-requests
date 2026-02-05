@@ -31,15 +31,7 @@ import {
   TimelineUnknownEvent,
   TimelineReviewersUpdatedEvent,
 } from "./timelineEvents";
-import {
-  config,
-  defaultQueryParams,
-  defaultReplyQueryParams,
-  permissions,
-  request,
-  requestDetailsDiv,
-  userAvatar,
-} from "./data";
+import { getDataset, requestDetailsDiv } from "./data";
 
 const defaultComponents = {
   ...defaultContribComponents,
@@ -67,13 +59,8 @@ const overriddenComponents = overrideStore.getAll();
 
 ReactDOM.render(
   <InvenioRequestsApp
-    request={request}
-    defaultQueryParams={defaultQueryParams}
-    defaultReplyQueryParams={defaultReplyQueryParams}
+    dataset={getDataset()}
     overriddenCmps={{ ...defaultComponents, ...overriddenComponents }}
-    userAvatar={userAvatar}
-    permissions={permissions}
-    config={config}
   />,
   requestDetailsDiv
 );
