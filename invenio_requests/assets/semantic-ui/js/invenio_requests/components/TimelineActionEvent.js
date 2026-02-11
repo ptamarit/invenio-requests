@@ -54,6 +54,7 @@ class TimelineActionEvent extends Component {
                   <b>{user}</b>
                   <Feed.Date>
                     <TimelineEventBody
+                      collapsible={false}
                       payload={{ ...event.payload, content: eventContent }}
                     />{" "}
                     {toRelativeTime(event.created, i18next.language)}

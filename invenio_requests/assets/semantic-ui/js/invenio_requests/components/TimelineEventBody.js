@@ -41,8 +41,7 @@ TimelineEventBody.defaultProps = {
   expandedByDefault: false,
 };
 
-const TimelineEventBodyRender = ({
-  ref,
+const TimelineEventBodyRender = React.forwardRef(({
   refInner,
   isOverflowing,
   expanded,
@@ -50,14 +49,15 @@ const TimelineEventBodyRender = ({
   toggleCollapsed,
   content,
   format,
-}) => {
+  files,
+}, ref) => {
   const getCollapsibleClass = () => {
     if (!isOverflowing) return "";
     return expanded || !collapsible ? "expanded" : "overflowing";
   };
 
   return (
-    <span ref={ref} className={`collapsible-comment ${getCollapsibleClass()}`}>
+    <span ref={ref} className={`${collapsible ? "collapsible-comment" : ""} ${getCollapsibleClass()}`}>
       <span ref={refInner} className={collapsible ? "collapsible-comment-inner" : ""}>
         {format === "html" ? (
           <span dangerouslySetInnerHTML={{ __html: content }} />
@@ -76,10 +76,9 @@ const TimelineEventBodyRender = ({
       </span>
     </span>
   );
-};
+});
 
 TimelineEventBodyRender.propTypes = {
-  ref: PropTypes.instanceOf(Element).isRequired,
   refInner: PropTypes.instanceOf(Element).isRequired,
   isOverflowing: PropTypes.bool.isRequired,
   expanded: PropTypes.bool.isRequired,
