@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2023 CERN.
+# Copyright (C) 2026 KTH Royal Institute of Technology.
 #
 # Invenio-Requests is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -56,9 +57,9 @@ class UserModerationRequestService:
         # For user moderation, topic is the user to be moderated
         topic = {"user": str(user_id)}
 
-        # Receiver can be configured, by default send the request to users with moderation role
-        receiver = {"group": receiver}  # TODO to be changed to role id
-        creator = {"group": creator}  # TODO to be changed to role id
+        # Group references are role IDs.
+        receiver = {"group": receiver}
+        creator = {"group": creator}
 
         request_item = self.requests_service.create(
             identity,
@@ -87,8 +88,8 @@ class UserModerationRequestService:
         return self._create_request(
             identity,
             user_id,
-            creator=role.name,
-            receiver=role.name,
+            creator=role.id,
+            receiver=role.id,
             data=data,
             uow=uow,
         )

@@ -4,6 +4,7 @@
 # Copyright (C) 2021-2025 Northwestern University.
 # Copyright (C) 2021 TU Wien.
 # Copyright (C) 2023-2025 Graz University of Technology.
+# Copyright (C) 2026 KTH Royal Institute of Technology.
 #
 # Invenio-Requests is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -332,7 +333,7 @@ def superuser_role(database):
 def moderator_role(app, database):
     """Moderator role."""
     REQUESTS_MODERATION_ROLE = app.config["REQUESTS_MODERATION_ROLE"]
-    mod_role = Role(name=REQUESTS_MODERATION_ROLE)
+    mod_role = Role(id=REQUESTS_MODERATION_ROLE, name=REQUESTS_MODERATION_ROLE)
     database.session.add(mod_role)
 
     action_role = ActionRoles.create(action=user_management_action, role=mod_role)
