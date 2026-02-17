@@ -15,3 +15,20 @@ export const getDraftComment = (requestId, parentRequestEventId) => {
 export const deleteDraftComment = (requestId, parentRequestEventId) => {
   localStorage.removeItem(draftCommentKey(requestId, parentRequestEventId));
 };
+
+const draftFilesKey = (requestId, parentRequestEventId) =>
+  `draft-files-${requestId}${parentRequestEventId ? "-" + parentRequestEventId : ""}`;
+export const setDraftFiles = (requestId, parentRequestEventId, files) => {
+  localStorage.setItem(
+    draftFilesKey(requestId, parentRequestEventId),
+    JSON.stringify(files)
+  );
+};
+export const getDraftFiles = (requestId, parentRequestEventId) => {
+  return JSON.parse(
+    localStorage.getItem(draftFilesKey(requestId, parentRequestEventId))
+  );
+};
+export const deleteDraftFiles = (requestId, parentRequestEventId) => {
+  localStorage.removeItem(draftFilesKey(requestId, parentRequestEventId));
+};

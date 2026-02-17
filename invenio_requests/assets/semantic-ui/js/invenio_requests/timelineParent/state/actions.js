@@ -5,7 +5,10 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import { errorSerializer, payloadSerializer } from "../../api/serializers";
-import { deleteDraftComment } from "../../timelineCommentEditor/draftStorage.js";
+import {
+  deleteDraftComment,
+  deleteDraftFiles,
+} from "../../timelineCommentEditor/draftStorage.js";
 import { i18next } from "@translations/invenio_requests/i18next";
 
 export const SET_INITIAL_LOADING = "timeline/SET_LOADING";
@@ -23,6 +26,8 @@ export const PARENT_UPDATED_COMMENT = "timeline/PARENT_UPDATED_COMMENT";
 export const PARENT_DELETED_COMMENT = "timeline/PARENT_DELETED_COMMENT";
 export const PARENT_SET_DRAFT_CONTENT = "timeline/PARENT_SET_DRAFT_CONTENT";
 export const PARENT_RESTORE_DRAFT_CONTENT = "timeline/PARENT_RESTORE_DRAFT_CONTENT";
+export const PARENT_SET_DRAFT_FILES = "timeline/PARENT_SET_DRAFT_FILES";
+export const PARENT_RESTORE_DRAFT_FILES = "timeline/PARENT_RESTORE_DRAFT_FILES";
 
 class intervalManager {
   static IntervalId = undefined;
@@ -251,7 +256,7 @@ export const clearTimelineInterval = () => {
   };
 };
 
-export const submitComment = (content, format) => {
+export const submitComment = (content, format, files) => {
   return async (dispatch, getState, config) => {
     const { request } = getState();
     const { size } = config.defaultQueryParams;
@@ -263,7 +268,7 @@ export const submitComment = (content, format) => {
       payload: { submitting: true },
     });
 
-    const payload = payloadSerializer(content, format || "html");
+    const payload = payloadSerializer(content, format || "html", files);
 
     try {
       /* Because of the delay in ES indexing we need to handle the updated state on the client-side until it is ready to be retrieved from the server.*/
@@ -272,6 +277,7 @@ export const submitComment = (content, format) => {
 
       try {
         deleteDraftComment(request.data.id);
+        deleteDraftFiles(request.data.id);
       } catch (e) {
         console.warn("Failed to delete saved comment:", e);
       }
@@ -299,6 +305,11 @@ export const submitComment = (content, format) => {
       dispatch({
         type: PARENT_SET_DRAFT_CONTENT,
         payload: { content: "" },
+      });
+
+      dispatch({
+        type: PARENT_SET_DRAFT_FILES,
+        payload: { files: [] },
       });
 
       dispatch(setTimelineInterval());

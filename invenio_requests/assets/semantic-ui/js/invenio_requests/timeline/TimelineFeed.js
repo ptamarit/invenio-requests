@@ -94,6 +94,8 @@ class TimelineFeed extends Component {
       appendedCommentContent,
       setCommentContent,
       restoreCommentContent,
+      setCommentFiles,
+      restoreCommentFiles,
       submissionError,
       submitComment,
       totalHits,
@@ -103,6 +105,7 @@ class TimelineFeed extends Component {
       size,
       updateComment,
       deleteComment,
+      draftFiles,
     } = this.props;
     const { modalOpen, modalAction, expanded } = this.state;
 
@@ -180,6 +183,9 @@ class TimelineFeed extends Component {
                   appendedCommentContent={appendedCommentContent}
                   setCommentContent={setCommentContent}
                   restoreCommentContent={restoreCommentContent}
+                  files={draftFiles}
+                  restoreCommentFiles={restoreCommentFiles}
+                  setCommentFiles={setCommentFiles}
                   error={submissionError}
                   submitComment={submitComment}
                   userAvatar={userAvatar}
@@ -196,6 +202,7 @@ class TimelineFeed extends Component {
                   }
                   saveButtonIcon={isReplyTimeline ? "reply" : "send"}
                   onCancel={isReplyTimeline ? this.onCancelClick : undefined}
+                  request={request}
                 />
               )}
 
@@ -232,6 +239,9 @@ TimelineFeed.propTypes = {
   appendedCommentContent: PropTypes.string,
   setCommentContent: PropTypes.func.isRequired,
   restoreCommentContent: PropTypes.func.isRequired,
+  draftFiles: PropTypes.array.isRequired,
+  restoreCommentFiles: PropTypes.func.isRequired,
+  setCommentFiles: PropTypes.func.isRequired,
   submissionError: PropTypes.string,
   submitComment: PropTypes.func.isRequired,
   updateComment: PropTypes.func.isRequired,

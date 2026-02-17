@@ -13,6 +13,10 @@ from invenio_i18n import lazy_gettext as _
 from invenio_users_resources.entity_resolvers import GroupResolver, UserResolver
 
 from invenio_requests.services.requests import facets
+from invenio_requests.services.requests.components import (
+    RequestCommentFileCleanupComponent,
+    RequestCommentFileValidationComponent,
+)
 
 from .customizations import CommentEventType, LogEventType, ReviewersUpdatedType
 from .services.permissions import PermissionPolicy
@@ -34,7 +38,7 @@ REQUESTS_ENTITY_RESOLVERS = [UserResolver(), GroupResolver()]
 """Registered resolvers for resolving/creating references in request metadata."""
 
 REQUESTS_ROUTES = {
-    "details": "/requests/<uuid:pid_value>",
+    "download_file_html": "/requests/<uuid:pid_value>/files/<path:file_key>",
 }
 """Invenio requests ui endpoints."""
 
@@ -143,3 +147,19 @@ REQUESTS_COMMENT_PREVIEW_LIMIT = 5
 This limits the size of indexed documents when comments have many replies.
 Additional replies can be loaded via pagination.
 """
+
+REQUESTS_FILES_DEFAULT_QUOTA_SIZE = 100 * 10**6  # 100MB
+REQUESTS_FILES_DEFAULT_MAX_FILE_SIZE = 10 * 10**6  # 10MB
+
+REQUESTS_EVENTS_SERVICE_COMPONENTS = [
+    RequestCommentFileValidationComponent,
+    RequestCommentFileCleanupComponent,
+]
+
+REQUESTS_COMMENTS_ALLOWED_EXTRA_HTML_TAGS = ["img"]
+"""Extend allowed HTML tags list for requests comments content."""
+
+REQUESTS_COMMENTS_ALLOWED_EXTRA_HTML_ATTRS = {
+    "img": ["src", "alt", "width", "height"],
+}
+"""Extend allowed HTML attrs list for requests comments content."""

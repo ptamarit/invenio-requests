@@ -13,6 +13,8 @@ import {
   REPLY_DELETED_COMMENT,
   REPLY_RESTORE_DRAFT_CONTENT,
   REPLY_SET_DRAFT_CONTENT,
+  REPLY_SET_DRAFT_FILES,
+  REPLY_RESTORE_DRAFT_FILES,
   REPLY_UPDATED_COMMENT,
   SET_LOADING,
   SET_PAGE,
@@ -66,6 +68,7 @@ const initialCommentStatus = {
   draftContent: "",
   storedDraftContent: "",
   appendedDraftContent: "",
+  draftFiles: [],
   replying: false,
 };
 
@@ -226,10 +229,19 @@ export const timelineRepliesReducer = (state = initialState, action) => {
             .draftContent + action.payload.content,
         replying: true,
       });
+    case REPLY_SET_DRAFT_FILES:
+      return newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
+        draftFiles: action.payload.files,
+      });
+    case REPLY_RESTORE_DRAFT_FILES:
+      return newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
+        draftFiles: action.payload.files,
+      });
     case CLEAR_DRAFT:
       return newStateWithUpdatedStatus(state, action.payload.parentRequestEventId, {
         draftContent: "",
         storedDraftContent: "",
+        draftFiles: [],
       });
     case REPLY_UPDATED_COMMENT:
       return {

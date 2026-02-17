@@ -3,10 +3,13 @@
 //
 // Invenio RDM Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
-export const payloadSerializer = (content, format) => ({
+export const payloadSerializer = (content, format, files) => ({
   payload: {
     content,
     format,
+    files: files.map((file) => ({
+      file_id: file.file_id,
+    })),
   },
 });
 

@@ -10,6 +10,8 @@ import {
   clearTimelineInterval,
   PARENT_SET_DRAFT_CONTENT,
   PARENT_RESTORE_DRAFT_CONTENT,
+  PARENT_SET_DRAFT_FILES,
+  PARENT_RESTORE_DRAFT_FILES,
   submitComment,
   PARENT_UPDATED_COMMENT,
   SET_REFRESHING,
@@ -20,6 +22,8 @@ import TimelineFeedParent from "./TimelineFeedParent";
 import {
   restoreDraftContent,
   setDraftContent,
+  setEventFiles,
+  restoreEventFiles,
 } from "../timelineCommentEditor/state/actions";
 import {
   deleteComment,
@@ -36,7 +40,12 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(setDraftContent(content, null, PARENT_SET_DRAFT_CONTENT)),
   restoreCommentContent: () =>
     dispatch(restoreDraftContent(null, PARENT_RESTORE_DRAFT_CONTENT)),
-  submitComment: (content) => dispatch(submitComment(content, "html")),
+  setCommentFiles: (files) =>
+    dispatch(setEventFiles(files, null, PARENT_SET_DRAFT_FILES)),
+  restoreCommentFiles: () =>
+    dispatch(restoreEventFiles(null, PARENT_RESTORE_DRAFT_FILES)),
+  submitComment: (content, format, files) =>
+    dispatch(submitComment(content, format, files)),
   updateComment: async (payload) =>
     dispatch(
       updateComment({
@@ -68,6 +77,7 @@ const mapStateToProps = (state) => {
     warning: state.timeline.warning,
     commentContent: state.timeline.commentContent,
     storedCommentContent: state.timeline.storedCommentContent,
+    draftFiles: state.timeline.files,
     submissionError: state.timeline.submissionError,
   };
 };

@@ -9,8 +9,11 @@
 
 """Component for creating request numbers."""
 
+from uuid import UUID
+
 from flask import current_app
 from invenio_i18n import _
+from invenio_records_resources.services.errors import ValidationErrorGroup
 from invenio_records_resources.services.records.components import (
     DataComponent,
     ServiceComponent,
@@ -21,7 +24,11 @@ from invenio_requests.customizations.event_types import (
     LogEventType,
     ReviewersUpdatedType,
 )
-from invenio_requests.proxies import current_events_service
+from invenio_requests.proxies import (
+    current_events_service,
+    current_request_files_service,
+)
+from invenio_requests.records.api import RequestFile
 
 
 class RequestNumberComponent(ServiceComponent):
@@ -199,3 +206,90 @@ class RequestLockComponent(ServiceComponent):
         event = LogEventType(payload=dict(event="unlocked"))
         _data = dict(payload=event.payload)
         current_events_service.create(identity, record.id, _data, event, uow=uow)
+
+
+class RequestCommentFileValidationComponent(ServiceComponent):
+    """Component validating files referenced in a request comment."""
+
+    def _check_file_references(
+        self, identity, data=None, event=None, uow=None, **kwargs
+    ):
+        # The new list of files received from the current service call.
+        comment_file_ids_next = [
+            UUID(file_next["file_id"])
+            for file_next in data.get("payload", {}).get("files", [])
+        ]
+
+        # Retrieve the existing (persisted) list of files with the given file IDs which are associated to the request.
+        request_files_existing = RequestFile.list_by_file_ids(
+            event["request_id"], comment_file_ids_next
+        )
+        request_file_ids_existing = {
+            request_file_existing.file.file_id
+            for request_file_existing in request_files_existing
+        }
+
+        # Check if all the file IDs exist in the database.
+        error_messages = []
+        for idx, comment_file_id_next in enumerate(comment_file_ids_next):
+            if comment_file_id_next not in request_file_ids_existing:
+                error_messages.append(
+                    {
+                        "messages": [_(f"File {str(comment_file_id_next)} not found.")],
+                        "field": f"payload.files[{idx}]",
+                    }
+                )
+        if error_messages:
+            raise ValidationErrorGroup(error_messages)
+
+    def create(self, identity, data=None, event=None, errors=None, uow=None, **kwargs):
+        """Ensures all referenced files exist."""
+        self._check_file_references(identity, data=data, event=event, uow=uow, **kwargs)
+
+    def update_comment(
+        self, identity, data=None, event=None, request=None, uow=None, **kwargs
+    ):
+        """Ensures all referenced files exist."""
+        self._check_file_references(identity, data=data, event=event, uow=uow, **kwargs)
+
+
+class RequestCommentFileCleanupComponent(ServiceComponent):
+    """Component deleting files which references were removed form a request comment."""
+
+    def update_comment(
+        self, identity, data=None, event=None, request=None, uow=None, **kwargs
+    ):
+        """Delete files not referenced anymore in a comment."""
+        # The existing (persisted) list of files associated to the comment.
+        file_ids_previous = [
+            file_previous["file_id"]
+            for file_previous in event["payload"].get("files", [])
+        ]
+
+        # The new list of files received from the current service call.
+        file_ids_next = [
+            file_next["file_id"] for file_next in data["payload"].get("files", [])
+        ]
+
+        # Delete files from the persisted list which are not in the new list anymore.
+        for file_id_previous in file_ids_previous:
+            if file_id_previous not in file_ids_next:
+                current_request_files_service.delete_file(
+                    identity, event["request_id"], file_id=file_id_previous, uow=uow
+                )
+
+    def delete_comment(
+        self, identity, data=None, event=None, request=None, uow=None, **kwargs
+    ):
+        """Delete files not associated to a deleted comment."""
+        # The existing (persisted) list of files associated to the comment.
+        file_ids_previous = [
+            file_previous["file_id"]
+            for file_previous in event["payload"].get("files", [])
+        ]
+
+        # Delete all the files.
+        for file_id_previous in file_ids_previous:
+            current_request_files_service.delete_file(
+                identity, event["request_id"], file_id=file_id_previous, uow=uow
+            )

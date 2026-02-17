@@ -11,6 +11,7 @@
 """Resources module."""
 
 from .events import RequestCommentsResource, RequestCommentsResourceConfig
+from .files import RequestFilesResource, RequestFilesResourceConfig
 from .requests import RequestsResource, RequestsResourceConfig
 
 __all__ = (
@@ -18,4 +19,6 @@ __all__ = (
     "RequestsResourceConfig",
     "RequestCommentsResource",
     "RequestCommentsResourceConfig",
+    "RequestFilesResource",
+    "RequestFilesResourceConfig",
 )

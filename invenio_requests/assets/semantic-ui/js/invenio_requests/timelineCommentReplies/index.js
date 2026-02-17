@@ -13,6 +13,8 @@ import {
   REPLY_DELETED_COMMENT,
   REPLY_RESTORE_DRAFT_CONTENT,
   REPLY_SET_DRAFT_CONTENT,
+  REPLY_SET_DRAFT_FILES,
+  REPLY_RESTORE_DRAFT_FILES,
   REPLY_UPDATED_COMMENT,
   SET_SUBMITTING,
   setInitialReplies,
@@ -22,6 +24,8 @@ import {
 import {
   restoreDraftContent,
   setDraftContent,
+  restoreEventFiles,
+  setEventFiles,
 } from "../timelineCommentEditor/state/actions.js";
 import {
   deleteComment,
@@ -35,8 +39,12 @@ const mapDispatchToProps = (dispatch, { parentRequestEvent }) => ({
     dispatch(setDraftContent(content, parentRequestEvent.id, REPLY_SET_DRAFT_CONTENT)),
   restoreCommentContent: () =>
     dispatch(restoreDraftContent(parentRequestEvent.id, REPLY_RESTORE_DRAFT_CONTENT)),
-  submitComment: (content) =>
-    dispatch(submitReply(parentRequestEvent, content, "html")),
+  submitComment: (content, format, files) =>
+    dispatch(submitReply(parentRequestEvent, content, format, files)),
+  setCommentFiles: (files) =>
+    dispatch(setEventFiles(files, parentRequestEvent.id, REPLY_SET_DRAFT_FILES)),
+  restoreCommentFiles: () =>
+    dispatch(restoreEventFiles(parentRequestEvent.id, REPLY_RESTORE_DRAFT_FILES)),
   updateComment: (payload) =>
     dispatch(
       updateComment({
@@ -70,6 +78,7 @@ const mapStateToProps = (state, { parentRequestEvent }) => {
     submitting: isSubmitting,
     draftContent: commentContent,
     storedDraftContent: storedCommentContent,
+    draftFiles,
     appendedDraftContent: appendedCommentContent,
     submissionError,
     totalHits,
@@ -86,6 +95,7 @@ const mapStateToProps = (state, { parentRequestEvent }) => {
     permissions: parentRequestEvent.permissions,
     initialLoading: false,
     commentContent,
+    draftFiles,
     storedCommentContent,
     appendedCommentContent,
     submissionError,

@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import PropTypes from "prop-types";
 import Overridable from "react-overridable";
 import { Button, Popup, ButtonGroup } from "semantic-ui-react";
+import { FilesList } from "react-invenio-forms";
 import { i18next } from "@translations/invenio_requests/i18next";
 
 const TimelineEventBody = ({ payload, quoteReply, collapsible, expandedByDefault }) => {
@@ -41,42 +42,59 @@ TimelineEventBody.defaultProps = {
   expandedByDefault: false,
 };
 
-const TimelineEventBodyRender = React.forwardRef(({
-  refInner,
-  isOverflowing,
-  expanded,
-  collapsible,
-  toggleCollapsed,
-  content,
-  format,
-  files,
-}, ref) => {
-  const getCollapsibleClass = () => {
-    if (!isOverflowing) return "";
-    return expanded || !collapsible ? "expanded" : "overflowing";
-  };
+const TimelineEventBodyRender = React.forwardRef(
+  (
+    {
+      refInner,
+      isOverflowing,
+      expanded,
+      collapsible,
+      toggleCollapsed,
+      content,
+      format,
+      files,
+    },
+    ref
+  ) => {
+    const getCollapsibleClass = () => {
+      if (!isOverflowing) return "";
+      return expanded || !collapsible ? "expanded" : "overflowing";
+    };
 
-  return (
-    <span ref={ref} className={`${collapsible ? "collapsible-comment" : ""} ${getCollapsibleClass()}`}>
-      <span ref={refInner} className={collapsible ? "collapsible-comment-inner" : ""}>
-        {format === "html" ? (
-          <span dangerouslySetInnerHTML={{ __html: content }} />
-        ) : (
-          content
-        )}
-        {isOverflowing && collapsible && (
-          <button
-            type="button"
-            className="ui tiny button text-only show-more"
-            onClick={toggleCollapsed}
+    return (
+      <>
+        <span
+          ref={ref}
+          className={`${
+            collapsible ? "collapsible-comment" : ""
+          } ${getCollapsibleClass()}`}
+        >
+          <span
+            ref={refInner}
+            className={collapsible ? "collapsible-comment-inner" : ""}
           >
-            {expanded ? i18next.t("Show less") : i18next.t("Show more")}
-          </button>
-        )}
-      </span>
-    </span>
-  );
-});
+            {format === "html" ? (
+              <span dangerouslySetInnerHTML={{ __html: content }} />
+            ) : (
+              content
+            )}
+            {isOverflowing && collapsible && (
+              <button
+                type="button"
+                className="ui tiny button text-only show-more"
+                onClick={toggleCollapsed}
+              >
+                {expanded ? i18next.t("Show less") : i18next.t("Show more")}
+              </button>
+            )}
+          </span>
+        </span>
+        {files !== undefined && <FilesList files={files} />}
+      </>
+    );
+  }
+);
+TimelineEventBodyRender.displayName = "TimelineEventBodyRender";
 
 TimelineEventBodyRender.propTypes = {
   refInner: PropTypes.instanceOf(Element).isRequired,
@@ -86,6 +104,7 @@ TimelineEventBodyRender.propTypes = {
   toggleCollapsed: PropTypes.func.isRequired,
   content: PropTypes.string.isRequired,
   format: PropTypes.string,
+  files: PropTypes.array.isRequired,
 };
 
 TimelineEventBodyRender.defaultProps = {
@@ -171,7 +190,7 @@ const TimelineEventBodyContainer = ({
     window.invenio?.onSearchResultsRendered();
   }, []);
 
-  const { format, content, event } = payload;
+  const { format, content, files, event } = payload;
 
   if (!quoteReply) {
     return (
@@ -183,6 +202,7 @@ const TimelineEventBodyContainer = ({
         collapsible={collapsible}
         toggleCollapsed={toggleCollapsed}
         content={content}
+        files={files}
       />
     );
   }
@@ -214,6 +234,7 @@ const TimelineEventBodyContainer = ({
           toggleCollapsed={toggleCollapsed}
           content={content}
           format={format}
+          files={files}
         />
       }
       basic

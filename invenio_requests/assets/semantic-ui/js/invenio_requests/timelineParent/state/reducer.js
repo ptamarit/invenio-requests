@@ -16,6 +16,8 @@ import {
   APPEND_TO_LAST_PAGE,
   PARENT_SET_DRAFT_CONTENT,
   PARENT_RESTORE_DRAFT_CONTENT,
+  PARENT_SET_DRAFT_FILES,
+  PARENT_RESTORE_DRAFT_FILES,
   HAS_SUBMISSION_ERROR,
   SET_SUBMITTING,
   SET_REFRESHING,
@@ -38,13 +40,14 @@ export const initialState = {
   focusedPage: null,
   warning: null,
   commentContent: "",
+  files: [],
   storedCommentContent: null,
   submitting: false,
 };
 
 const newStateWithUpdate = (timelineState, updatedComment) => {
   const newTimelineState = _cloneDeep(timelineState);
-  const position = findEventPageAndIndex(newTimelineState, updatedComment.id);
+  const position = findEventPageAndIndex(newTimelineState["hits"], updatedComment.id);
   if (position === null) return newTimelineState;
   newTimelineState.hits[position.pageNumber][position.indexInPage] = {
     ...newTimelineState.hits[position.pageNumber][position.indexInPage],
@@ -157,6 +160,13 @@ export const timelineReducer = (state = initialState, action) => {
         commentContent: action.payload.content,
         // We'll never change this later, so it can be used as an `initialValue`
         storedCommentContent: action.payload.content,
+      };
+    case PARENT_SET_DRAFT_FILES:
+      return { ...state, files: action.payload.files };
+    case PARENT_RESTORE_DRAFT_FILES:
+      return {
+        ...state,
+        files: action.payload.files,
       };
 
     default:

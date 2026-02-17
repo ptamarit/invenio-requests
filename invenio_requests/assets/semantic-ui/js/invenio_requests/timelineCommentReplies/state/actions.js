@@ -7,6 +7,7 @@
 import { errorSerializer, payloadSerializer } from "../../api/serializers";
 import {
   deleteDraftComment,
+  deleteDraftFiles,
   setDraftComment,
 } from "../../timelineCommentEditor/draftStorage";
 import { i18next } from "@translations/invenio_requests/i18next";
@@ -24,6 +25,8 @@ export const CLEAR_DRAFT = "timelineReplies/CLEAR_DRAFT";
 export const REPLY_APPEND_DRAFT_CONTENT = "timelineReplies/APPEND_DRAFT_CONTENT";
 export const REPLY_SET_DRAFT_CONTENT = "timelineReplies/SET_DRAFT_CONTENT";
 export const REPLY_RESTORE_DRAFT_CONTENT = "timelineReplies/RESTORE_DRAFT_CONTENT";
+export const REPLY_SET_DRAFT_FILES = "timelineReplies/SET_DRAFT_FILES";
+export const REPLY_RESTORE_DRAFT_FILES = "timelineReplies/RESTORE_DRAFT_FILES";
 export const REPLY_UPDATED_COMMENT = "timelineReplies/UPDATED_COMMENT";
 export const REPLY_DELETED_COMMENT = "timelineReplies/DELETED_COMMENT";
 
@@ -186,7 +189,7 @@ export const fetchRepliesPage = (parentRequestEvent, page) => {
   };
 };
 
-export const submitReply = (parentRequestEvent, content, format) => {
+export const submitReply = (parentRequestEvent, content, format, files) => {
   return async (dispatch, getState, config) => {
     const { request } = getState();
 
@@ -198,7 +201,7 @@ export const submitReply = (parentRequestEvent, content, format) => {
       },
     });
 
-    const payload = payloadSerializer(content, format || "html");
+    const payload = payloadSerializer(content, format || "html", files);
 
     try {
       const response = await config
@@ -207,6 +210,7 @@ export const submitReply = (parentRequestEvent, content, format) => {
 
       try {
         deleteDraftComment(request.data.id, parentRequestEvent.id);
+        deleteDraftFiles(request.data.id, parentRequestEvent.id);
       } catch (e) {
         console.warn("Failed to delete saved comment:", e);
       }
@@ -243,6 +247,14 @@ export const submitReply = (parentRequestEvent, content, format) => {
           content: "",
         },
       });
+
+      dispatch({
+        type: REPLY_SET_DRAFT_FILES,
+        payload: {
+          parentRequestEventId: parentRequestEvent.id,
+          files: [],
+        },
+      });
     } catch (error) {
       dispatch({
         type: HAS_SUBMISSION_ERROR,
@@ -261,6 +273,7 @@ export const clearDraft = (parentRequestEventId) => {
   return (dispatch, getState) => {
     const { request } = getState();
     deleteDraftComment(request.data.id, parentRequestEventId);
+    deleteDraftFiles(request.data.id, parentRequestEventId);
     dispatch({
       type: CLEAR_DRAFT,
       payload: {

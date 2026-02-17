@@ -11,7 +11,7 @@
 
 from flask import Blueprint
 
-from .api import create_request_events_bp, create_requests_bp
+from .api import create_request_events_bp, create_request_files_bp, create_requests_bp
 from .ui import create_ui_blueprint
 
 blueprint = Blueprint("invenio-requests-ext", __name__)
@@ -22,4 +22,5 @@ __all__ = (
     "create_ui_blueprint",
     "create_requests_bp",
     "create_request_events_bp",
+    "create_request_files_bp",
 )

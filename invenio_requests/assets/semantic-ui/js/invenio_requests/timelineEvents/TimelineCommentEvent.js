@@ -18,6 +18,7 @@ import TimelineEventBody from "../components/TimelineEventBody";
 import { toRelativeTime } from "react-invenio-forms";
 import { isEventSelected } from "./utils";
 import { RequestEventsLinksExtractor } from "../api/InvenioRequestEventsApi.js";
+import { InvenioRequestFilesApi } from "../api/InvenioRequestFilesApi.js";
 import TimelineFeedReplies from "../timelineCommentReplies/index.js";
 
 class TimelineCommentEvent extends Component {
@@ -28,6 +29,7 @@ class TimelineCommentEvent extends Component {
 
     this.state = {
       commentContent: event?.payload?.content,
+      files: event?.expanded?.files || [],
       isSelected: false,
     };
     this.ref = createRef(null);
@@ -86,6 +88,12 @@ class TimelineCommentEvent extends Component {
     appendCommentContent(`<blockquote>${text}</blockquote><br />`);
   };
 
+  onFileUpload = async (filename, payload, options) => {
+    const client = new InvenioRequestFilesApi();
+    const { request } = this.props;
+    return await client.uploadFile(request.id, filename, payload, options);
+  };
+
   render() {
     const {
       isLoading,
@@ -102,7 +110,7 @@ class TimelineCommentEvent extends Component {
       request,
       isBeforeLoadMore,
     } = this.props;
-    const { commentContent, isSelected } = this.state;
+    const { commentContent, files, isSelected } = this.state;
 
     const commentHasBeenDeleted = event?.payload?.event === "comment_deleted";
 
@@ -207,11 +215,17 @@ class TimelineCommentEvent extends Component {
                       onEditorChange={(event, editor) => {
                         this.setState({ commentContent: editor.getContent() });
                       }}
+                      files={files}
+                      onFilesChange={(files) => {
+                        this.setState({ files: files });
+                      }}
+                      // This is an existing comment, so we do not delete the file via the API.
+                      onFileUpload={this.onFileUpload}
                       minHeight={150}
                     />
                   ) : (
                     <TimelineEventBody
-                      payload={event?.payload}
+                      payload={{ ...event?.payload, files: event?.expanded?.files }}
                       quoteReply={this.quoteReply}
                     />
                   )}
@@ -220,7 +234,7 @@ class TimelineCommentEvent extends Component {
                     <Container fluid className="mt-15" textAlign="right">
                       <CancelButton onClick={() => toggleEditMode()} />
                       <SaveButton
-                        onClick={() => updateComment(commentContent, "html")}
+                        onClick={() => updateComment(commentContent, "html", files)}
                         loading={isLoading}
                       />
                     </Container>

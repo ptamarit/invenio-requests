@@ -15,6 +15,7 @@ from datetime import timezone
 from invenio_records_resources.services.records.schema import BaseRecordSchema
 from marshmallow import (
     RAISE,
+    Schema,
     fields,
 )
 from marshmallow_utils import fields as utils_fields
@@ -81,6 +82,18 @@ class RequestEventSchema(BaseRecordSchema):
         )
 
         return permissions
+
+
+class RequestFileSchema(Schema):
+    """Schema for file requests."""
+
+    id = fields.UUID(attribute="file.file_id", dump_only=True)
+    key = fields.String(dump_only=True)
+    checksum = fields.String(attribute="file.checksum", dump_only=True)
+    mimetype = fields.String(attribute="file.mimetype", dump_only=True)
+    size = fields.Integer(attribute="file.size", dump_only=True)
+    metadata = fields.Dict(attribute="model.data", dump_only=True)
+    links = Links()
 
 
 class RequestSchema(BaseRecordSchema):

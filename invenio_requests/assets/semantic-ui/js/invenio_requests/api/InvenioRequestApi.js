@@ -133,13 +133,14 @@ export class InvenioRequestsAPI {
     });
   };
 
-  performAction = async (action, commentContent = null) => {
+  performAction = async (action, commentContent = null, files = []) => {
     let payload = {};
     if (!_isEmpty(commentContent)) {
       payload = {
         payload: {
           content: commentContent,
           format: "html",
+          files: files,
         },
       };
     }

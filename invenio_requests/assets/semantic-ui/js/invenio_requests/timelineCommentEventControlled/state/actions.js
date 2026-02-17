@@ -10,6 +10,7 @@ import { payloadSerializer } from "../../api/serializers";
 export const updateComment = ({
   content,
   format,
+  files,
   parentRequestEventId,
   requestEventData,
   successEvent,
@@ -19,7 +20,7 @@ export const updateComment = ({
     dispatch(clearTimelineInterval());
     const commentsApi = config.requestEventsApi(requestEventData.links);
 
-    const payload = payloadSerializer(content, format);
+    const payload = payloadSerializer(content, format, files);
 
     dispatch({
       type: loadingEvent,
