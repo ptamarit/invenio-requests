@@ -200,6 +200,18 @@ class ParentChildRecordIndexer(RecordIndexer):
         return data
 
 
+def request_event_anchor(_, vars):
+    """Generate the anchor for request events.
+
+    This is also called for requests, so we need to return None if it isn't being called for a request event.
+    """
+    request_event = vars["request_event"]
+    if request_event is None:
+        return None
+
+    return f"commentevent-{request_event.id}"
+
+
 class RequestEventsServiceConfig(RecordServiceConfig, ConfiguratorMixin):
     """Config."""
 
@@ -230,6 +242,7 @@ class RequestEventsServiceConfig(RecordServiceConfig, ConfiguratorMixin):
             # The presence of request_event_retriever
             # provides for further differentiation
             request_event_retriever=lambda obj, vars: obj,
+            anchor=request_event_anchor,
         ),
         "reply": RequestSingleCommentEndpointLink(
             "request_events.reply",
