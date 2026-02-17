@@ -9,6 +9,10 @@
 Changes
 =======
 
+version v12.2.1 (released 2026-02-17)
+
+- fix(events): add back support for #commentevent anchor
+
 Version v12.2.0 (released 2026-02-17)
 
 - feat: role name to role id in request creation
