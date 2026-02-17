@@ -9,6 +9,16 @@
 Changes
 =======
 
+Version v12.3.0 (released 2026-02-25)
+
+- feat(timeline): file upload for comments
+- feat(timeline): deep link for replies
+- feat(timeline): make messages collapsible
+- fix(comment-editor): disable comment button when message is empty
+- fix(timeline): defer dataset extraction
+- fix(timeline): resize detection for comment body
+- fix(files): add 'not found' handler for file UI endpoint
+
 version v12.2.1 (released 2026-02-17)
 
 - fix(events): add back support for #commentevent anchor
