@@ -9,6 +9,11 @@
 Changes
 =======
 
+Version v12.2.0 (released 2026-02-17)
+
+- feat: role name to role id in request creation
+- fix: disable comment button when message is empty
+
 Version v12.1.0 (released 2026-02-03)
 
 - feat: enable deepcopy for AttrProxy
