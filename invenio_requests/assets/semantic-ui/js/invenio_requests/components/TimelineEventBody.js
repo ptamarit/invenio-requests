@@ -157,11 +157,24 @@ const TimelineEventBodyContainer = ({
   useEffect(() => {
     if (!collapsible) return;
 
+    if (expanded) {
+      setIsOverflowing(true);
+      return;
+    }
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      if (entries.length !== 1) return;
+      const el = entries[0].target;
+      setIsOverflowing(el.scrollHeight > el.clientHeight);
+    });
+
     const el = refInner.current;
     if (!el) return;
-
-    setIsOverflowing(el.scrollHeight > el.clientHeight);
-  }, [collapsible]);
+    resizeObserver.observe(el);
+    return () => {
+      resizeObserver.unobserve(el);
+    };
+  }, [collapsible, expanded]);
 
   const toggleCollapsed = () => {
     if (!collapsible) return;
