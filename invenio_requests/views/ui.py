@@ -38,8 +38,6 @@ def record_permission_denied_error(error):
 
 def create_ui_blueprint(app):
     """Register blueprint routes on app."""
-    routes = app.config.get("REQUESTS_ROUTES")
-
     blueprint = Blueprint(
         "invenio_requests",
         __name__,

@@ -9,11 +9,15 @@
 """Request Files ui views module."""
 
 from flask import Blueprint, current_app, render_template
-from flask_login import current_user
-from invenio_pidstore.errors import PIDDeletedError, PIDDoesNotExistError
-from invenio_records_resources.services.errors import PermissionDeniedError
+
+from invenio_requests.services.files.errors import RequestFileNotFoundError
 
 from .requests import read_file
+
+
+def not_found_error(_):
+    """Handler for 'Not Found' errors."""
+    return render_template(current_app.config["THEME_404_TEMPLATE"]), 404
 
 
 def create_ui_blueprint(app):
@@ -32,6 +36,11 @@ def create_ui_blueprint(app):
     blueprint.add_url_rule(
         routes["download_file_html"],
         view_func=read_file,
+    )
+
+    blueprint.register_error_handler(
+        RequestFileNotFoundError,
+        not_found_error,
     )
 
     return blueprint
