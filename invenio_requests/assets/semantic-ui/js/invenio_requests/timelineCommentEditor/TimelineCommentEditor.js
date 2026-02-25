@@ -32,15 +32,20 @@ const TimelineCommentEditor = ({
   saveButtonIcon,
   onCancel,
   disabled,
-  request,
+  requestId,
 }) => {
   useEffect(() => {
     restoreCommentContent();
-  }, [restoreCommentContent]);
-
-  useEffect(() => {
     restoreCommentFiles();
-  }, [restoreCommentFiles]);
+    // These functions are re-created on every top-level render of the timeline feed both for parents and replies.
+    // For example, whenever the Redux state changes, the functions are recreated.
+    // This therefore causes the restore to happen repeatedly on every render, which might lead to race conditions
+    // or unexpected UI behaviour.
+    // The functions will not actually change in a meaningful way. The only way this change would be needed is if the
+    // ID of the parent request event (for a reply timeline) changes, which is not possible.
+    // Therefore it is reasonable to not include them as effect dependencies.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const editorRef = useRef(null);
   useEffect(() => {
@@ -63,12 +68,12 @@ const TimelineCommentEditor = ({
 
   const onFileUpload = async (filename, payload, options) => {
     const client = new InvenioRequestFilesApi();
-    return await client.uploadFile(request.id, filename, payload, options);
+    return await client.uploadFile(requestId, filename, payload, options);
   };
 
   const onFileDelete = async (file) => {
     const client = new InvenioRequestFilesApi();
-    await client.deleteFile(request.id, file.key);
+    await client.deleteFile(requestId, file.key);
   };
 
   return (
@@ -126,7 +131,7 @@ const TimelineCommentEditor = ({
             commentContent.length > 0 && submitComment(commentContent, "html", files)
           }
           disabled={!canCreateComment}
-          aria-disabled={commentContent.length > 0}
+          aria-disabled={commentContent.length === 0}
         />
       </div>
     </div>
@@ -152,7 +157,7 @@ TimelineCommentEditor.propTypes = {
   saveButtonIcon: PropTypes.string,
   onCancel: PropTypes.func,
   disabled: PropTypes.bool,
-  request: PropTypes.object.isRequired,
+  requestId: PropTypes.string.isRequired,
 };
 
 TimelineCommentEditor.defaultProps = {

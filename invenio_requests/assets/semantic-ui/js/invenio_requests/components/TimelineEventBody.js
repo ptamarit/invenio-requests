@@ -97,18 +97,19 @@ const TimelineEventBodyRender = React.forwardRef(
 TimelineEventBodyRender.displayName = "TimelineEventBodyRender";
 
 TimelineEventBodyRender.propTypes = {
-  refInner: PropTypes.instanceOf(Element).isRequired,
+  refInner: PropTypes.object.isRequired,
   isOverflowing: PropTypes.bool.isRequired,
   expanded: PropTypes.bool.isRequired,
   collapsible: PropTypes.bool.isRequired,
   toggleCollapsed: PropTypes.func.isRequired,
   content: PropTypes.string.isRequired,
   format: PropTypes.string,
-  files: PropTypes.array.isRequired,
+  files: PropTypes.array,
 };
 
 TimelineEventBodyRender.defaultProps = {
   format: null,
+  files: [],
 };
 
 const TimelineEventBodyContainer = ({

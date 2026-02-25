@@ -202,7 +202,7 @@ class TimelineFeed extends Component {
                   }
                   saveButtonIcon={isReplyTimeline ? "reply" : "send"}
                   onCancel={isReplyTimeline ? this.onCancelClick : undefined}
-                  request={request}
+                  requestId={request.id}
                 />
               )}
 
