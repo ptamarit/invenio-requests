@@ -19,21 +19,19 @@ import { RequestReviewers } from "./reviewers/RequestReviewers";
 import { LockRequest } from "./LockRequest";
 
 const User = ({ user }) => (
-  <div className="flex">
-    <Image
-      src={user.links.avatar}
-      avatar
-      size="tiny"
-      className="mr-5"
-      ui={false}
-      rounded
-    />
-    <span>
-      {user.profile?.full_name ||
-        user?.username ||
-        user?.email ||
-        i18next.t("Anonymous user")}
-    </span>
+  <div className="ui items avatar-logo-container">
+    <div className="item">
+      <Image src={user.links.avatar} avatar size="tiny" ui rounded />
+
+      <div className="middle aligned content">
+        <span>
+          {user.profile?.full_name ||
+            user?.username ||
+            user?.email ||
+            i18next.t("Anonymous user")}
+        </span>
+      </div>
+    </div>
   </div>
 );
 
@@ -51,9 +49,14 @@ User.propTypes = {
 };
 
 const Community = ({ community }) => (
-  <div className="flex">
-    <Image src={community.links.logo} avatar size="tiny" className="mr-5" ui={false} />
-    <a href={`/communities/${community.slug}`}>{community.metadata.title}</a>
+  <div className="ui items avatar-logo-container">
+    <div className="item">
+      <Image src={community.links.logo} avatar size="tiny" ui rounded />
+
+      <div className="middle aligned content">
+        <a href={`/communities/${community.slug}`}>{community.metadata.title}</a>
+      </div>
+    </div>
   </div>
 );
 
