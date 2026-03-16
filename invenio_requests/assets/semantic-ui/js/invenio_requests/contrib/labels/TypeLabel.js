@@ -1,5 +1,5 @@
 // This file is part of InvenioRequests
-// Copyright (C) 2022-2025 CERN.
+// Copyright (C) 2022-2026 CERN.
 // Copyright (C) 2024 Northwestern University.
 //
 // Invenio RDM Records is free software; you can redistribute it and/or modify it
@@ -72,5 +72,11 @@ export const LabelTypeRecordDeletion = (props) => (
 export const LabelTypeFileModification = (props) => (
   <Label horizontal className="primary theme-secondary" size="small">
     {i18next.t("File modification")}
+  </Label>
+);
+
+export const LabelTypeQuotaIncrease = (props) => (
+  <Label horizontal className="primary theme-secondary" size="small">
+    {i18next.t("Quota increase")}
   </Label>
 );

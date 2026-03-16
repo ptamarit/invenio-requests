@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023-2025 CERN.
+# Copyright (C) 2023-2026 CERN.
 # Copyright (C) 2023 Graz University of Technology.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -31,6 +31,7 @@ type = TermsFacet(
         "user-moderation": _("User moderation"),
         "record-deletion": _("Record deletion"),
         "file-modification": _("File modification"),
+        "quota-increase": _("Quota increase"),
         # Instance-specific labels which ideally should not be listed here
         "community-manage-record": _("Community manage record"),
         "legacy-record-upgrade": _("Upgrade legacy record"),

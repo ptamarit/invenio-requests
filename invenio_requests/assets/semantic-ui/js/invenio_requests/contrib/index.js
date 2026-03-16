@@ -1,5 +1,5 @@
 // This file is part of Invenio Requests
-// Copyright (C) 2024-2025 CERN.
+// Copyright (C) 2024-2026 CERN.
 //
 // Invenio is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -22,6 +22,7 @@ import {
   LabelTypeCommunityMembershipRequest,
   LabelTypeRecordDeletion,
   LabelTypeFileModification,
+  LabelTypeQuotaIncrease,
 } from "@js/invenio_requests/contrib";
 import {
   RequestAcceptButton,
@@ -55,6 +56,7 @@ export const defaultContribComponents = {
     LabelTypeCommunityMembershipRequest,
   [`RequestTypeLabel.layout.record-deletion`]: LabelTypeRecordDeletion,
   [`RequestTypeLabel.layout.file-modification`]: LabelTypeFileModification,
+  [`RequestTypeLabel.layout.quota-increase`]: LabelTypeQuotaIncrease,
   [`RequestStatusLabel.layout.submitted`]: LabelStatusSubmit,
   [`RequestStatusLabel.layout.deleted`]: LabelStatusDelete,
   [`RequestStatusLabel.layout.accepted`]: LabelStatusAccept,
