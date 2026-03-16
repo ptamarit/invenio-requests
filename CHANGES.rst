@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v12.3.1 (released 2026-03-16)
+
+- fix(RequestMetadata): pass required props to the <Overridable>
+
 Version v12.3.0 (released 2026-02-25)
 
 - feat(timeline): file upload for comments
