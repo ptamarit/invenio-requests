@@ -162,7 +162,12 @@ class RequestMetadata extends Component {
     const expandedReceiver = request.expanded?.receiver;
 
     return (
-      <Overridable id="InvenioRequest.RequestMetadata.Layout" request={request}>
+      <Overridable
+        id="InvenioRequest.RequestMetadata.Layout"
+        request={request}
+        config={config}
+        permissions={permissions}
+      >
         <>
           {enableReviewers && (
             <>
