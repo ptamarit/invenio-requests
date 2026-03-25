@@ -9,8 +9,8 @@
 """Requests service configuration."""
 
 from invenio_records_resources.services import (
+    EndpointLink,
     FileServiceConfig,
-    Link,
 )
 from invenio_records_resources.services.base.config import ConfiguratorMixin, FromConfig
 from invenio_records_resources.services.files.links import FileEndpointLink
@@ -30,15 +30,25 @@ class RequestFileItem(RecordItem):
         return self._record.id
 
 
-class RequestFileLink(Link):
-    """Link variables setter for RequestFile links."""
+class RequestFileEndpointLink(EndpointLink):
+    """Rendering of a file link with specific vars expansion."""
 
     @staticmethod
     def vars(obj, vars):
-        """Variables for the URI template."""
-        vars.update({"request_id": obj.model.record_id, "key": obj.key})
-        # Remark: we do not call `request_type._update_link_config`
-        # because we do not want file links to be modified depending on the context (e.g. `/me`)
+        """Variables for the endpoint expansion.
+
+        WARNING: This is the *direct* translation of the previous deprecated
+                 RequestFileLink to use EndpointLink. As such, it keeps the
+                 behavior and shortcomings of the *original* implementation
+                 with respect to vars generation, chiefly: touching the DB to
+                 get the request id (!). Refactoring to pass the request id
+                 to the context (vars) should alleviate that, but it is outside
+                 of scope of this PR.
+
+        :param obj: api.RequestFile
+        :param vars: dict
+        """
+        vars.update({"id": obj.model.record_id, "key": obj.key})
 
 
 class RequestFilesServiceConfig(FileServiceConfig, ConfiguratorMixin):
@@ -61,9 +71,18 @@ class RequestFilesServiceConfig(FileServiceConfig, ConfiguratorMixin):
 
     # links configuration / ResultItem configurations
     links_item = {
-        "self": RequestFileLink("{+api}/requests/{request_id}/files/{key}"),
-        "content": RequestFileLink("{+api}/requests/{request_id}/files/{key}/content"),
-        "download_html": RequestFileLink("{+ui}/requests/{request_id}/files/{key}"),
+        "self": RequestFileEndpointLink("request_files.delete", params=["id", "key"]),
+        "content": RequestFileEndpointLink("request_files.read", params=["id", "key"]),
+        "download_html": EndpointLink(
+            "invenio_requests_files.read_file",
+            params=["pid_value", "file_key"],
+            vars=lambda obj, vars: (
+                vars.update(
+                    # Same WARNING as in RequestFileEndpointLink applies
+                    {"pid_value": obj.model.record_id, "file_key": obj.key}
+                )
+            ),
+        ),
     }
 
     file_links_item = {
