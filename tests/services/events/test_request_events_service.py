@@ -374,7 +374,7 @@ def _test_comment_request_event_notification(
 
     with mail.record_messages() as outbox:
         # Create a comment as creator
-        request_events_service.create(
+        request_event = request_events_service.create(
             user2.identity, request_id, dict(**comment), CommentEventType
         )
 
@@ -385,13 +385,12 @@ def _test_comment_request_event_notification(
         assert len(outbox) == 1
         assert user1.email in outbox[0].recipients
         html = outbox[0].html
-        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
-        assert "/me/requests/{}".format(request_id) in html
+        assert request_event["links"]["self_html"] in html
         assert comment["payload"]["content"] in html
 
     with mail.record_messages() as outbox:
         # Create a comment as receiver
-        request_events_service.create(
+        request_event = request_events_service.create(
             user1.identity, request_id, dict(**comment), CommentEventType
         )
 
@@ -402,13 +401,12 @@ def _test_comment_request_event_notification(
         assert len(outbox) == 1
         assert user2.email in outbox[0].recipients
         html = outbox[0].html
-        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
-        assert "/me/requests/{}".format(request_id) in html
+        assert request_event["links"]["self_html"] in html
         assert comment["payload"]["content"] in html
 
     with mail.record_messages() as outbox:
         # Create a comment as superuser
-        request_events_service.create(
+        request_event = request_events_service.create(
             superuser.identity, request_id, dict(**comment), CommentEventType
         )
 
@@ -420,8 +418,7 @@ def _test_comment_request_event_notification(
         assert user1.email in outbox[0].recipients
         assert user2.email in outbox[1].recipients
         html = outbox[0].html
-        # TODO: update to `req["links"]["self_html"]` when addressing https://github.com/inveniosoftware/invenio-rdm-records/issues/1327
-        assert "/me/requests/{}".format(request_id) in html
+        assert request_event["links"]["self_html"] in html
         assert comment["payload"]["content"] in html
 
 

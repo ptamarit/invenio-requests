@@ -16,8 +16,12 @@
 {% set title = invenio_request.title %}
 
 {% block page_body %}
-  {% set title = _("Request ") %}
-  {{ super() }}
+  {#
+    Only call super() when using user dashboard base template, so we don't render a duplicate title
+  #}
+  {%- if is_user_dashboard|default(false) %}
+    {{ super() }}
+  {%- endif %}
   {%- block request_body %}
     <div class="ui container request-detail-page">
 

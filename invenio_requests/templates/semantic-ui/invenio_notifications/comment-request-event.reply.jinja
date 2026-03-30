@@ -9,11 +9,8 @@
 {% set request_title = invenio_request.title | safe %}
 {% set reply_id = invenio_request_event.id %}
 
-{# TODO: use request.links.self_html when issue issue is resolved: https://github.com/inveniosoftware/invenio-rdm-records/issues/1327 #}
-{% set request_link = "{ui}/me/requests/{id}".format(
-    ui=config.SITE_UI_URL, id=request_id
-    )
-%}
+{% set request_link = invenio_request_event.links.self_html %}
+
 {% set reply_link = "{ui}/me/requests/{id}#replyevent-{reply_id}".format(
     ui=config.SITE_UI_URL, id=request_id, reply_id=reply_id
     )
