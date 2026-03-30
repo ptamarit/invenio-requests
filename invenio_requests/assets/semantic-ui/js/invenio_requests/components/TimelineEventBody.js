@@ -201,7 +201,10 @@ const TimelineEventBodyContainer = ({
   }, [selectionRange, quoteReply]);
 
   useEffect(() => {
-    window.invenio?.onSearchResultsRendered();
+    if (refInner.current !== null) {
+      // Run MathJax typesetting only on the inner element that contains the content of the comment
+      window.invenio?.onSearchResultsRendered([refInner.current]);
+    }
   }, []);
 
   const { format, content, files, event } = payload;
