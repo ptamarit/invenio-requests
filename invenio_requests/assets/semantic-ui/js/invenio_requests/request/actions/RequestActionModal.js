@@ -9,6 +9,7 @@ import { RequestActionContext } from "@js/invenio_requests/request/actions/conte
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { Trans } from "react-i18next";
+import { i18next } from "@translations/invenio_requests/i18next";
 import Overridable from "react-overridable";
 import { Modal } from "semantic-ui-react";
 import Error from "../../components/Error";
@@ -47,7 +48,7 @@ export class RequestActionModal extends Component {
           <Modal aria-label={action} role="dialog" id={modalId} open={currentModalOpen}>
             <Modal.Header as="h2" className="capitalize-first-char">
               <Overridable id={`RequestActionModal.title.${action}`}>
-                <Trans defaults="{{action}} request" values={{ action: action }} />
+                <Trans defaults="{{action}} request" values={{ action: i18next.t(action) }} />
               </Overridable>
             </Modal.Header>
             <Modal.Content>
