@@ -48,7 +48,10 @@ export class RequestActionModal extends Component {
           <Modal aria-label={action} role="dialog" id={modalId} open={currentModalOpen}>
             <Modal.Header as="h2" className="capitalize-first-char">
               <Overridable id={`RequestActionModal.title.${action}`}>
-                <Trans defaults="{{action}} request" values={{ action: i18next.t(action) }} />
+                <Trans
+                  defaults="{{action}} request"
+                  values={{ action: i18next.t(action) }}
+                />
               </Overridable>
             </Modal.Header>
             <Modal.Content>
