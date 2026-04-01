@@ -34,7 +34,7 @@ class RequestTypeDependentEndpointLink(EndpointLink):
     """Class that dynamically delegates to EndpointLink on RequestType's.
 
     The Requests API (/requests/...) needs to return links that sometimes
-    depend on the type of Request. RequestTypeEndpointLink allows that
+    depend on the type of Request. RequestTypeDependentEndpointLink allows that
     by delegating the link to be rendered to one defined in the RequestType
     (where such responsibility should reside) under
     `links_item = {<key>: ...}`.
@@ -65,10 +65,10 @@ class RequestTypeDependentEndpointLink(EndpointLink):
         """Fill `context` with retrieved values.
 
         This is what makes it possible to use
-        RequestTypeDependentEndpointLink from a Request- or RequestEvent-
-        Service (or any for that matter) as it sets values in keys
-        "request", "request_type", "request_event" that an EndpointLink
-        defined on a RequestType can rely on.
+        RequestTypeDependentEndpointLink from a Request —or RequestEvent—
+        Service as it sets values in keys "request", "request_type",
+        "request_event" that an EndpointLink defined on a RequestType can
+        and should rely on.
         """
         ctx = copy.deepcopy(context)
         ctx["request"] = self._request_retriever(obj, ctx)
@@ -103,6 +103,7 @@ class RequestTypeDependentEndpointLink(EndpointLink):
         """Expand/render the endpoint defined on the RequestType."""
         ctx = self._get_uniform_context(obj, context)
         endpoint_link = self._retrieve_endpoint_link(obj, ctx)
+        endpoint_link.set_anchor(self._anchor_func)
         return endpoint_link.expand(obj, ctx)
 
 
