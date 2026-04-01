@@ -1,6 +1,7 @@
 ..
     Copyright (C) 2021-2025 CERN.
     Copyright (C) 2024-2026 Graz University of Technology.
+    Copyright (C) 2026 Northwestern University.
 
     Invenio-Requests is free software; you can redistribute it and/or
     modify it under the terms of the MIT License; see LICENSE file for more
@@ -8,6 +9,11 @@
 
 Changes
 =======
+
+
+Version v12.5.0 (released 2026-04-07)
+
+- feat: RequestTypeDependentEndpointLink dynamically assigns anchor
 
 Version v12.4.0 (released 2026-04-02)
 
