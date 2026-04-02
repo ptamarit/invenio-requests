@@ -9,6 +9,15 @@
 Changes
 =======
 
+Version v12.4.0 (released 2026-04-02)
+
+- chore: replace usage of Link by EndpointLink
+- fix: add missing alembic script
+- fix: event entrypoint incorrectly pointed to request type registry
+- fix: wide community logo in request metadata
+- fix(TimelineEventBody): render mathjax only for the newly loaded comment
+- ui(translations): mark action values as translatable
+
 Version v12.3.1 (released 2026-03-16)
 
 - fix(RequestMetadata): pass required props to the <Overridable>
