@@ -65,7 +65,7 @@ class RequestTypeDependentEndpointLink(EndpointLink):
         """Fill `context` with retrieved values.
 
         This is what makes it possible to use
-        RequestTypeDependentEndpointLink from a Request —or RequestEvent—
+        RequestTypeDependentEndpointLink from a Request— or RequestEvent—
         Service as it sets values in keys "request", "request_type",
         "request_event" that an EndpointLink defined on a RequestType can
         and should rely on.
