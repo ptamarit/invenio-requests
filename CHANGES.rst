@@ -10,6 +10,9 @@
 Changes
 =======
 
+Version v12.5.1 (released 2026-04-08)
+
+- fix(links): set anchor only if Endpointlink supports it
 
 Version v12.5.0 (released 2026-04-07)
 
