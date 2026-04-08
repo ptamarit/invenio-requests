@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version v12.5.2 (released 2026-04-08)
+
+- fix: only render super when using dashboard base template
+
 Version v12.5.1 (released 2026-04-08)
 
 - fix(links): set anchor only if Endpointlink supports it

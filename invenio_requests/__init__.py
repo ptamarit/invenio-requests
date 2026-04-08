@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021-2025 CERN.
+# Copyright (C) 2021-2026 CERN.
 # Copyright (C) 2021-2023 TU Wien.
 # Copyright (C) 2024-2026 Graz University of Technology.
 #
@@ -21,7 +21,7 @@ from .proxies import (
     current_requests_service,
 )
 
-__version__ = "12.5.1"
+__version__ = "12.5.2"
 
 __all__ = (
     "__version__",
