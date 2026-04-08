@@ -103,7 +103,8 @@ class RequestTypeDependentEndpointLink(EndpointLink):
         """Expand/render the endpoint defined on the RequestType."""
         ctx = self._get_uniform_context(obj, context)
         endpoint_link = self._retrieve_endpoint_link(obj, ctx)
-        endpoint_link.set_anchor(self._anchor_func)
+        if hasattr(endpoint_link, "set_anchor"):
+            endpoint_link.set_anchor(self._anchor_func)
         return endpoint_link.expand(obj, ctx)
 
 
