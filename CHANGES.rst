@@ -10,6 +10,10 @@
 Changes
 =======
 
+Version v12.6.0 (released 2026-04-09)
+
+- labels: add quota increase label
+
 Version v12.5.2 (released 2026-04-08)
 
 - fix: only render super when using dashboard base template
