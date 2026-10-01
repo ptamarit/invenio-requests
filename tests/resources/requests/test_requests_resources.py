@@ -46,7 +46,7 @@ def test_reference_search_filters(app, client_logged_as, headers, example_reques
 
     # get unfiltered responses
     response = client.get(
-        "/requests/",
+        "/requests",
         headers=headers,
     )
     check_reference_search_filter_results(
@@ -55,21 +55,21 @@ def test_reference_search_filters(app, client_logged_as, headers, example_reques
 
     # get requests where user #1 is the receiver (should be the first two)
     response = client.get(
-        "/requests/?receiver=user:1",
+        "/requests?receiver=user:1",
         headers=headers,
     )
     check_reference_search_filter_results(response, 2, [req1.number, req2.number])
 
     # get requests where user #2 is the receiver (should be the last one)
     response = client.get(
-        "/requests/?receiver=user:2",
+        "/requests?receiver=user:2",
         headers=headers,
     )
     check_reference_search_filter_results(response, 1, [req3.number])
 
     # get requests where user #3 is the receiver (none)
     response = client.get(
-        "/requests/?receiver=user:3",
+        "/requests?receiver=user:3",
         headers=headers,
     )
     check_reference_search_filter_results(response, 0, [])
@@ -77,7 +77,7 @@ def test_reference_search_filters(app, client_logged_as, headers, example_reques
     # check what happens when there's an invalid reference
     # (the filter should get dropped)
     response = client.get(
-        "/requests/?receiver=nosuchthing:1",
+        "/requests?receiver=nosuchthing:1",
         headers=headers,
     )
     check_reference_search_filter_results(
@@ -123,7 +123,7 @@ def test_create_is_disallowed(app, client_logged_as, headers, request_resource_d
     client = client_logged_as("user1@example.org")
 
     # try to create a request, should fail
-    response = client.post("/requests/", headers=headers, json=request_resource_data)
+    response = client.post("/requests", headers=headers, json=request_resource_data)
     assert response.status_code == 405
 
 

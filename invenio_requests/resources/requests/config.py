@@ -62,7 +62,7 @@ class RequestsResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     blueprint_name = "requests"
     url_prefix = "/requests"
     routes = {
-        "list": "/",
+        "list": "",
         "user-prefix": "/user",
         "item": "/<uuid:id>",
         "action": "/<uuid:id>/actions/<action>",

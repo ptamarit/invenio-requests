@@ -29,7 +29,7 @@ def test_moderate(app, search_clear, client_logged_as, headers, mod_request):
     assert response.status_code == 200
 
     response = client.get(
-        "/requests/",
+        "/requests",
         headers=headers,
     )
     assert response.status_code == 200
@@ -121,7 +121,7 @@ def test_search_as_moderator(app, search_clear, client_logged_as, headers, mod_r
     client = client_logged_as(mod_email)
 
     response = client.get(
-        "/requests/",
+        "/requests",
         headers=headers,
     )
     assert response.status_code == 200
@@ -137,7 +137,7 @@ def test_search_as_user(app, search_clear, client_logged_as, headers, mod_reques
     client = client_logged_as("user1@example.org")
 
     response = client.get(
-        "/requests/",
+        "/requests",
         headers=headers,
     )
     assert response.status_code == 200
@@ -152,7 +152,7 @@ def test_links(app, search_clear, client_logged_as, headers, mod_request):
     client = client_logged_as(mod_email)
 
     response = client.get(
-        "/requests/",
+        "/requests",
         headers=headers,
     )
     assert response.status_code == 200
@@ -171,7 +171,7 @@ def test_links(app, search_clear, client_logged_as, headers, mod_request):
     assert response.status_code == 200
 
     response = client.get(
-        "/requests/",
+        "/requests",
         headers=headers,
     )
     assert response.status_code == 200
